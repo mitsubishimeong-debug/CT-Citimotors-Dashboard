@@ -1,0 +1,1947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Auto Loan Application - CT Citimotors Las Piñas Corp</title>
+<style>
+  :root{ --orange:#c0521a; --line:#333; --yellow:#fff8b0; --navy:#1e3a5f; --sidebar-bg:#152238; --sidebar-bg2:#1c3350; --sidebar-active:#c3a26b; }
+  *{box-sizing:border-box;}
+  html, body{height:100%;}
+  body{font-family:Arial, Helvetica, sans-serif; font-size:12px; color:#111; background:#eef0f3; margin:0; padding:0;}
+  .app-shell{display:flex; min-height:100vh;}
+  .sidebar{width:240px; flex-shrink:0; background:linear-gradient(180deg, var(--sidebar-bg) 0%, var(--sidebar-bg2) 100%); color:#fff; display:flex; flex-direction:column; position:sticky; top:0; height:100vh; overflow-y:auto;}
+  .sidebar-logo{padding:22px 18px 16px 18px; border-bottom:1px solid rgba(255,255,255,0.12);}
+  .sidebar-logo .lg1{font-weight:800; font-size:15px; letter-spacing:0.03em;}
+  .sidebar-logo .lg2{font-size:10.5px; color:var(--sidebar-active); letter-spacing:0.08em; text-transform:uppercase; margin-top:3px;}
+  .sidebar-nav{flex:1; padding:14px 10px; display:flex; flex-direction:column; gap:3px;}
+  .sidebar-nav button{text-align:left; background:transparent; border:none; color:#cdd6e4; padding:11px 12px; border-radius:7px; font-size:12.5px; cursor:pointer; display:flex; align-items:center; gap:9px;}
+  .sidebar-nav button:hover{background:rgba(255,255,255,0.06); color:#fff;}
+  .sidebar-nav button.active{background:var(--sidebar-active); color:#241a04; font-weight:700;}
+  .sidebar-footer{padding:14px 10px; border-top:1px solid rgba(255,255,255,0.12);}
+  .sidebar-footer button{width:100%; background:rgba(255,255,255,0.08); color:#fff; border:1px solid rgba(255,255,255,0.2); padding:10px; border-radius:7px; cursor:pointer; font-size:11.5px;}
+  .sidebar-footer button:hover{background:rgba(255,255,255,0.16);}
+  .main-content{flex:1; padding:22px 26px 40px 26px; overflow-x:hidden; min-width:0;}
+  .toolbar{max-width:1000px; margin:0 auto 8px auto; display:flex; gap:8px; align-items:center; flex-wrap:wrap;}
+  .toolbar button, .toolbar select{background:var(--orange); color:#fff; border:none; padding:9px 14px; font-size:12.5px; border-radius:4px; cursor:pointer;}
+  .toolbar button.secondary{background:#555;}
+  .toolbar button.navy{background:var(--navy);}
+  .toolbar select{background:#fff; color:#111; border:1px solid #999;}
+  .hint{max-width:1000px; margin:0 auto 10px auto; font-size:11.5px; color:#444; background:#fffbe0; border:1px solid #e0d38a; padding:6px 10px; border-radius:4px;}
+  .sheet{max-width:1000px; margin:0 auto; background:#fff; padding:12px 16px 18px 16px; border:1px solid #ccc;}
+  table{width:100%; border-collapse:collapse;}
+  td, th{border:1px solid var(--line); padding:4px 6px; vertical-align:top;}
+  .headtop td{border:none;}
+  .company{font-weight:bold; font-style:italic; font-size:12px;}
+  .addr{font-weight:bold;}
+  .banner{background:var(--orange); color:#fff; text-align:center; font-weight:bold; padding:5px;}
+  .note{font-size:9.5px; line-height:1.2;}
+  .calltime{background:#ffff00; font-weight:bold; text-align:center;}
+  .section-title{background:var(--orange); color:#fff; text-align:center; font-weight:bold; padding:4px;}
+  .label{font-size:10.5px; color:#333; margin-bottom:2px; display:block;}
+  input[type="text"], input[type="email"]{width:100%; border:none; border-bottom:1px solid #aaa; font-family:inherit; font-size:12px; padding:2px 1px; background:transparent;}
+  input[type="text"]:focus, input[type="email"]:focus{outline:none; border-bottom:1px solid var(--orange); background:#fffdf5;}
+  .chk-row{display:flex; align-items:center; gap:4px; font-size:11px; margin-bottom:3px;}
+  .chk-row input{width:auto;}
+  .center{text-align:center;}
+  .bold{font-weight:bold;}
+  .small-note{font-size:9px; line-height:1.3; color:#222;}
+  .sig-row td{border:none; text-align:center; padding-top:6px; vertical-align:bottom;}
+  .sig-line{border-top:1px solid #000; margin:0 20px; padding-top:2px; font-size:10.5px;}
+  .sig-img-holder{height:42px; display:flex; align-items:center; justify-content:center;}
+  .sig-img-holder img{max-height:40px; max-width:100%;}
+  .addrow-btn{background:#eee; border:1px dashed #999; padding:3px 8px; font-size:10px; cursor:pointer; margin-top:3px;}
+  .del-btn{background:#a12626; color:#fff; border:none; border-radius:3px; padding:2px 7px; cursor:pointer; font-size:11px;}
+  .bulletin-wrap, .saved-wrap, .quote-wrap{max-width:1000px; margin:0 auto; background:#fff; padding:16px; border:1px solid #ccc; overflow-x:auto;}
+  .bulletin-wrap h2, .saved-wrap h2, .quote-wrap h2{margin-top:0;}
+  .bulletin-wrap table{min-width:900px;}
+  .bulletin-wrap table input{border:1px solid #ccc; padding:5px; width:100%; font-size:11.5px;}
+  .saved-item{display:flex; justify-content:space-between; align-items:center; border:1px solid #ddd; border-radius:5px; padding:10px 12px; margin-bottom:8px;}
+  .saved-item .meta{font-size:11px; color:#666;}
+  .saved-item button{margin-left:6px; padding:6px 10px; border:none; border-radius:4px; cursor:pointer; font-size:12px;}
+  .load-btn{background:var(--orange); color:#fff;}
+  .del-btn2{background:#a12626; color:#fff;}
+  .monitoring-wrap{max-width:1100px; margin:0 auto; background:#fff; padding:16px; border:1px solid #ccc; overflow-x:auto;}
+  .monitoring-wrap h2{margin-top:0;}
+  .monitoring-wrap table{min-width:1400px;}
+  .monitoring-wrap table input, .monitoring-wrap table select, .monitoring-wrap table textarea{border:1px solid #ccc; padding:5px; width:100%; font-size:11px; font-family:inherit;}
+  .monitoring-wrap textarea{resize:vertical; min-height:34px;}
+  .status-ONGOING{background:#fff3cd;}
+  .status-DECLINED{background:#f8d7da;}
+  .status-APPROVED{background:#d4edda;}
+
+  .messages-wrap, .sync-wrap{max-width:1000px; margin:0 auto; background:#fff; padding:16px; border:1px solid #ccc;}
+  .messages-wrap h2, .sync-wrap h2{margin-top:0;}
+  .alert-box{background:#fff3cd; border:1px solid #e0c46c; border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12.5px;}
+  .alert-box.holiday{background:#d6e9ff; border-color:#8fb8e8;}
+  .template-card{border:1px solid #ddd; border-radius:6px; padding:12px; margin-bottom:12px;}
+  .template-card h4{margin:0 0 8px 0; font-size:13px; color:var(--orange);}
+  .template-card textarea{width:100%; min-height:80px; font-family:inherit; font-size:12.5px; padding:8px; border:1px solid #ccc; border-radius:4px;}
+  .template-card .copy-btn{margin-top:6px; background:var(--orange); color:#fff; border:none; padding:8px 14px; border-radius:4px; cursor:pointer; font-size:12px;}
+  .client-picker{width:100%; padding:8px; margin-bottom:12px; border:1px solid #ccc; border-radius:4px; font-size:13px;}
+  .sync-box{background:var(--navy); color:#fff; padding:16px; border-radius:8px; margin-bottom:14px;}
+  .sync-box button{background:var(--orange); color:#fff; border:none; padding:10px 16px; border-radius:5px; cursor:pointer; font-size:13px; margin-right:8px; margin-top:8px;}
+  #qrDisplay{background:#fff; padding:14px; border-radius:8px; text-align:center; margin-top:10px;}
+  #qrDisplay img, #qrDisplay canvas{margin:0 auto;}
+  #qrScanVideo{width:100%; max-width:360px; border-radius:8px; display:block; margin:10px auto;}
+  .sync-progress{font-size:12px; color:#333; text-align:center; margin-top:6px;}
+
+  /* ---- Dashboard ---- */
+  .dash-header{max-width:1200px; margin:0 auto 18px auto;}
+  .dash-header h1{font-size:20px; margin:0 0 2px 0; color:#1c3350;}
+  .dash-header p{font-size:12px; color:#667; margin:0;}
+  .kpi-grid{max-width:1200px; margin:0 auto 20px auto; display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:14px;}
+  .kpi-card{background:#fff; border-radius:10px; padding:16px 18px; border:1px solid #e2e5ea; box-shadow:0 1px 3px rgba(0,0,0,0.04);}
+  .kpi-card .kpi-label{font-size:10.5px; text-transform:uppercase; letter-spacing:0.06em; color:#8a93a3; font-weight:700;}
+  .kpi-card .kpi-value{font-size:26px; font-weight:800; color:#1c3350; margin-top:6px;}
+  .kpi-card .kpi-sub{font-size:11px; color:#8a93a3; margin-top:4px;}
+  .kpi-card.accent-gold{border-left:4px solid #c3a26b;}
+  .kpi-card.accent-green{border-left:4px solid #3a7a54;}
+  .kpi-card.accent-red{border-left:4px solid #a12626;}
+  .kpi-card.accent-navy{border-left:4px solid #1c3350;}
+  .dash-grid{max-width:1200px; margin:0 auto; display:grid; grid-template-columns:1.2fr 1fr; gap:16px;}
+  @media (max-width:800px){ .dash-grid{grid-template-columns:1fr;} }
+  .dash-panel{background:#fff; border-radius:10px; padding:16px 18px; border:1px solid #e2e5ea; box-shadow:0 1px 3px rgba(0,0,0,0.04);}
+  .dash-panel h3{margin:0 0 12px 0; font-size:13.5px; color:#1c3350;}
+  .dash-panel canvas{max-height:260px;}
+  .activity-row{display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #f0f1f3; font-size:12px;}
+  .activity-row:last-child{border-bottom:none;}
+  .activity-row .a-name{font-weight:700; color:#333;}
+  .activity-row .a-meta{color:#8a93a3; font-size:11px;}
+
+  /* ---- GitHub Cloud Sync modal ---- */
+  .gh-modal-box{max-width:440px;}
+  .gh-modal-box label{font-size:11.5px; font-weight:700; color:#333; display:block; margin:10px 0 4px;}
+  .gh-modal-box input[type="text"], .gh-modal-box input[type="password"]{width:100%; padding:9px; border:1px solid #ccc; border-radius:5px; font-size:12.5px;}
+  .gh-modal-box .gh-hint{font-size:10.5px; color:#777; margin-top:4px; line-height:1.4;}
+  .gh-status{font-size:11.5px; margin-top:10px; padding:8px; border-radius:5px;}
+  .gh-status.ok{background:#d4edda; color:#1e5c30;}
+  .gh-status.err{background:#f8d7da; color:#7a1f27;}
+  #tab-form, #tab-bulletin, #tab-saved, #tab-quote, #tab-monitoring, #tab-messages, #tab-sync{display:none;}
+
+  /* bold + all-caps as the borrower/co-borrower details are typed, so the bank checker reads them fast */
+  #sheet input[type="text"]{font-weight:700; letter-spacing:0.2px; text-transform:uppercase;}
+  #sheet input[id$="_email"]{text-transform:none; font-weight:600;}
+
+  /* ---- Quotation tab (full computation sheet) ---- */
+  :root{ --qnavy:#1c3350; --qnavy2:#254264; --qcharcoal:#23262e; --qgold:#c3a26b; --qgoldl:#ecdfc4; --qmaroon:#7d3038; --qmaroon2:#5f242a; --qamberl:#f1e9d8; }
+  .quote-select-box{background:linear-gradient(135deg,var(--qnavy) 0%,var(--qnavy2) 100%); color:#fff; padding:18px 20px; border-radius:10px; margin-bottom:16px;}
+  .quote-select-box label{font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--qgoldl); display:block; margin-bottom:8px; font-weight:600;}
+  .quote-select-box select{width:100%; padding:10px; border-radius:6px; border:none; font-size:14px; font-weight:600;}
+  .dp-toggle{display:flex; gap:8px; margin-top:14px;}
+  .dp-btn{flex:1; padding:11px; text-align:center; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.22); border-radius:7px; cursor:pointer; font-weight:700; font-size:13px; color:#fff;}
+  .dp-btn.active{background:var(--qgold); border-color:var(--qgold); color:#2c2005;}
+  .custom-link{display:inline-block; margin-top:14px; font-size:12px; color:var(--qgoldl); cursor:pointer; border-bottom:1px solid rgba(236,223,196,0.4); padding-bottom:1px;}
+  .custom-fields{display:none; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin-top:12px;}
+  .custom-fields input{width:100%; padding:9px 10px; border:1px solid rgba(255,255,255,0.2); border-radius:6px; font-size:13px;}
+  .custom-fields label{color:var(--qgoldl); font-size:10.5px; margin-bottom:4px; display:block;}
+  .quote-action-bar{display:none; gap:8px; margin-bottom:12px; flex-wrap:wrap;}
+  .quote-action-bar.show{display:flex;}
+  .quote-action-bar button{padding:10px 14px; border-radius:7px; font-size:12.5px; font-weight:700; cursor:pointer; border:none; color:#fff;}
+  .quote-action-bar .btn-navy{background:var(--qnavy);}
+  .quote-action-bar .btn-gold{background:var(--qgold); color:#2c2005;}
+  .quote-action-bar .btn-orange{background:var(--orange);}
+  .quote-sheet{display:none; background:#fff; border-radius:10px; overflow:hidden; border:1px solid #e4e5e9;}
+  .agent-bar{background:linear-gradient(135deg,var(--qcharcoal) 0%,#31353f 100%); color:#fff; padding:16px 22px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px; border-bottom:3px solid var(--qgold);}
+  .agent-bar .qname{font-weight:700; font-size:1.1rem;}
+  .agent-bar .qrole{font-size:10px; color:var(--qgoldl); letter-spacing:0.12em; text-transform:uppercase; margin-top:2px;}
+  .agent-bar .dealer-info{font-size:11px; text-align:right; line-height:1.6; color:#c7cad1;}
+  .date-line{text-align:right; padding:8px 22px 0 0; font-size:11px; color:#6b7280; font-weight:600;}
+  .date-line span{color:var(--qmaroon); font-weight:700;}
+  .cashout-highlight{margin:14px 22px 6px 22px; background:linear-gradient(135deg,var(--qmaroon) 0%,var(--qmaroon2) 100%); border:2px solid var(--qgold); border-radius:10px; text-align:center; padding:16px 14px;}
+  .cashout-label{color:var(--qgoldl); font-size:11px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; margin-bottom:6px;}
+  .cashout-amount{color:#fff; font-weight:800; font-size:2rem;}
+  .cashout-sub{color:#f0d9dc; font-size:11px; margin-top:6px; font-style:italic;}
+  table.quote{width:100%; border-collapse:collapse; margin-top:8px;}
+  table.quote td{padding:11px 18px; font-size:12.5px; border-bottom:1px solid #edeceb;}
+  .row-label{background:#f6f7f9; font-weight:700; width:38%; color:#3a4150; font-size:11.5px;}
+  .row-value{font-weight:700; color:var(--qnavy);}
+  .row-model .row-value{font-weight:800; font-size:1.05rem; text-align:center;}
+  .row-model{background:linear-gradient(135deg,#eef2f7 0%,#e6ebf2 100%);}
+  .row-model .row-label{background:transparent;}
+  .free-cell{color:#3a7a54; font-weight:700; font-size:11.5px;}
+  .row-discount td{background:var(--qamberl) !important; color:#5a4b2c; text-align:center; font-weight:700;}
+  .row-cashout td{background:linear-gradient(135deg,var(--qmaroon) 0%,var(--qmaroon2) 100%) !important; color:#fff; text-align:center; font-weight:800; font-size:1.2rem; padding:16px;}
+  .row-promo td{background:linear-gradient(135deg,#d3b785 0%,#c3a26b 100%) !important; color:#3a2c11; text-align:center; font-weight:700; font-size:11.5px; line-height:1.6;}
+  .fin-header{background:var(--qnavy); text-align:center; font-weight:700; color:#fff; padding:11px; font-size:12.5px;}
+  table.fin{width:100%; border-collapse:collapse;}
+  table.fin th, table.fin td{padding:10px 6px; text-align:center; border-bottom:1px solid #edeceb; font-size:11.5px;}
+  table.fin th{background:#f9f9fa;}
+  .bank-badge{width:32px; height:32px; border-radius:50%; margin:0 auto 5px auto; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:800; font-size:10px;}
+  .badge-rcbc{background:#3a6ea5;} .badge-bpi{background:#8f3d42;} .badge-bdo{background:#2c4a68;} .badge-eastwest{background:#6c4a80;} .badge-security{background:#33587e;}
+  .bank-name{font-size:9.5px; font-weight:700; text-transform:uppercase; color:#3a4150;}
+  table.fin td:first-child{text-align:left; font-weight:700; background:#f6f7f9; color:#3a4150; font-size:11px;}
+  .docreq{padding:18px 22px; background:#fafbfc;}
+  .docreq h3{margin:0 0 12px 0; font-size:13px; color:var(--qnavy); font-weight:700;}
+  .docreq-grid{display:grid; grid-template-columns:1fr 1fr 1fr; border:1px solid #e4e5e9; border-radius:8px; overflow:hidden; background:#fff;}
+  .docreq-col{border-right:1px solid #edeceb;}
+  .docreq-col:last-child{border-right:none;}
+  .docreq-col .head{background:var(--qnavy); color:var(--qgoldl); text-align:center; padding:9px; font-weight:700; font-size:10px; text-transform:uppercase;}
+  .docreq-col ul{list-style:none; margin:0; padding:9px 12px;}
+  .docreq-col li{font-size:10.5px; padding:5px 0; border-bottom:1px solid #edeceb; color:#3a4150;}
+  .docreq-col li:last-child{border-bottom:none;}
+  .docreq-col li:before{content:"✓ "; color:#3a7a54; font-weight:800;}
+  .quote-footer{padding:12px 22px; background:var(--qcharcoal); font-size:10px; color:#9aa0ab;}
+  .img-modal{display:none; position:fixed; inset:0; background:rgba(20,20,25,0.85); z-index:999; align-items:center; justify-content:center; padding:20px; flex-direction:column; gap:14px;}
+  .img-modal.show{display:flex;}
+  .img-modal img{max-width:100%; max-height:70vh; border-radius:8px;}
+  .img-modal .hint-text{color:#fff; font-size:13px; text-align:center; max-width:400px;}
+  .img-modal .modal-actions2{display:flex; gap:10px;}
+  .img-modal .modal-btn{padding:9px 18px; border-radius:7px; font-size:12.5px; font-weight:700; cursor:pointer; border:none;}
+  .img-modal .modal-btn.close{background:#fff; color:#111;}
+  .img-modal .modal-btn.dl{background:var(--qgold); color:#2c2005; text-decoration:none; display:inline-block;}
+
+  .modal-overlay{position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.55); display:none; align-items:center; justify-content:center; z-index:999; padding:16px;}
+  .modal-overlay.open{display:flex;}
+  .modal-box{background:#fff; border-radius:8px; padding:16px; max-width:400px; width:100%;}
+  .modal-box h3{margin-top:0;}
+  #sigCanvas{border:1px solid #999; touch-action:none; width:100%; background:#fdfdfd; border-radius:4px;}
+  .modal-actions{display:flex; gap:8px; margin-top:10px;}
+  .modal-actions button{flex:1; padding:10px; border:none; border-radius:5px; cursor:pointer; font-size:12.5px;}
+
+  @media print{
+    body{background:#fff; padding:0; font-size:9.5px;}
+    .sidebar{display:none !important;}
+    .main-content{padding:0 !important;}
+    .toolbar, .hint, #tab-bulletin, #tab-saved, #tab-monitoring, #tab-dashboard, #tab-messages, #tab-sync, .modal-overlay, .quote-select-box, .quote-action-bar{display:none !important;}
+    #tab-form{display:block !important;}
+    .sheet{border:none; max-width:100%; padding:4px 10px;}
+    input{border-bottom:none !important;}
+    .addrow-btn, .del-btn{display:none !important;}
+    td, th{padding:2px 4px;}
+    .note{font-size:7.5px;}
+    .small-note{font-size:7px; line-height:1.15;}
+    .label{font-size:8.5px;}
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }
+  }
+
+  body.pdf-mode .no-print{display:none !important;}
+  body.pdf-mode input{border-bottom:none !important;}
+  body.pdf-mode .sheet{font-size:9.5px;}
+</style>
+</head>
+<body>
+
+<div class="app-shell">
+  <aside class="sidebar no-print">
+    <div class="sidebar-logo">
+      <div class="lg1">CT CITIMOTORS</div>
+      <div class="lg2">Loan &amp; CRM System</div>
+    </div>
+    <nav class="sidebar-nav">
+      <button onclick="switchTab('dashboard')" id="btn-tab-dashboard">📊 Dashboard</button>
+      <button onclick="switchTab('form')" id="btn-tab-form">📄 Application Form</button>
+      <button onclick="switchTab('quote')" id="btn-tab-quote">🧮 Quotation</button>
+      <button onclick="switchTab('bulletin')" id="btn-tab-bulletin">🚗 Vehicle Bulletin</button>
+      <button onclick="switchTab('saved')" id="btn-tab-saved">💾 Saved Applications</button>
+      <button onclick="switchTab('monitoring')" id="btn-tab-monitoring">📋 Monitoring</button>
+      <button onclick="switchTab('messages')" id="btn-tab-messages">📨 Messages</button>
+      <button onclick="switchTab('sync')" id="btn-tab-sync">🔗 Sync (QR)</button>
+    </nav>
+    <div class="sidebar-footer">
+      <button onclick="openGithubModal()">☁️ Cloud Sync (GitHub)</button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+
+<div id="tab-dashboard">
+  <div class="dash-header">
+    <h1>Dashboard</h1>
+    <p id="dashDateLabel">—</p>
+  </div>
+  <div class="kpi-grid" id="kpiGrid"></div>
+  <div class="dash-grid">
+    <div class="dash-panel">
+      <h3>Status Breakdown</h3>
+      <canvas id="statusChart"></canvas>
+    </div>
+    <div class="dash-panel">
+      <h3>Recent Activity</h3>
+      <div id="recentActivity"><p style="color:#8a93a3; font-size:12px;">Wala pang saved applications.</p></div>
+    </div>
+  </div>
+</div>
+
+<div class="toolbar no-print" id="formToolbar">
+  <button onclick="downloadPDF()">⬇️ Download PDF (1-page, colored)</button>
+  <button class="secondary" onclick="window.print()">🖨️ Print (browser dialog)</button>
+  <select id="paperSize"><option value="letter">Letter</option><option value="A4">A4</option><option value="legal">Legal</option></select>
+  <button class="navy" onclick="openSigModal()">✍️ Add Signature</button>
+  <button class="secondary" onclick="clearAll()">New / Clear</button>
+  <button onclick="saveApplication()">💾 Save Application</button>
+</div>
+<div class="toolbar no-print" id="formToolbar3">
+  <button class="secondary" onclick="exportBackup()">⬇️ Export Backup (.json)</button>
+  <button class="secondary" onclick="document.getElementById('importFile').click()">⬆️ Import Backup</button>
+  <input type="file" id="importFile" accept="application/json" style="display:none" onchange="importBackup(event)">
+</div>
+<div class="hint no-print" id="formToolbar2">
+  Gamitin ang <b>"Download PDF"</b> button para guaranteed 1-page at may kulay (hindi na kailangan ng "Background graphics" setting). Ang data ay naka-save dito sa browser/gadget na ito lang — gamitin ang <b>Export/Import Backup</b> para madala sa ibang phone o laptop.
+</div>
+
+<div id="tab-form">
+<div class="sheet" id="sheet">
+
+  <table class="headtop">
+    <tr>
+      <td style="width:55%;">
+        <div class="company">CITIMOTORS LAS PIÑAS CORP.</div>
+        <div class="addr">Alabang Zapote Road. Cor. Sta.<br>Talos Dos, Las Piñas City</div>
+      </td>
+      <td style="width:20%;" class="calltime">
+        BEST TIME TO CALL:<br>
+        <input type="text" id="bestTime" placeholder="e.g. ANYTIME" style="text-align:center;font-weight:bold;">
+      </td>
+      <td style="width:25%;">
+        <div class="banner" style="margin-bottom:4px;">Auto Loan Application</div>
+        <div class="note">Important Information: Pls. fill out all entries in the form to
+        ensure rapid process of your loan application. Incomplete
+        information will cause delay in processing</div>
+      </td>
+    </tr>
+  </table>
+
+  <div class="section-title">VEHICLE / LOAN INFORMATION</div>
+  <table>
+    <tr>
+      <td style="width:25%;">
+        <span class="label">Vehicle: (type or pick from list)</span>
+        <input type="text" id="vehicle" list="vehicleDatalist" oninput="onVehicleChange()">
+        <datalist id="vehicleDatalist"></datalist>
+      </td>
+      <td style="width:25%;"><span class="label">Selling Price:</span><input type="text" id="sellingPrice"></td>
+      <td style="width:25%;">
+        <span class="label">Down Payment:</span>
+        <input type="text" id="downPayment" list="dpDatalist" oninput="onDownPaymentChange()">
+        <datalist id="dpDatalist"><option value="20%"><option value="30%"><option value="40%"></datalist>
+      </td>
+    </tr>
+    <tr>
+      <td><span class="label">Sales Executive:</span><input type="text" id="salesExec"></td>
+      <td><span class="label">Amount for Financing:</span><input type="text" id="amountFinancing"></td>
+      <td>
+        <span class="label">Terms:</span>
+        <input type="text" id="terms" list="termsDatalist">
+        <datalist id="termsDatalist"><option value="36 MONTHS"><option value="48 MONTHS"><option value="60 MONTHS"></datalist>
+      </td>
+    </tr>
+  </table>
+
+  <table>
+    <tr>
+      <td style="width:50%;"><span class="label">Last Name/ First Name / Middle Name:</span><input type="text" id="b_name"></td>
+      <td style="width:50%;"><span class="label">Last Name/ First Name / Middle Name (Co-Borrower):</span><input type="text" id="c_name"></td>
+    </tr>
+    <tr>
+      <td><span class="label">Relationship to Borrower (if co-borrower):</span><input type="text" id="b_rel"></td>
+      <td><span class="label">Relationship to Borrower:</span><input type="text" id="c_rel"></td>
+    </tr>
+    <tr>
+      <td style="width:50%;"><span class="label">Birthdate:</span><input type="text" id="b_bday" placeholder="e.g. July 13, 1989"></td>
+      <td style="width:50%;"><span class="label">Birthdate:</span><input type="text" id="c_bday" placeholder="e.g. July 13, 1989"></td>
+    </tr>
+    <tr>
+      <td><span class="label">Residence Address:</span><input type="text" id="b_addr"></td>
+      <td><span class="label">Residence Address:</span><input type="text" id="c_addr"></td>
+    </tr>
+    <tr>
+      <td>
+        <table style="border:none;"><tr>
+          <td style="border:none; width:50%; padding:2px;">
+            <div class="chk-row"><input type="checkbox" id="b_owned">Owned Not Mortgaged</div>
+            <div class="chk-row"><input type="checkbox" id="b_ownedmtg">Owned Mortgaged</div>
+          </td>
+          <td style="border:none; width:30%; padding:2px;">
+            <div class="chk-row"><input type="checkbox" id="b_family">Living with family</div>
+            <div class="chk-row"><input type="checkbox" id="b_rented">Rented</div>
+          </td>
+          <td style="border:none; width:20%; padding:2px;"><span class="label">Length of Stay:</span><input type="text" id="b_stay"></td>
+        </tr></table>
+      </td>
+      <td>
+        <table style="border:none;"><tr>
+          <td style="border:none; width:50%; padding:2px;">
+            <div class="chk-row"><input type="checkbox" id="c_owned">Owned Not Mortgaged</div>
+            <div class="chk-row"><input type="checkbox" id="c_ownedmtg">Owned Mortgaged</div>
+          </td>
+          <td style="border:none; width:30%; padding:2px;">
+            <div class="chk-row"><input type="checkbox" id="c_family">Living with family</div>
+            <div class="chk-row"><input type="checkbox" id="c_rented">Rented</div>
+          </td>
+          <td style="border:none; width:20%; padding:2px;"><span class="label">Length of Stay:</span><input type="text" id="c_stay"></td>
+        </tr></table>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <table style="border:none;"><tr>
+          <td style="border:none; width:50%; padding:2px;"><span class="label">Residence Telephone Number:</span><input type="text" id="b_tel"></td>
+          <td style="border:none; width:50%; padding:2px;"><span class="label">Mobile Number:</span><input type="text" id="b_mobile"></td>
+        </tr></table>
+      </td>
+      <td>
+        <table style="border:none;"><tr>
+          <td style="border:none; width:50%; padding:2px;"><span class="label">Residence Telephone Number:</span><input type="text" id="c_tel"></td>
+          <td style="border:none; width:50%; padding:2px;"><span class="label">Mobile Number:</span><input type="text" id="c_mobile"></td>
+        </tr></table>
+      </td>
+    </tr>
+    <tr>
+      <td><span class="label">Email Address:</span><input type="text" id="b_email"></td>
+      <td><span class="label">Email Address:</span><input type="text" id="c_email"></td>
+    </tr>
+    <tr>
+      <td>
+        <table style="border:none;"><tr>
+          <td style="border:none; width:60%; padding:2px;">
+            <span class="label bold">Civil Status</span>
+            <div class="chk-row"><input type="checkbox" id="b_single">Single</div>
+            <div class="chk-row"><input type="checkbox" id="b_married">Married</div>
+            <div class="chk-row"><input type="checkbox" id="b_widowed">Widowed</div>
+            <div class="chk-row"><input type="checkbox" id="b_separated">Separated</div>
+            <div class="chk-row"><input type="checkbox" id="b_common">Common Law Married</div>
+          </td>
+          <td style="border:none; width:40%; padding:2px;">
+            <span class="label bold">Gender</span>
+            <div class="chk-row"><input type="checkbox" id="b_male">Male</div>
+            <div class="chk-row"><input type="checkbox" id="b_female">Female</div>
+          </td>
+        </tr></table>
+      </td>
+      <td>
+        <table style="border:none;"><tr>
+          <td style="border:none; width:60%; padding:2px;">
+            <span class="label bold">Civil Status</span>
+            <div class="chk-row"><input type="checkbox" id="c_single">Single</div>
+            <div class="chk-row"><input type="checkbox" id="c_married">Married</div>
+            <div class="chk-row"><input type="checkbox" id="c_widowed">Widowed</div>
+            <div class="chk-row"><input type="checkbox" id="c_separated">Separated</div>
+            <div class="chk-row"><input type="checkbox" id="c_common">Common Law Married</div>
+          </td>
+          <td style="border:none; width:40%; padding:2px;">
+            <span class="label bold">Gender</span>
+            <div class="chk-row"><input type="checkbox" id="c_male">Male</div>
+            <div class="chk-row"><input type="checkbox" id="c_female">Female</div>
+          </td>
+        </tr></table>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <table style="border:none;"><tr>
+          <td style="border:none; width:33%; padding:2px;"><span class="label">Citizenship:</span><input type="text" id="b_citizenship" value="FILIPINO"></td>
+          <td style="border:none; width:33%; padding:2px;"><span class="label">No. Of Dependents:</span><input type="text" id="b_dependents"></td>
+          <td style="border:none; width:34%; padding:2px;"><span class="label">Tin Number:</span><input type="text" id="b_tin"></td>
+        </tr></table>
+      </td>
+      <td>
+        <table style="border:none;"><tr>
+          <td style="border:none; width:33%; padding:2px;"><span class="label">Citizenship:</span><input type="text" id="c_citizenship" value="FILIPINO"></td>
+          <td style="border:none; width:33%; padding:2px;"><span class="label">No. Of Dependents:</span><input type="text" id="c_dependents"></td>
+          <td style="border:none; width:34%; padding:2px;"><span class="label">Tin Number:</span><input type="text" id="c_tin"></td>
+        </tr></table>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <table style="border:none;"><tr>
+          <td style="border:none; width:65%; padding:2px;"><span class="label">Employer / Business name:</span><input type="text" id="b_employer"></td>
+          <td style="border:none; width:35%; padding:2px;"><span class="label">Length of Stay:</span><input type="text" id="b_emplen"></td>
+        </tr></table>
+      </td>
+      <td>
+        <table style="border:none;"><tr>
+          <td style="border:none; width:65%; padding:2px;"><span class="label">Employer / Business name:</span><input type="text" id="c_employer"></td>
+          <td style="border:none; width:35%; padding:2px;"><span class="label">Length of Stay:</span><input type="text" id="c_emplen"></td>
+        </tr></table>
+      </td>
+    </tr>
+    <tr>
+      <td><span class="label">Office Address:</span><input type="text" id="b_office"></td>
+      <td><span class="label">Office Address:</span><input type="text" id="c_office"></td>
+    </tr>
+    <tr>
+      <td>
+        <table style="border:none;"><tr>
+          <td style="border:none; width:40%; padding:2px;"><span class="label">Nature of business:</span><input type="text" id="b_natbiz"></td>
+          <td style="border:none; width:30%; padding:2px;"><span class="label">Office Telephone number:</span><input type="text" id="b_officetel"></td>
+          <td style="border:none; width:30%; padding:2px;"><span class="label">Office mobile number:</span><input type="text" id="b_officemobile"></td>
+        </tr></table>
+      </td>
+      <td>
+        <table style="border:none;"><tr>
+          <td style="border:none; width:40%; padding:2px;"><span class="label">Nature of business:</span><input type="text" id="c_natbiz"></td>
+          <td style="border:none; width:30%; padding:2px;"><span class="label">Office Telephone number:</span><input type="text" id="c_officetel"></td>
+          <td style="border:none; width:30%; padding:2px;"><span class="label">Office mobile number:</span><input type="text" id="c_officemobile"></td>
+        </tr></table>
+      </td>
+    </tr>
+    <tr>
+      <td><span class="label">Monthly Income:</span><input type="text" id="b_income"></td>
+      <td><span class="label">Monthly Income:</span><input type="text" id="c_income"></td>
+    </tr>
+    <tr>
+      <td>
+        <span class="label bold">Employment:</span>
+        <table style="border:none;"><tr>
+          <td style="border:none; padding:2px;"><div class="chk-row"><input type="checkbox" id="b_salary">Salary</div></td>
+          <td style="border:none; padding:2px;"><div class="chk-row"><input type="checkbox" id="b_selfemp">Self-Employed</div></td>
+          <td style="border:none; padding:2px;"><div class="chk-row"><input type="checkbox" id="b_ofw">OFW</div></td>
+        </tr></table>
+      </td>
+      <td>
+        <span class="label bold">Employment:</span>
+        <table style="border:none;"><tr>
+          <td style="border:none; padding:2px;"><div class="chk-row"><input type="checkbox" id="c_salary">Salary</div></td>
+          <td style="border:none; padding:2px;"><div class="chk-row"><input type="checkbox" id="c_selfemp">Self-Employed</div></td>
+          <td style="border:none; padding:2px;"><div class="chk-row"><input type="checkbox" id="c_ofw">OFW</div></td>
+        </tr></table>
+      </td>
+    </tr>
+    <tr>
+      <td><span class="label">Position:</span><input type="text" id="b_position"></td>
+      <td><span class="label">Position:</span><input type="text" id="c_position"></td>
+    </tr>
+    <tr>
+      <td>
+        <table style="border:none;"><tr>
+          <td style="border:none; width:65%; padding:2px;"><span class="label">Nature of Business:</span><input type="text" id="b_natbiz2"></td>
+          <td style="border:none; width:35%; padding:2px;"><span class="label">Years and Months:</span><input type="text" id="b_years"></td>
+        </tr></table>
+      </td>
+      <td>
+        <table style="border:none;"><tr>
+          <td style="border:none; width:65%; padding:2px;"><span class="label">Nature of Business:</span><input type="text" id="c_natbiz2"></td>
+          <td style="border:none; width:35%; padding:2px;"><span class="label">Years and Months:</span><input type="text" id="c_years"></td>
+        </tr></table>
+      </td>
+    </tr>
+  </table>
+
+  <div class="section-title">ADDITIONAL INFORMATION FOR SELF-EMPLOYED</div>
+  <table>
+    <tr>
+      <td style="width:25%;"><span class="label">Major Contact:</span><input type="text" id="majorContact"></td>
+      <td style="width:25%;"><span class="label">Contact Number:</span><input type="text" id="majorContactNum"></td>
+      <td style="width:25%;"><span class="label">Major Supplier:</span><input type="text" id="majorSupplier"></td>
+      <td style="width:25%;"><span class="label">Contact Number:</span><input type="text" id="majorSupplierNum"></td>
+    </tr>
+  </table>
+
+  <table>
+    <tr>
+      <td colspan="3" class="section-title">BANK ACCOUNTS</td>
+      <td colspan="3" class="section-title">CREDIT CARD OWNED</td>
+    </tr>
+    <tr class="bold center">
+      <td style="width:16%;">BANK/BRANCH</td><td style="width:16%;">TYPE OF ACCOUNT</td><td style="width:18%;">ACCOUNT NUMBER</td>
+      <td style="width:16%;">CARD COMPANY</td><td style="width:16%;">CREDIT LIMIT</td><td style="width:18%;">EXPIRY DATE</td>
+    </tr>
+    <tbody id="bankRows">
+      <tr><td><input type="text" class="bank-branch"></td><td><input type="text" class="bank-type"></td><td><input type="text" class="bank-acct"></td><td><input type="text" class="cc-company"></td><td><input type="text" class="cc-limit"></td><td><input type="text" class="cc-expiry"></td></tr>
+      <tr><td><input type="text" class="bank-branch"></td><td><input type="text" class="bank-type"></td><td><input type="text" class="bank-acct"></td><td><input type="text" class="cc-company"></td><td><input type="text" class="cc-limit"></td><td><input type="text" class="cc-expiry"></td></tr>
+      <tr><td><input type="text" class="bank-branch"></td><td><input type="text" class="bank-type"></td><td><input type="text" class="bank-acct"></td><td><input type="text" class="cc-company"></td><td><input type="text" class="cc-limit"></td><td><input type="text" class="cc-expiry"></td></tr>
+    </tbody>
+  </table>
+  <button class="addrow-btn no-print" onclick="addBankRow()">+ Add row</button>
+
+  <table style="margin-top:8px;">
+    <tr><td class="small-note">
+      I hereby authorize CT CITIMOTORS LAS PIÑAS CORP. to process and share my personal data to any of its accredited banks,
+      which is likewise authorized to receive, use, collect, and process my personal data, for the purpose of
+      financing my purchase of auto vehicle/s from the dealer, or assignment of the dealer's rights to its accredited
+      bank, including verification, customer profiling, cross-checking, and credit investigation.
+      <br><br>
+      In this regard, my personal information may also be shared with accredited bank's branches, subsidiaries
+      affiliates, representatives, or third party service providers.
+      <br><br>
+      I am also aware that the details of how my personal data will be processed and the rights available
+      to me are listed in the accredited bank's Privacy Policy Statement. If I want to access, update, or correct my
+      personal data, or withdraw my consent, I know that I may contact the customer service of CT CITIMOTORS LAS PIÑAS CORP.
+    </td></tr>
+  </table>
+
+  <table>
+    <tr class="sig-row">
+      <td style="width:34%;">
+        <div class="sig-line">
+          <div class="sig-img-holder" id="sigImgHolder"></div>
+          <input type="text" id="sigBorrower" style="text-align:center;" placeholder="Borrower Name">
+          <div>Borrower's Signature Over Printed Name</div>
+        </div>
+      </td>
+      <td style="width:33%;">
+        <div class="sig-line">
+          <div class="sig-img-holder"></div>
+          <input type="text" id="sigExec" style="text-align:center;" value="ROMEO CUYACOT (MEONG)">
+          <div>Sales Executives (SRC Group)</div>
+        </div>
+      </td>
+      <td style="width:33%;">
+        <div class="sig-line">
+          <div class="sig-img-holder"></div>
+          <input type="text" id="sigManager" style="text-align:center;" placeholder="Sales Manager Name">
+          <div>Sales Manager</div>
+        </div>
+      </td>
+    </tr>
+  </table>
+
+</div>
+</div>
+
+<div id="tab-quote">
+  <div class="quote-wrap">
+    <div class="quote-select-box">
+      <label>Select Vehicle from Current Bulletin</label>
+      <select id="bulletinPicker"><option value="">— Choose a unit —</option></select>
+      <div class="dp-toggle" id="dpToggle">
+        <div class="dp-btn" data-dp="20">20% DP</div>
+        <div class="dp-btn" data-dp="25">25% DP</div>
+        <div class="dp-btn active" data-dp="30">30% DP</div>
+      </div>
+      <div class="custom-link" id="customLink">Vehicle not on the bulletin? Enter it manually →</div>
+      <div class="custom-fields" id="customFields">
+        <div><label>Vehicle Model</label><input type="text" id="cModel" placeholder="e.g. 2026 XPANDER GLS"></div>
+        <div><label>SRP (₱)</label><input type="number" id="cSRP" placeholder="e.g. 1259000"></div>
+        <div><label>Down Payment %</label><input type="number" id="cDP" placeholder="e.g. 20" value="20"></div>
+        <div><label>Total Initial Cash Out (₱)</label><input type="number" id="cCashOut" placeholder="e.g. 18000"></div>
+        <div><label>Promo Text (optional)</label><input type="text" id="cPromo" placeholder="e.g. Free Fuel Subsidy"></div>
+      </div>
+    </div>
+
+    <div class="quote-action-bar" id="quoteActionBar">
+      <button class="btn-navy" onclick="downloadQuotePDF()">⬇️ Download PDF</button>
+      <button class="btn-gold" onclick="downloadQuoteImage()">📷 Download Image</button>
+      <button class="btn-orange" onclick="applyQuoteToForm()">Use in Application Form →</button>
+    </div>
+
+    <div class="quote-sheet" id="quoteSheet">
+      <div class="agent-bar">
+        <div>
+          <div class="qname" id="quoteAgentName">ROMEO CUYACOT</div>
+          <div class="qrole">SALES EXECUTIVE</div>
+        </div>
+        <div class="dealer-info">
+          CT CITIMOTORS LAS PIÑAS<br>
+          MITSUBISHIMEONG@GMAIL.COM<br>
+          0991-679-5402 · 0934-590-9530
+        </div>
+      </div>
+      <div class="date-line">Date Prepared: <span id="todayLabel"></span></div>
+
+      <div class="cashout-highlight">
+        <div class="cashout-label">✦ Total Initial Cash Out ✦</div>
+        <div class="cashout-amount" id="qCashOutHero">—</div>
+        <div class="cashout-sub">Drive home with this amount — everything else is already factored in</div>
+      </div>
+
+      <table class="quote">
+        <tr class="row-model"><td class="row-label">VEHICLE MODEL</td><td class="row-value" id="qModel">—</td></tr>
+        <tr><td class="row-label">Suggested Retail Price (SRP)</td><td class="row-value" id="qSRP">—</td></tr>
+        <tr><td class="row-label" id="qDPLabel">Required Down Payment</td><td class="row-value" id="qDP">—</td></tr>
+        <tr><td class="row-label">1-Year Comprehensive Insurance</td><td class="free-cell">✓ FREE</td></tr>
+        <tr><td class="row-label">3-Years LTO Registration</td><td class="free-cell">✓ FREE</td></tr>
+        <tr><td class="row-label">Chattel Mortgage Fee</td><td class="free-cell">✓ FREE</td></tr>
+        <tr class="row-discount"><td>Dealer Discount</td><td id="qDiscount">—</td></tr>
+        <tr class="row-cashout"><td>Total Initial Cash Out</td><td id="qCashOut">—</td></tr>
+        <tr class="row-promo"><td>Limited-Time Offer</td><td id="qPromo">—</td></tr>
+      </table>
+
+      <div class="fin-header">Estimated Monthly Amortization — Accredited Financing Partners</div>
+      <table class="fin">
+        <tr>
+          <td></td>
+          <th><div class="bank-badge badge-rcbc">RC</div><div class="bank-name">RCBC</div></th>
+          <th><div class="bank-badge badge-bpi">BPI</div><div class="bank-name">BPI</div></th>
+          <th><div class="bank-badge badge-bdo">BDO</div><div class="bank-name">BDO</div></th>
+          <th><div class="bank-badge badge-eastwest">EW</div><div class="bank-name">EastWest</div></th>
+          <th><div class="bank-badge badge-security">SB</div><div class="bank-name">Security Bank</div></th>
+        </tr>
+        <tr>
+          <td>60 Months (5 Years)</td>
+          <td id="a60RCBC">—</td><td id="a60BPI">—</td><td id="a60BDO">—</td><td id="a60EastWest">—</td><td id="a60Security">—</td>
+        </tr>
+        <tr>
+          <td>48 Months (4 Years)</td>
+          <td id="a48RCBC">—</td><td id="a48BPI">—</td><td id="a48BDO">—</td><td id="a48EastWest">—</td><td id="a48Security">—</td>
+        </tr>
+      </table>
+
+      <div class="docreq">
+        <h3>Documentary Requirements</h3>
+        <div class="docreq-grid">
+          <div class="docreq-col">
+            <div class="head">Employed</div>
+            <ul>
+              <li>Two (2) Valid Government IDs</li>
+              <li>Proof of Billing</li>
+              <li>Latest Certificate of Employment (COE)</li>
+              <li>Latest Income Tax Return (ITR 2316)</li>
+              <li>Latest Three (3) Months Payslips</li>
+            </ul>
+          </div>
+          <div class="docreq-col">
+            <div class="head">Self-Employed / Business Owner</div>
+            <ul>
+              <li>Two (2) Valid Government IDs</li>
+              <li>Proof of Billing</li>
+              <li>Latest Three (3) Bank Statements</li>
+              <li>DTI Registration</li>
+            </ul>
+          </div>
+          <div class="docreq-col">
+            <div class="head">OFW / Seafarer</div>
+            <ul>
+              <li>Two (2) Valid Government IDs</li>
+              <li>Proof of Billing</li>
+              <li>Latest Certificate of Employment (COE)</li>
+              <li>Latest Employment Contract</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="quote-footer">This quotation is an estimate. Final approved terms depend on the financing partner's credit evaluation.</div>
+    </div>
+
+    <div class="hint" id="quoteEmptyHint" style="max-width:none;">Select a vehicle above to generate the quotation sheet.</div>
+  </div>
+</div>
+
+<div class="img-modal no-print" id="quoteImgModal">
+  <div class="hint-text">Press and hold the image, then choose "Save Image" or "Download Image" to save it to your phone.</div>
+  <img id="quoteModalImg" src="" alt="Quotation">
+  <div class="modal-actions2">
+    <a class="modal-btn dl" id="quoteModalDownload" download="quotation.png" href="#">Try Direct Download</a>
+    <button class="modal-btn close" onclick="document.getElementById('quoteImgModal').classList.remove('show')">Close</button>
+  </div>
+</div>
+
+<div id="tab-bulletin">
+  <div class="bulletin-wrap">
+    <h2>Bulletin Data — Edit Here</h2>
+    <p class="hint" style="max-width:none;">Edits sync automatically to the vehicle dropdown and quotation sheet once you click "Save Table".</p>
+    <table>
+      <tr class="bold center">
+        <td style="width:20%;">UNIT</td><td style="width:10%;">SRP</td><td style="width:10%;">DISCOUNT</td>
+        <td style="width:11%;">CASH OUT @20%</td><td style="width:11%;">CASH OUT @25%</td><td style="width:11%;">CASH OUT @30%</td>
+        <td style="width:22%;">PROMO</td><td style="width:5%;"></td>
+      </tr>
+      <tbody id="bulletinRows"></tbody>
+    </table>
+    <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+      <button class="addrow-btn" style="padding:8px 14px; font-size:12px; background:var(--orange); color:#fff; border:none;" onclick="saveBulletinTable()">💾 Save Table</button>
+      <button class="addrow-btn" style="padding:8px 14px; font-size:12px;" onclick="addBulletinRow()">+ Add New Unit</button>
+      <button class="addrow-btn" style="padding:8px 14px; font-size:12px;" onclick="resetBulletin()">Reset to Default Bulletin</button>
+    </div>
+  </div>
+</div>
+
+<div id="tab-saved">
+  <div class="saved-wrap">
+    <h2>Saved Applications</h2>
+    <div id="savedList"><p>Loading...</p></div>
+  </div>
+</div>
+
+<div id="tab-monitoring">
+  <div class="monitoring-wrap">
+    <h2>Client Monitoring</h2>
+    <p class="hint" style="max-width:none;">Automatic na nadadagdag dito ang client kapag pinindot mo ang "💾 Save Application" sa Application Form. Pwede mo ring idagdag manually gamit ang "+ Add Client".</p>
+    <table>
+      <tr class="bold center">
+        <td>NAME</td><td>CONTACT NUMBER</td><td>ADDRESS</td><td>VEHICLE MODEL</td><td>DP%</td><td>BIRTHDATE (MM/DD)</td>
+        <td>STATUS</td><td>REMARKS</td>
+        <td>DATE OF RELEASE</td><td>ORCR RELEASE DATE</td><td>PLATE NUMBER</td><td>WARRANTY BOOKLET</td><td></td>
+      </tr>
+      <tbody id="monitoringRows"></tbody>
+    </table>
+    <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+      <button class="addrow-btn" style="padding:8px 14px; font-size:12px; background:var(--orange); color:#fff; border:none;" onclick="saveMonitoringTable()">💾 Save Table</button>
+      <button class="addrow-btn" style="padding:8px 14px; font-size:12px;" onclick="addMonitoringRow()">+ Add Client</button>
+    </div>
+  </div>
+</div>
+
+<div id="tab-messages">
+  <div class="messages-wrap">
+    <h2>Client Messages</h2>
+    <p class="hint" style="max-width:none;">Ito ay ready-made na mensahe lang na pwede mong kopyahin — ikaw pa rin ang magpapadala manually sa Messenger/SMS. Walang awtomatikong ipinapadalang text.</p>
+
+    <div id="alertsHolder"></div>
+
+    <label style="font-size:12px; font-weight:bold; display:block; margin:14px 0 4px;">Piliin ang client (para awtomatikong mapunan ang pangalan/detalye sa mensahe):</label>
+    <select id="msgClientPicker" class="client-picker" onchange="renderMessageTemplates()"><option value="">— Walang piliin (generic template) —</option></select>
+
+    <div id="templatesHolder"></div>
+  </div>
+</div>
+
+<div id="tab-sync">
+  <div class="sync-wrap">
+    <h2>Sync Data Between Gadgets (QR Code, walang internet/cloud kailangan)</h2>
+    <p class="hint" style="max-width:none;">Gamitin ito para ilipat ang Saved Applications, Monitoring, at Vehicle Bulletin papunta sa ibang phone o laptop na may bukas ding app na ito. Ilagay lang magkatabi ang dalawang screen. <b>Note:</b> hindi kasama ang mga naka-save na signature images dito (masyadong malaki para sa QR) — export/import backup file (.json) na lang ang gamitin kung kailangan yun.</p>
+
+    <div class="sync-box">
+      <b>1️⃣ SEND — ipakita ang QR sa kabilang gadget</b><br>
+      <button onclick="startSyncSend()">📤 Generate QR to Send</button>
+      <div id="qrDisplay" style="display:none;"></div>
+      <div class="sync-progress" id="sendProgress"></div>
+    </div>
+
+    <div class="sync-box">
+      <b>2️⃣ RECEIVE — i-scan gamit ang camera</b><br>
+      <button onclick="startSyncScan()">📷 Start Scanning</button>
+      <button onclick="stopSyncScan()" style="background:#555;">Stop</button>
+      <video id="qrScanVideo" autoplay playsinline muted style="display:none;"></video>
+      <canvas id="qrScanCanvas" style="display:none;"></canvas>
+      <div class="sync-progress" id="scanProgress"></div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay no-print" id="sigModal">
+  <div class="modal-box">
+    <h3>Borrower's Signature</h3>
+    <canvas id="sigCanvas" width="360" height="140"></canvas>
+    <div class="modal-actions">
+      <button style="background:#eee;" onclick="clearSigCanvas()">Clear</button>
+      <button style="background:#eee;" onclick="document.getElementById('sigUpload').click()">Upload Photo</button>
+      <input type="file" id="sigUpload" accept="image/*" style="display:none" onchange="handleSigUpload(event)">
+    </div>
+    <div class="modal-actions">
+      <button style="background:#555; color:#fff;" onclick="closeSigModal()">Cancel</button>
+      <button style="background:var(--orange); color:#fff;" onclick="saveSignature()">Use this Signature</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay no-print" id="githubModal">
+  <div class="modal-box gh-modal-box">
+    <h3>☁️ Cloud Sync via GitHub</h3>
+    <p class="gh-hint">Gamitin ang sarili mong libreng GitHub account bilang "cloud storage" — dito ma-sasave ang Saved Applications, Monitoring, at Bulletin data, kaya magagamit mo rin sa laptop o ibang phone basta parehong naka-configure ang settings dito.</p>
+    <label>Personal Access Token</label>
+    <input type="password" id="ghToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+    <div class="gh-hint">Gawa ka ng token sa github.com → Settings → Developer settings → Personal access tokens → Fine-grained token → bigyan ng <b>Read & Write access sa "Contents"</b> ng repo na gagamitin mo. Naka-save lang ito dito sa browser mo — hindi ito ipinapadala kahit saan maliban sa GitHub mismo.</div>
+    <label>Repository (username/repo-name)</label>
+    <input type="text" id="ghRepo" placeholder="e.g. juandelacruz/citimotors-data">
+    <label>File path sa loob ng repo</label>
+    <input type="text" id="ghPath" value="citimotors-data.json">
+    <div class="modal-actions" style="margin-top:14px;">
+      <button style="background:#eee;" onclick="closeGithubModal()">Close</button>
+      <button style="background:var(--navy); color:#fff;" onclick="githubSave()">☁️ Save to GitHub</button>
+      <button style="background:var(--orange); color:#fff;" onclick="githubLoad()">⬇️ Load from GitHub</button>
+    </div>
+    <div id="ghStatus"></div>
+  </div>
+</div>
+
+  </main>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script>
+const DEFAULT_VEHICLES = [
+{unit:"2026 MIRAGE", srp:781000, discount:105000, c20:15000, c25:15000, c30:59000, promo:"FREE FUEL SUBSIDY (₱20,000 VALUE)"},
+{unit:"2026 MIRAGE G4 GLX CVT", srp:841000, discount:104000, c20:18000, c25:48000, c30:18000, promo:"FREE FUEL SUBSIDY WORTH 40,000\nFREE 2 YEARS PMS (30% DP)"},
+{unit:"2026 MIRAGE G4 GLS CVT", srp:937000, discount:96000, c20:8000, c25:68000, c30:58000, promo:"FREE FUEL SUBSIDY (₱40,000 VALUE)"},
+{unit:"2026 L300 EXCEED FB BODY DUAL AC", srp:1039000, discount:112000, c20:5000, c25:25000, c30:88000, promo:"FREE FUEL SUBSIDY (₱20,000 VALUE)"},
+{unit:"2026 XPANDER GLX MT", srp:1099000, discount:90000, c20:8000, c25:75000, c30:138000, promo:"FREE FUEL SUBSIDY (₱40,000 VALUE)"},
+{unit:"2026 XPANDER GLX AT", srp:1159000, discount:90000, c20:13000, c25:88000, c30:158000, promo:"FREE FUEL SUBSIDY (₱40,000 VALUE)"},
+{unit:"2026 XPANDER GLS", srp:1259000, discount:100000, c20:18000, c25:88000, c30:158000, promo:"FREE FUEL SUBSIDY (₱40,000 VALUE)\nFREE PMS 2 YEARS OR 30,000KM"},
+{unit:"2026 XPANDER CROSS MONOTONE AT", srp:1346000, discount:90000, c20:25000, c25:118000, c30:117500, promo:"FREE FUEL SUBSIDY (₱40,000 VALUE)"},
+{unit:"2026 XFORCE GLS", srp:1367000, discount:230000, c20:20000, c25:21000, c30:38000, promo:"FREE FUEL SUBSIDY (₱40,000 VALUE)"},
+{unit:"2026 XPANDER CROSS TWOTONE AT", srp:1378000, discount:101000, c20:25000, c25:98000, c30:188000, promo:"FREE FUEL SUBSIDY (₱40,000 VALUE)"},
+{unit:"2026 DESTINATOR GLX 4X2 AT", srp:1389000, discount:95000, c20:23000, c25:103000, c30:183000, promo:"FREE FUEL SUBSIDY (₱40,000 VALUE)"},
+{unit:"2027 TRITON GX AT", srp:1430000, discount:131000, c20:28000, c25:98000, c30:175000, promo:"FREE FUEL SUBSIDY (₱40,000 VALUE)"},
+{unit:"2026 MONTERO GLX MT", srp:1568000, discount:265000, c20:0, c25:24000, c30:68000, promo:"FREE FUEL SUBSIDY WORTH 20,000"},
+{unit:"2026 XFORCE GT", srp:1581000, discount:230000, c20:0, c25:25000, c30:88000, promo:"FREE FUEL SUBSIDY (₱40,000 VALUE)"},
+{unit:"2026 DESTINATOR GLS 4X2 AT", srp:1599000, discount:87000, c20:48000, c25:125000, c30:215000, promo:"FREE FUEL SUBSIDY (₱40,000 VALUE)"},
+{unit:"2025 VERSA VAN MT", srp:1649000, discount:95000, c20:68000, c25:168000, c30:258000, promo:"FREE FUEL SUBSIDY WORTH 20,000"},
+{unit:"2026 MONTERO GLS", srp:1927000, discount:120000, c20:28000, c25:138000, c30:248000, promo:"FREE FUEL SUBSIDY (₱40,000 VALUE)\nFREE PMS 1 YEAR OR 20,000KM"},
+{unit:"2026 DESTINATOR GT MONOTONE CVT", srp:1929000, discount:119000, c20:18000, c25:128000, c30:228000, promo:"FREE FUEL SUBSIDY (₱40,000 VALUE)"},
+{unit:"2026 DESTINATOR GT TWOTONE CVT", srp:1939000, discount:119000, c20:28000, c25:148000, c30:248000, promo:"FREE FUEL SUBSIDY (₱40,000 VALUE)"},
+{unit:"2026 TRITON GLS AT", srp:1959000, discount:70000, c20:58000, c25:148000, c30:248000, promo:"FREE FUEL SUBSIDY (₱40,000 VALUE)"}
+];
+
+let vehicles = [];
+let quoteDP = 30;
+let sigDataUrl = null;
+let sigDrawing = false;
+let sigCtx = null;
+
+// ---------------- Tabs ----------------
+function switchTab(name){
+  ['dashboard','form','quote','bulletin','saved','monitoring','messages','sync'].forEach(n=>{
+    document.getElementById('tab-'+n).style.display = (n===name)?'block':'none';
+    document.getElementById('btn-tab-'+n).classList.toggle('active', n===name);
+  });
+  document.getElementById('formToolbar').style.display = (name==='form') ? 'flex' : 'none';
+  document.getElementById('formToolbar2').style.display = (name==='form') ? 'block' : 'none';
+  document.getElementById('formToolbar3').style.display = (name==='form') ? 'flex' : 'none';
+  if(name==='saved') refreshSavedList();
+  if(name==='monitoring') renderMonitoringTable();
+  if(name==='quote'){ refreshBulletinPicker(); renderQuoteSheet(); }
+  if(name==='messages') renderMessagesTab();
+  if(name==='dashboard') renderDashboard();
+}
+
+function formatNumber(n){ const num=Number(n); return isNaN(num)? n : num.toLocaleString('en-US'); }
+function parseNumber(str){ if(!str) return NaN; return parseFloat(String(str).replace(/[^0-9.]/g,'')); }
+function escapeHtml(str){ const d=document.createElement('div'); d.textContent=str||''; return d.innerHTML; }
+
+// ---------------- Save helper: works on the website AND inside the wrapped Android app ----------------
+function utf8ToBase64(str){ return btoa(unescape(encodeURIComponent(str))); }
+
+function isInAndroidApp(){ return !!(window.AndroidBridge && window.AndroidBridge.saveFile); }
+
+// dataUrl: a "data:<mime>;base64,XXXX" string. filename: e.g. "quote.pdf". mimeType: e.g. "application/pdf"
+function saveDataUrlAsFile(dataUrl, filename, mimeType){
+  if(isInAndroidApp()){
+    const base64 = dataUrl.split(',')[1] || dataUrl;
+    const ok = window.AndroidBridge.saveFile(base64, filename, mimeType);
+    if(ok) alert('Na-save sa Downloads folder ng phone: ' + filename);
+    else alert('Hindi na-save. Subukan muli.');
+    return;
+  }
+  const a = document.createElement('a');
+  a.href = dataUrl; a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
+}
+
+// text: a plain-text/JSON string to save (used for backup export)
+function saveTextAsFile(text, filename, mimeType){
+  if(isInAndroidApp()){
+    const ok = window.AndroidBridge.saveFile(utf8ToBase64(text), filename, mimeType);
+    if(ok) alert('Na-save sa Downloads folder ng phone: ' + filename);
+    else alert('Hindi na-save. Subukan muli.');
+    return;
+  }
+  const blob = new Blob([text], {type:mimeType});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+}
+
+// ---------------- LocalStorage helpers (works standalone, per device/browser) ----------------
+function lsGet(key, fallback){
+  try{ const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }catch(e){ return fallback; }
+}
+function lsSet(key, val){
+  try{ localStorage.setItem(key, JSON.stringify(val)); return true; }catch(e){ return false; }
+}
+
+// ---------------- Bulletin ----------------
+function loadBulletin(){
+  vehicles = lsGet('cl_bulletin_vehicles', null) || DEFAULT_VEHICLES.slice();
+  renderVehicleDatalist();
+  renderBulletinTable();
+}
+function renderVehicleDatalist(){
+  const dl = document.getElementById('vehicleDatalist');
+  dl.innerHTML = '';
+  vehicles.forEach(v=>{ const o=document.createElement('option'); o.value=v.unit; dl.appendChild(o); });
+}
+function renderBulletinTable(){
+  const tbody = document.getElementById('bulletinRows');
+  tbody.innerHTML = '';
+  vehicles.forEach(v=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><input type="text" class="bl-unit" value="${escapeHtml(v.unit)}"></td>
+      <td><input type="text" class="bl-srp" value="${v.srp}"></td>
+      <td><input type="text" class="bl-discount" value="${v.discount||0}"></td>
+      <td><input type="text" class="bl-c20" value="${v.c20||0}"></td>
+      <td><input type="text" class="bl-c25" value="${v.c25||0}"></td>
+      <td><input type="text" class="bl-c30" value="${v.c30||0}"></td>
+      <td><input type="text" class="bl-promo" value="${escapeHtml(v.promo||'')}"></td>
+      <td class="center"><button class="del-btn" onclick="this.closest('tr').remove()">✕</button></td>`;
+    tbody.appendChild(tr);
+  });
+}
+function addBulletinRow(){
+  const tbody = document.getElementById('bulletinRows');
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td><input type="text" class="bl-unit"></td><td><input type="text" class="bl-srp"></td>
+    <td><input type="text" class="bl-discount"></td><td><input type="text" class="bl-c20"></td>
+    <td><input type="text" class="bl-c25"></td><td><input type="text" class="bl-c30"></td>
+    <td><input type="text" class="bl-promo"></td>
+    <td class="center"><button class="del-btn" onclick="this.closest('tr').remove()">✕</button></td>`;
+  tbody.appendChild(tr);
+}
+function saveBulletinTable(){
+  const rows = document.querySelectorAll('#bulletinRows tr');
+  const newVehicles = [];
+  rows.forEach(tr=>{
+    const unit = tr.querySelector('.bl-unit').value.trim();
+    if(!unit) return;
+    newVehicles.push({
+      unit,
+      srp: parseNumber(tr.querySelector('.bl-srp').value) || 0,
+      discount: parseNumber(tr.querySelector('.bl-discount').value) || 0,
+      c20: parseNumber(tr.querySelector('.bl-c20').value) || 0,
+      c25: parseNumber(tr.querySelector('.bl-c25').value) || 0,
+      c30: parseNumber(tr.querySelector('.bl-c30').value) || 0,
+      promo: tr.querySelector('.bl-promo').value.trim()
+    });
+  });
+  vehicles = newVehicles;
+  lsSet('cl_bulletin_vehicles', vehicles);
+  renderVehicleDatalist();
+  alert('Vehicle bulletin saved. Dropdown at quotation sheet updated.');
+}
+function resetBulletin(){
+  if(!confirm('Reset bulletin to the default list? Mawawala ang mga sarili mong dinagdag/binago.')) return;
+  vehicles = DEFAULT_VEHICLES.slice();
+  lsSet('cl_bulletin_vehicles', vehicles);
+  renderVehicleDatalist();
+  renderBulletinTable();
+}
+function onVehicleChange(){
+  const val = document.getElementById('vehicle').value.trim().toUpperCase();
+  const match = vehicles.find(v => v.unit.toUpperCase() === val);
+  if(match) document.getElementById('sellingPrice').value = formatNumber(match.srp);
+}
+function onDownPaymentChange(){
+  const num = parseNumber(document.getElementById('downPayment').value);
+  if(!isNaN(num) && num>=0 && num<=100) document.getElementById('amountFinancing').value = (100-num)+'%';
+}
+
+// ---------------- Quotation tab (full computation) ----------------
+// Monthly Amortization = ceil( Amount Financed x Rate / Term Months )
+const bankRates = { RCBC:1.54, BPI:1.5698, BDO:1.5521, EastWest:1.5695, Security:1.5754 };
+const peso = n => '₱' + Number(n||0).toLocaleString('en-PH', {minimumFractionDigits:2, maximumFractionDigits:2});
+function amort(financed, rate, months){ return Math.ceil((financed*rate)/months); }
+function buildFinRow(prefix, financed, months){
+  Object.keys(bankRates).forEach(bank=>{
+    const el = document.getElementById(prefix+bank);
+    if(el) el.textContent = peso(amort(financed, bankRates[bank], months));
+  });
+}
+function todayLabel(){
+  const d = new Date();
+  return d.toLocaleDateString('en-GB', {day:'2-digit', month:'2-digit', year:'numeric'});
+}
+
+let quoteSelectedIdx = null;
+let quoteCustomMode = false;
+
+function refreshBulletinPicker(){
+  const picker = document.getElementById('bulletinPicker');
+  const prevUnit = (quoteSelectedIdx!==null && vehicles[quoteSelectedIdx]) ? vehicles[quoteSelectedIdx].unit : null;
+  picker.innerHTML = '<option value="">— Choose a unit —</option>';
+  vehicles.forEach((v, idx)=>{
+    const o = document.createElement('option');
+    o.value = idx; o.textContent = v.unit + ' — ' + peso(v.srp);
+    picker.appendChild(o);
+  });
+  if(prevUnit){
+    const newIdx = vehicles.findIndex(v=>v.unit===prevUnit);
+    quoteSelectedIdx = newIdx>=0 ? newIdx : null;
+    picker.value = newIdx>=0 ? newIdx : '';
+  }
+}
+
+function initQuoteTab(){
+  document.getElementById('todayLabel').textContent = todayLabel();
+  const picker = document.getElementById('bulletinPicker');
+  picker.addEventListener('change', ()=>{
+    quoteSelectedIdx = picker.value==='' ? null : parseInt(picker.value,10);
+    if(quoteSelectedIdx!==null){
+      quoteCustomMode = false;
+      document.getElementById('customFields').style.display = 'none';
+      document.getElementById('customLink').textContent = 'Vehicle not on the bulletin? Enter it manually →';
+    }
+    renderQuoteSheet();
+  });
+  document.getElementById('customLink').addEventListener('click', ()=>{
+    quoteCustomMode = !quoteCustomMode;
+    document.getElementById('customFields').style.display = quoteCustomMode ? 'grid' : 'none';
+    document.getElementById('customLink').textContent = quoteCustomMode ? 'Use bulletin selection instead →' : 'Vehicle not on the bulletin? Enter it manually →';
+    if(quoteCustomMode){ picker.value=''; quoteSelectedIdx=null; }
+    renderQuoteSheet();
+  });
+  document.querySelectorAll('#dpToggle .dp-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('#dpToggle .dp-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      quoteDP = parseInt(btn.dataset.dp,10);
+      renderQuoteSheet();
+    });
+  });
+  ['cModel','cSRP','cDP','cCashOut','cPromo'].forEach(id=>{
+    document.getElementById(id).addEventListener('input', renderQuoteSheet);
+  });
+}
+
+function renderQuoteSheet(){
+  let model, srp, dpPct, cashOut, promoText;
+  if(quoteCustomMode){
+    model = document.getElementById('cModel').value.trim();
+    srp = parseFloat(document.getElementById('cSRP').value) || 0;
+    dpPct = parseFloat(document.getElementById('cDP').value) || 0;
+    cashOut = parseFloat(document.getElementById('cCashOut').value) || 0;
+    promoText = document.getElementById('cPromo').value.trim();
+    if(!model || !srp){
+      document.getElementById('quoteSheet').style.display = 'none';
+      document.getElementById('quoteActionBar').classList.remove('show');
+      document.getElementById('quoteEmptyHint').style.display = 'block';
+      document.getElementById('quoteEmptyHint').textContent = 'Fill in model, SRP, and cash out to generate the quotation sheet.';
+      return;
+    }
+  } else {
+    if(quoteSelectedIdx===null || !vehicles[quoteSelectedIdx]){
+      document.getElementById('quoteSheet').style.display = 'none';
+      document.getElementById('quoteActionBar').classList.remove('show');
+      document.getElementById('quoteEmptyHint').style.display = 'block';
+      document.getElementById('quoteEmptyHint').textContent = 'Select a vehicle above to generate the quotation sheet.';
+      return;
+    }
+    const v = vehicles[quoteSelectedIdx];
+    model = v.unit; srp = v.srp; dpPct = quoteDP;
+    cashOut = dpPct===20 ? v.c20 : (dpPct===25 ? v.c25 : v.c30);
+    promoText = v.promo || '';
+  }
+
+  const dpAmount = srp*(dpPct/100);
+  const discount = dpAmount - cashOut;
+  const financed = srp - dpAmount;
+
+  document.getElementById('qModel').textContent = model;
+  document.getElementById('qSRP').textContent = peso(srp);
+  document.getElementById('qDPLabel').textContent = 'Required Down Payment ' + dpPct + '%';
+  document.getElementById('qDP').textContent = peso(dpAmount);
+  document.getElementById('qDiscount').textContent = peso(Math.max(discount,0));
+  document.getElementById('qCashOut').textContent = peso(Math.max(cashOut,0));
+  document.getElementById('qCashOutHero').textContent = peso(Math.max(cashOut,0));
+  document.getElementById('qPromo').innerHTML = promoText ? escapeHtml(promoText).replace(/\n/g,'<br>') : 'No active promo for this selection';
+
+  buildFinRow('a60', financed, 60);
+  buildFinRow('a48', financed, 48);
+
+  document.getElementById('quoteSheet').style.display = 'block';
+  document.getElementById('quoteEmptyHint').style.display = 'none';
+  document.getElementById('quoteActionBar').classList.add('show');
+}
+
+function applyQuoteToForm(){
+  let unit, srp;
+  if(quoteCustomMode){
+    unit = document.getElementById('cModel').value.trim();
+    srp = parseFloat(document.getElementById('cSRP').value) || 0;
+  } else {
+    if(quoteSelectedIdx===null || !vehicles[quoteSelectedIdx]) return;
+    unit = vehicles[quoteSelectedIdx].unit;
+    srp = vehicles[quoteSelectedIdx].srp;
+  }
+  document.getElementById('vehicle').value = unit;
+  document.getElementById('sellingPrice').value = formatNumber(srp);
+  document.getElementById('downPayment').value = quoteDP + '%';
+  onDownPaymentChange();
+  switchTab('form');
+}
+
+async function downloadQuotePDF(){
+  const sheetEl = document.getElementById('quoteSheet');
+  try{
+    const canvas = await html2canvas(sheetEl, {scale:2, backgroundColor:'#ffffff', useCORS:true});
+    const imgData = canvas.toDataURL('image/png');
+    const { jsPDF } = window.jspdf;
+    const wmm = 210, hmm = 297; // A4, tall content so use full A4 (not forced single-page squeeze)
+    const ratio = canvas.height/canvas.width;
+    const margin = 6;
+    let renderW = wmm - margin*2;
+    let renderH = renderW*ratio;
+    const pdf = new jsPDF({ orientation:'portrait', unit:'mm', format:[wmm,hmm] });
+    if(renderH <= hmm - margin*2){
+      pdf.addImage(imgData,'PNG', margin, margin, renderW, renderH);
+    } else {
+      // paginate tall content across multiple A4 pages
+      let heightLeft = renderH;
+      let position = margin;
+      pdf.addImage(imgData,'PNG', margin, position, renderW, renderH);
+      heightLeft -= (hmm - margin*2);
+      while(heightLeft > 0){
+        pdf.addPage();
+        position = margin - (renderH - heightLeft);
+        pdf.addImage(imgData,'PNG', margin, position, renderW, renderH);
+        heightLeft -= (hmm - margin*2);
+      }
+    }
+    const nameFor = quoteCustomMode ? document.getElementById('cModel').value : (vehicles[quoteSelectedIdx]?.unit || 'quotation');
+    const filename = 'Quotation_' + nameFor.replace(/[^a-z0-9]+/gi,'_') + '.pdf';
+    saveDataUrlAsFile(pdf.output('datauristring'), filename, 'application/pdf');
+  } catch(e){
+    alert('Hindi na-generate ang PDF. Subukan muli.');
+  }
+}
+
+async function downloadQuoteImage(){
+  const sheetEl = document.getElementById('quoteSheet');
+  try{
+    const canvas = await html2canvas(sheetEl, {scale:2, backgroundColor:'#ffffff', useCORS:true});
+    const dataUrl = canvas.toDataURL('image/png');
+    const nameFor = quoteCustomMode ? document.getElementById('cModel').value : (vehicles[quoteSelectedIdx]?.unit || 'quotation');
+    const filename = 'Quotation_' + nameFor.replace(/[^a-z0-9]+/gi,'_') + '.png';
+    if(isInAndroidApp()){
+      saveDataUrlAsFile(dataUrl, filename, 'image/png');
+      return;
+    }
+    document.getElementById('quoteModalImg').src = dataUrl;
+    document.getElementById('quoteModalDownload').href = dataUrl;
+    document.getElementById('quoteModalDownload').download = filename;
+    document.getElementById('quoteImgModal').classList.add('show');
+  } catch(e){
+    alert('Could not generate the image. Please try Download PDF instead.');
+  }
+}
+
+// ---------------- Signature pad ----------------
+function openSigModal(){
+  document.getElementById('sigModal').classList.add('open');
+  const canvas = document.getElementById('sigCanvas');
+  sigCtx = canvas.getContext('2d');
+  sigCtx.clearRect(0,0,canvas.width,canvas.height);
+  sigCtx.lineWidth = 2.2;
+  sigCtx.lineCap = 'round';
+  sigCtx.strokeStyle = '#111';
+  if(!canvas.dataset.bound){
+    canvas.addEventListener('pointerdown', e=>{
+      sigDrawing = true;
+      const r = canvas.getBoundingClientRect();
+      sigCtx.beginPath();
+      sigCtx.moveTo((e.clientX-r.left)*(canvas.width/r.width), (e.clientY-r.top)*(canvas.height/r.height));
+    });
+    canvas.addEventListener('pointermove', e=>{
+      if(!sigDrawing) return;
+      const r = canvas.getBoundingClientRect();
+      sigCtx.lineTo((e.clientX-r.left)*(canvas.width/r.width), (e.clientY-r.top)*(canvas.height/r.height));
+      sigCtx.stroke();
+    });
+    window.addEventListener('pointerup', ()=> sigDrawing=false);
+    canvas.dataset.bound = '1';
+  }
+}
+function closeSigModal(){ document.getElementById('sigModal').classList.remove('open'); }
+function clearSigCanvas(){
+  const canvas = document.getElementById('sigCanvas');
+  sigCtx.clearRect(0,0,canvas.width,canvas.height);
+}
+function handleSigUpload(evt){
+  const file = evt.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e){
+    const img = new Image();
+    img.onload = function(){
+      const canvas = document.getElementById('sigCanvas');
+      sigCtx.clearRect(0,0,canvas.width,canvas.height);
+      const scale = Math.min(canvas.width/img.width, canvas.height/img.height);
+      const w = img.width*scale, h = img.height*scale;
+      sigCtx.drawImage(img, (canvas.width-w)/2, (canvas.height-h)/2, w, h);
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+function saveSignature(){
+  const canvas = document.getElementById('sigCanvas');
+  sigDataUrl = canvas.toDataURL('image/png');
+  document.getElementById('sigImgHolder').innerHTML = `<img src="${sigDataUrl}">`;
+  closeSigModal();
+}
+
+// ---------------- Save / Load / Backup applications ----------------
+function gatherFormData(){
+  const data = {};
+  document.querySelectorAll('#sheet input[id]').forEach(el=>{
+    data[el.id] = (el.type==='checkbox') ? el.checked : el.value;
+  });
+  data._bankRows = Array.from(document.querySelectorAll('#bankRows tr')).map(tr=>({
+    branch: tr.querySelector('.bank-branch').value, type: tr.querySelector('.bank-type').value,
+    acct: tr.querySelector('.bank-acct').value, ccCompany: tr.querySelector('.cc-company').value,
+    ccLimit: tr.querySelector('.cc-limit').value, ccExpiry: tr.querySelector('.cc-expiry').value,
+  }));
+  data._signature = sigDataUrl;
+  return data;
+}
+function applyFormData(data){
+  Object.keys(data).forEach(id=>{
+    if(id.startsWith('_')) return;
+    const el = document.getElementById(id);
+    if(!el) return;
+    if(el.type==='checkbox') el.checked = !!data[id]; else el.value = data[id];
+  });
+  if(data._bankRows){
+    const tbody = document.getElementById('bankRows');
+    tbody.innerHTML = '';
+    data._bankRows.forEach(r=>{
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td><input type="text" class="bank-branch" value="${escapeHtml(r.branch)}"></td><td><input type="text" class="bank-type" value="${escapeHtml(r.type)}"></td><td><input type="text" class="bank-acct" value="${escapeHtml(r.acct)}"></td><td><input type="text" class="cc-company" value="${escapeHtml(r.ccCompany)}"></td><td><input type="text" class="cc-limit" value="${escapeHtml(r.ccLimit)}"></td><td><input type="text" class="cc-expiry" value="${escapeHtml(r.ccExpiry)}"></td>`;
+      tbody.appendChild(tr);
+    });
+  }
+  sigDataUrl = data._signature || null;
+  document.getElementById('sigImgHolder').innerHTML = sigDataUrl ? `<img src="${sigDataUrl}">` : '';
+}
+function saveApplication(){
+  const data = gatherFormData();
+  const borrower = data.b_name || 'Unnamed Borrower';
+  const vehicle = data.vehicle || 'No vehicle';
+  const apps = lsGet('cl_applications', {});
+  const id = 'app_' + Date.now();
+  apps[id] = { id, title: `${borrower} — ${vehicle}`, savedAt: new Date().toISOString(), data };
+  const ok = lsSet('cl_applications', apps);
+  addOrUpdateMonitoringFromForm(data);
+  alert(ok ? 'Application saved sa gadget/browser na ito, at nadagdag din sa Monitoring.' : 'Could not save. Baka puno na ang browser storage.');
+}
+function refreshSavedList(){
+  const container = document.getElementById('savedList');
+  const apps = lsGet('cl_applications', {});
+  const records = Object.values(apps).sort((a,b)=> new Date(b.savedAt)-new Date(a.savedAt));
+  if(records.length===0){ container.innerHTML = '<p>Wala pang saved applications sa gadget na ito.</p>'; return; }
+  container.innerHTML = '';
+  records.forEach(rec=>{
+    const div = document.createElement('div');
+    div.className = 'saved-item';
+    div.innerHTML = `
+      <div><div><b>${escapeHtml(rec.title)}</b></div><div class="meta">Saved: ${new Date(rec.savedAt).toLocaleString()}</div></div>
+      <div><button class="load-btn" onclick="loadApplication('${rec.id}')">Load</button><button class="del-btn2" onclick="deleteApplication('${rec.id}')">Delete</button></div>`;
+    container.appendChild(div);
+  });
+}
+function loadApplication(id){
+  const apps = lsGet('cl_applications', {});
+  const rec = apps[id];
+  if(!rec) return;
+  applyFormData(rec.data);
+  switchTab('form');
+}
+function deleteApplication(id){
+  if(!confirm('Delete this saved application?')) return;
+  const apps = lsGet('cl_applications', {});
+  delete apps[id];
+  lsSet('cl_applications', apps);
+  refreshSavedList();
+}
+
+// ---------------- Client Monitoring ----------------
+function getMonitoring(){ return lsGet('cl_monitoring', []); }
+function setMonitoring(list){ lsSet('cl_monitoring', list); }
+
+function addOrUpdateMonitoringFromForm(data){
+  const list = getMonitoring();
+  const name = data.b_name || '';
+  const contact = data.b_mobile || data.b_tel || '';
+  const address = data.b_addr || '';
+  const vehicle = data.vehicle || '';
+  const dp = data.downPayment || '';
+  // update existing record for same name+vehicle if found, else add new
+  const existingIdx = list.findIndex(r => r.name.toUpperCase()===name.toUpperCase() && r.vehicle.toUpperCase()===vehicle.toUpperCase());
+  const record = existingIdx>=0 ? list[existingIdx] : {
+    id: 'mon_' + Date.now(), status:'ONGOING', remarks:'', dateRelease:'', dateORCR:'', plateNumber:'', warrantyBooklet:''
+  };
+  record.name = name; record.contact = contact; record.address = address; record.vehicle = vehicle; record.dp = dp;
+  if(existingIdx>=0) list[existingIdx] = record; else list.push(record);
+  setMonitoring(list);
+}
+
+function renderMonitoringTable(){
+  const list = getMonitoring();
+  const tbody = document.getElementById('monitoringRows');
+  tbody.innerHTML = '';
+  list.forEach((r, idx)=>{
+    const tr = document.createElement('tr');
+    tr.className = 'status-' + (r.status||'ONGOING');
+    tr.innerHTML = `
+      <td><input type="text" class="mon-name" value="${escapeHtml(r.name)}"></td>
+      <td><input type="text" class="mon-contact" value="${escapeHtml(r.contact)}"></td>
+      <td><input type="text" class="mon-address" value="${escapeHtml(r.address)}"></td>
+      <td><input type="text" class="mon-vehicle" value="${escapeHtml(r.vehicle)}"></td>
+      <td><input type="text" class="mon-dp" value="${escapeHtml(r.dp)}"></td>
+      <td><input type="text" class="mon-birthdate" placeholder="MM/DD" value="${escapeHtml(r.birthdate||'')}"></td>
+      <td>
+        <select class="mon-status" onchange="onMonitoringStatusChange(this)">
+          <option value="ONGOING" ${r.status==='ONGOING'?'selected':''}>ONGOING</option>
+          <option value="DECLINED" ${r.status==='DECLINED'?'selected':''}>DECLINED</option>
+          <option value="APPROVED" ${r.status==='APPROVED'?'selected':''}>APPROVED</option>
+        </select>
+      </td>
+      <td><textarea class="mon-remarks">${escapeHtml(r.remarks)}</textarea></td>
+      <td><input type="text" class="mon-dateRelease" placeholder="MM/DD/YYYY" value="${escapeHtml(r.dateRelease)}"></td>
+      <td><input type="text" class="mon-dateORCR" placeholder="MM/DD/YYYY" value="${escapeHtml(r.dateORCR)}"></td>
+      <td><input type="text" class="mon-plate" value="${escapeHtml(r.plateNumber)}"></td>
+      <td><input type="text" class="mon-warranty" value="${escapeHtml(r.warrantyBooklet)}"></td>
+      <td class="center"><button class="del-btn" onclick="this.closest('tr').remove()">✕</button></td>`;
+    tbody.appendChild(tr);
+  });
+}
+function onMonitoringStatusChange(sel){
+  const tr = sel.closest('tr');
+  tr.className = 'status-' + sel.value;
+}
+function addMonitoringRow(){
+  const list = getMonitoring();
+  list.push({ id:'mon_'+Date.now(), name:'', contact:'', address:'', vehicle:'', dp:'', birthdate:'', status:'ONGOING', remarks:'', dateRelease:'', dateORCR:'', plateNumber:'', warrantyBooklet:'' });
+  setMonitoring(list);
+  renderMonitoringTable();
+}
+function saveMonitoringTable(){
+  const rows = document.querySelectorAll('#monitoringRows tr');
+  const list = [];
+  rows.forEach((tr, i)=>{
+    list.push({
+      id: 'mon_' + Date.now() + '_' + i,
+      name: tr.querySelector('.mon-name').value.trim(),
+      contact: tr.querySelector('.mon-contact').value.trim(),
+      address: tr.querySelector('.mon-address').value.trim(),
+      vehicle: tr.querySelector('.mon-vehicle').value.trim(),
+      dp: tr.querySelector('.mon-dp').value.trim(),
+      birthdate: tr.querySelector('.mon-birthdate').value.trim(),
+      status: tr.querySelector('.mon-status').value,
+      remarks: tr.querySelector('.mon-remarks').value.trim(),
+      dateRelease: tr.querySelector('.mon-dateRelease').value.trim(),
+      dateORCR: tr.querySelector('.mon-dateORCR').value.trim(),
+      plateNumber: tr.querySelector('.mon-plate').value.trim(),
+      warrantyBooklet: tr.querySelector('.mon-warranty').value.trim(),
+    });
+  });
+  setMonitoring(list);
+  alert('Monitoring table saved.');
+}
+function exportBackup(){
+  const backup = {
+    applications: lsGet('cl_applications', {}),
+    bulletin: lsGet('cl_bulletin_vehicles', vehicles),
+    monitoring: lsGet('cl_monitoring', []),
+    exportedAt: new Date().toISOString()
+  };
+  saveTextAsFile(JSON.stringify(backup, null, 2), 'citimotors_loan_backup_' + Date.now() + '.json', 'application/json');
+}
+function importBackup(evt){
+  const file = evt.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e){
+    try{
+      const backup = JSON.parse(e.target.result);
+      if(backup.applications) lsSet('cl_applications', backup.applications);
+      if(backup.bulletin) lsSet('cl_bulletin_vehicles', backup.bulletin);
+      if(backup.monitoring) lsSet('cl_monitoring', backup.monitoring);
+      loadBulletin();
+      alert('Na-import na ang backup. Puntahan ang "Saved Applications" o "Monitoring" tab para makita.');
+    }catch(err){
+      alert('Invalid backup file.');
+    }
+  };
+  reader.readAsText(file);
+  evt.target.value = '';
+}
+
+// ---------------- Bank rows / clear ----------------
+function addBankRow(){
+  const tbody = document.getElementById('bankRows');
+  const tr = document.createElement('tr');
+  tr.innerHTML = `<td><input type="text" class="bank-branch"></td><td><input type="text" class="bank-type"></td><td><input type="text" class="bank-acct"></td><td><input type="text" class="cc-company"></td><td><input type="text" class="cc-limit"></td><td><input type="text" class="cc-expiry"></td>`;
+  tbody.appendChild(tr);
+}
+function clearAll(){
+  if(!confirm('Start a new blank application? Any unsaved changes will be lost.')) return;
+  document.querySelectorAll('#sheet input[type=text], #sheet input[type=email]').forEach(el=>el.value='');
+  document.querySelectorAll('#sheet input[type=checkbox]').forEach(el=>el.checked=false);
+  document.getElementById('b_citizenship').value = 'FILIPINO';
+  document.getElementById('c_citizenship').value = 'FILIPINO';
+  document.getElementById('sigExec').value = 'ROMEO CUYACOT (MEONG)';
+  sigDataUrl = null;
+  document.getElementById('sigImgHolder').innerHTML = '';
+}
+
+// ---------------- PDF export (guaranteed single page + full color) ----------------
+async function downloadPDF(){
+  const paperSizesMM = { letter:[215.9,279.4], A4:[210,297], legal:[215.9,355.6] };
+  const paper = document.getElementById('paperSize').value;
+  const [wmm, hmm] = paperSizesMM[paper];
+  const sheet = document.getElementById('sheet');
+
+  document.body.classList.add('pdf-mode');
+  await new Promise(r=>setTimeout(r,50));
+
+  try{
+    const canvas = await html2canvas(sheet, {scale:2, backgroundColor:'#ffffff', useCORS:true});
+    const imgData = canvas.toDataURL('image/png');
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({ orientation:'portrait', unit:'mm', format:[wmm,hmm] });
+
+    const margin = 6;
+    const maxW = wmm - margin*2;
+    const maxH = hmm - margin*2;
+    const ratio = canvas.height / canvas.width;
+    let renderW = maxW;
+    let renderH = renderW * ratio;
+    if(renderH > maxH){ renderH = maxH; renderW = renderH / ratio; }
+    const x = (wmm - renderW)/2;
+    const y = margin;
+    pdf.addImage(imgData, 'PNG', x, y, renderW, renderH);
+
+    const borrower = (document.getElementById('b_name').value || 'application').trim().replace(/[^a-z0-9]+/gi,'_');
+    saveDataUrlAsFile(pdf.output('datauristring'), 'Auto_Loan_' + borrower + '.pdf', 'application/pdf');
+  } catch(e){
+    alert('Hindi na-generate ang PDF. Subukan muli, o gamitin ang "Print (browser dialog)" bilang backup.');
+  } finally {
+    document.body.classList.remove('pdf-mode');
+  }
+}
+
+// ---------------- Messages tab: templates + today's alerts ----------------
+const PH_FIXED_HOLIDAYS = [
+  {md:'01-01', name:"New Year's Day"},
+  {md:'02-25', name:'EDSA People Power Anniversary'},
+  {md:'04-09', name:'Araw ng Kagitingan'},
+  {md:'05-01', name:'Labor Day'},
+  {md:'06-12', name:'Independence Day'},
+  {md:'08-21', name:'Ninoy Aquino Day'},
+  {md:'11-30', name:'Bonifacio Day'},
+  {md:'12-08', name:'Feast of the Immaculate Conception'},
+  {md:'12-25', name:'Christmas Day'},
+  {md:'12-30', name:'Rizal Day'},
+  {md:'12-31', name:"New Year's Eve"}
+];
+// Note: movable holidays (Holy Week, Eid'l Fitr, Eid'l Adha, National Heroes Day - last Mon of Aug)
+// change every year by official proclamation, so they are not hardcoded here — check the latest
+// Malacañang proclamation and adjust PH_FIXED_HOLIDAYS above if you want to include them.
+
+function parseMonitoringDate(str){
+  // Expects MM/DD/YYYY; returns Date or null
+  if(!str) return null;
+  const m = str.trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if(!m) return null;
+  return new Date(parseInt(m[3]), parseInt(m[1])-1, parseInt(m[2]));
+}
+function sameDay(a,b){ return a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate(); }
+
+function computeTodaysAlerts(){
+  const alerts = [];
+  const today = new Date();
+  const todayMD = String(today.getMonth()+1).padStart(2,'0') + '-' + String(today.getDate()).padStart(2,'0');
+  const list = getMonitoring();
+
+  // Holiday check
+  const holiday = PH_FIXED_HOLIDAYS.find(h=>h.md===todayMD);
+  if(holiday){
+    const activeClients = list.filter(r=>r.status!=='DECLINED' && r.contact);
+    alerts.push({type:'holiday', text: `🎉 Ngayon ay ${holiday.name}! Magpadala ng greeting sa ${activeClients.length} active client(s).`, clients: activeClients});
+  }
+
+  // 3-day follow-up (Approved + released exactly 3 days ago)
+  list.forEach(r=>{
+    const rel = parseMonitoringDate(r.dateRelease);
+    if(rel){
+      const threeDaysLater = new Date(rel); threeDaysLater.setDate(threeDaysLater.getDate()+3);
+      if(sameDay(threeDaysLater, today)){
+        alerts.push({type:'followup', text: `🚗 3 araw na mula ma-release ang unit ni ${r.name || 'client'} (${r.vehicle}). Oras na para kumustahin ang experience niya.`, clients:[r]});
+      }
+    }
+  });
+
+  // Birthday (MM/DD stored on the record)
+  list.forEach(r=>{
+    if(r.birthdate){
+      const m = r.birthdate.trim().match(/^(\d{1,2})\/(\d{1,2})$/);
+      if(m && parseInt(m[1])===today.getMonth()+1 && parseInt(m[2])===today.getDate()){
+        alerts.push({type:'birthday', text: `🎂 Birthday ngayon ni ${r.name || 'client'}!`, clients:[r]});
+      }
+    }
+  });
+
+  return alerts;
+}
+
+function renderMessagesTab(){
+  // alerts
+  const alerts = computeTodaysAlerts();
+  const holder = document.getElementById('alertsHolder');
+  if(alerts.length===0){
+    holder.innerHTML = '<p style="color:#777; font-size:12.5px;">Walang alerts ngayon (walang holiday, 3-day follow-up, o birthday na tumutugma sa mga naka-save na client).</p>';
+  } else {
+    holder.innerHTML = '<h3 style="font-size:13px;">🔔 Ngayong Araw (Today\'s Alerts)</h3>' + alerts.map(a=>`<div class="alert-box ${a.type==='holiday'?'holiday':''}">${escapeHtml(a.text)}</div>`).join('');
+  }
+  // client picker
+  const picker = document.getElementById('msgClientPicker');
+  const current = picker.value;
+  picker.innerHTML = '<option value="">— Walang piliin (generic template) —</option>';
+  getMonitoring().forEach((r,idx)=>{
+    const o = document.createElement('option');
+    o.value = idx; o.textContent = (r.name||'(walang pangalan)') + ' — ' + (r.vehicle||'');
+    picker.appendChild(o);
+  });
+  if(current) picker.value = current;
+  renderMessageTemplates();
+}
+
+function fillTemplate(tpl, r){
+  return tpl
+    .replace(/\{NAME\}/g, (r && r.name) ? r.name : '[PANGALAN NG CLIENT]')
+    .replace(/\{VEHICLE\}/g, (r && r.vehicle) ? r.vehicle : '[MODEL NG SASAKYAN]')
+    .replace(/\{PLATE\}/g, (r && r.plateNumber) ? r.plateNumber : '[PLATE NUMBER]')
+    .replace(/\{DEALER\}/g, 'CT Citimotors Las Piñas')
+    .replace(/\{AGENT\}/g, 'Romeo Cuyacot');
+}
+
+const MESSAGE_TEMPLATES = [
+  { title: '3-Day Follow-up (After Release)', body:
+`Magandang araw po {NAME}! Ito po si {AGENT} ng {DEALER}. Kamusta na po ang experience niyo sa inyong bagong {VEHICLE}? Kung may tanong o concern po kayo, huwag mag-atubiling mag-message lang po. Salamat sa tiwala! 🚗✨` },
+  { title: 'Birthday Greeting', body:
+`Maligayang Kaarawan po, {NAME}! 🎉 Nawa'y puno ng biyaya at kasiyahan ang taong ito para sa inyo. Salamat sa patuloy na tiwala sa {DEALER}. — {AGENT}` },
+  { title: 'Philippine Holiday Greeting', body:
+`Maligayang bakasyon po, {NAME}! Nawa'y makapiling niyo ang inyong mga mahal sa buhay sa araw na ito. Ingat po palagi. — {AGENT}, {DEALER}` },
+  { title: 'Weather Advisory (manual — check current weather/PAGASA first)', body:
+`Magandang araw po {NAME}. Paalala lang po na mag-ingat sa biyahe dahil sa kasalukuyang panahon. Siguraduhing maayos ang wipers, gulong, at ilaw ng inyong {VEHICLE}. Ingat po palagi! — {AGENT}, {DEALER}` },
+  { title: 'Application Status Update', body:
+`Magandang araw po {NAME}! Update lang po sa inyong loan application para sa {VEHICLE} — [ILAGAY ANG STATUS DITO]. Sasabihan namin kayo kapag may bagong update. Salamat po! — {AGENT}, {DEALER}` }
+];
+
+function renderMessageTemplates(){
+  const picker = document.getElementById('msgClientPicker');
+  const list = getMonitoring();
+  const r = picker.value!=='' ? list[parseInt(picker.value,10)] : null;
+  const holder = document.getElementById('templatesHolder');
+  holder.innerHTML = MESSAGE_TEMPLATES.map((t, i)=>`
+    <div class="template-card">
+      <h4>${escapeHtml(t.title)}</h4>
+      <textarea id="tplText${i}">${escapeHtml(fillTemplate(t.body, r))}</textarea>
+      <button class="copy-btn" onclick="copyTemplate(${i})">📋 Copy Message</button>
+    </div>`).join('');
+}
+
+function copyTemplate(i){
+  const el = document.getElementById('tplText'+i);
+  el.select();
+  el.setSelectionRange(0, 999999);
+  try{
+    navigator.clipboard.writeText(el.value).then(()=>{
+      alert('Na-copy na! Puwede mo nang i-paste sa Messenger/SMS.');
+    }).catch(()=>{ document.execCommand('copy'); alert('Na-copy na (fallback).'); });
+  }catch(e){
+    document.execCommand('copy');
+    alert('Na-copy na (fallback).');
+  }
+}
+
+// ---------------- Sync tab: offline QR-based transfer ----------------
+const QR_CHUNK_SIZE = 700;
+let syncScanStream = null;
+let syncScanTimer = null;
+let syncReceivedChunks = {};
+let syncExpectedTotal = null;
+let syncSessionId = null;
+let syncSendTimer = null;
+
+function startSyncSend(){
+  const backup = {
+    applications: lsGet('cl_applications', {}),
+    bulletin: lsGet('cl_bulletin_vehicles', vehicles),
+    monitoring: lsGet('cl_monitoring', [])
+  };
+  // strip heavy signature images before transfer (too large for QR)
+  const trimmedApps = {};
+  Object.keys(backup.applications).forEach(k=>{
+    const rec = JSON.parse(JSON.stringify(backup.applications[k]));
+    if(rec.data) delete rec.data._signature;
+    trimmedApps[k] = rec;
+  });
+  backup.applications = trimmedApps;
+
+  const json = JSON.stringify(backup);
+  const sessionId = 's' + Date.now().toString(36);
+  const chunks = [];
+  for(let i=0; i<json.length; i+=QR_CHUNK_SIZE){
+    chunks.push(json.slice(i, i+QR_CHUNK_SIZE));
+  }
+  const frames = chunks.map((c, idx)=> JSON.stringify({s:sessionId, i:idx, n:chunks.length, d:c}));
+
+  const display = document.getElementById('qrDisplay');
+  display.style.display = 'block';
+  display.innerHTML = '';
+  const qrDiv = document.createElement('div');
+  display.appendChild(qrDiv);
+  const qr = new QRCode(qrDiv, { width:260, height:260, correctLevel: QRCode.CorrectLevel.L });
+
+  let frameIdx = 0;
+  clearInterval(syncSendTimer);
+  function showFrame(){
+    qr.clear();
+    qr.makeCode(frames[frameIdx]);
+    document.getElementById('sendProgress').textContent = `Frame ${frameIdx+1} / ${frames.length} — panatilihing bukas hanggang na-scan lahat sa kabilang gadget.`;
+    frameIdx = (frameIdx+1) % frames.length;
+  }
+  showFrame();
+  syncSendTimer = setInterval(showFrame, frames.length>1 ? 700 : 999999);
+}
+
+function startSyncScan(){
+  const video = document.getElementById('qrScanVideo');
+  const canvas = document.getElementById('qrScanCanvas');
+  syncReceivedChunks = {}; syncExpectedTotal = null; syncSessionId = null;
+  document.getElementById('scanProgress').textContent = 'Nag-oopen ng camera...';
+  navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } }).then(stream=>{
+    syncScanStream = stream;
+    video.srcObject = stream;
+    video.style.display = 'block';
+    video.play();
+    syncScanTimer = setInterval(()=>scanFrame(video, canvas), 300);
+  }).catch(err=>{
+    document.getElementById('scanProgress').textContent = 'Hindi ma-access ang camera. Siguraduhing pinayagan ang camera permission.';
+  });
+}
+
+function scanFrame(video, canvas){
+  if(!video.videoWidth) return;
+  canvas.width = video.videoWidth; canvas.height = video.videoHeight;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  const code = jsQR(imageData.data, imageData.width, imageData.height);
+  if(code){
+    try{
+      const frame = JSON.parse(code.data);
+      if(syncSessionId===null) syncSessionId = frame.s;
+      if(frame.s !== syncSessionId) return; // ignore frames from a different send session
+      syncExpectedTotal = frame.n;
+      syncReceivedChunks[frame.i] = frame.d;
+      const gotCount = Object.keys(syncReceivedChunks).length;
+      document.getElementById('scanProgress').textContent = `Na-scan: ${gotCount} / ${syncExpectedTotal} frames...`;
+      if(gotCount >= syncExpectedTotal){
+        let full = '';
+        for(let i=0;i<syncExpectedTotal;i++) full += (syncReceivedChunks[i]||'');
+        finishSyncScan(full);
+      }
+    }catch(e){ /* not our frame format, ignore */ }
+  }
+}
+
+function finishSyncScan(jsonStr){
+  stopSyncScan();
+  try{
+    const backup = JSON.parse(jsonStr);
+    const mode = confirm('Na-scan na ang data! Pindutin OK para i-MERGE sa existing data, o Cancel para i-REPLACE (papalitan lahat).');
+    if(mode){
+      // merge
+      const apps = lsGet('cl_applications', {});
+      Object.assign(apps, backup.applications||{});
+      lsSet('cl_applications', apps);
+      const mon = lsGet('cl_monitoring', []);
+      (backup.monitoring||[]).forEach(rec=>{
+        const idx = mon.findIndex(m=>m.name.toUpperCase()===rec.name.toUpperCase() && m.vehicle.toUpperCase()===rec.vehicle.toUpperCase());
+        if(idx>=0) mon[idx]=rec; else mon.push(rec);
+      });
+      lsSet('cl_monitoring', mon);
+      if(backup.bulletin) lsSet('cl_bulletin_vehicles', backup.bulletin);
+    } else {
+      if(backup.applications) lsSet('cl_applications', backup.applications);
+      if(backup.monitoring) lsSet('cl_monitoring', backup.monitoring);
+      if(backup.bulletin) lsSet('cl_bulletin_vehicles', backup.bulletin);
+    }
+    loadBulletin();
+    document.getElementById('scanProgress').textContent = '✅ Na-sync na ang data!';
+    alert('Tagumpay ang pag-sync! Tingnan ang Saved Applications / Monitoring tabs.');
+  }catch(e){
+    document.getElementById('scanProgress').textContent = 'Error sa pag-decode ng data. Subukan muli.';
+  }
+}
+
+function stopSyncScan(){
+  clearInterval(syncScanTimer);
+  if(syncScanStream){ syncScanStream.getTracks().forEach(t=>t.stop()); syncScanStream = null; }
+  const video = document.getElementById('qrScanVideo');
+  video.style.display = 'none';
+  video.srcObject = null;
+}
+
+// ---------------- Dashboard ----------------
+let statusChartInstance = null;
+
+function renderDashboard(){
+  document.getElementById('dashDateLabel').textContent = new Date().toLocaleDateString('en-PH', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
+
+  const monitoring = getMonitoring();
+  const apps = lsGet('cl_applications', {});
+  const appsList = Object.values(apps);
+
+  const ongoing = monitoring.filter(r=>r.status==='ONGOING').length;
+  const approved = monitoring.filter(r=>r.status==='APPROVED').length;
+  const declined = monitoring.filter(r=>r.status==='DECLINED').length;
+
+  // estimate pipeline value using bulletin SRP matched to each monitoring record's vehicle
+  let pipelineValue = 0;
+  monitoring.forEach(r=>{
+    if(r.status==='DECLINED') return;
+    const v = vehicles.find(x=>x.unit.toUpperCase()===String(r.vehicle||'').toUpperCase());
+    if(v) pipelineValue += v.srp;
+  });
+
+  const kpis = [
+    {label:'Total Clients', value: monitoring.length, sub:'sa Monitoring', accent:'navy'},
+    {label:'Ongoing', value: ongoing, sub:'currently processing', accent:'gold'},
+    {label:'Approved', value: approved, sub:'completed deals', accent:'green'},
+    {label:'Declined', value: declined, sub:'did not push through', accent:'red'},
+    {label:'Saved Applications', value: appsList.length, sub:'application forms filed', accent:'navy'},
+    {label:'Est. Pipeline Value', value: '₱' + pipelineValue.toLocaleString('en-PH'), sub:'Ongoing + Approved, based on SRP', accent:'gold'},
+  ];
+  document.getElementById('kpiGrid').innerHTML = kpis.map(k=>`
+    <div class="kpi-card accent-${k.accent}">
+      <div class="kpi-label">${escapeHtml(k.label)}</div>
+      <div class="kpi-value">${typeof k.value==='number' ? k.value.toLocaleString('en-US') : k.value}</div>
+      <div class="kpi-sub">${escapeHtml(k.sub)}</div>
+    </div>`).join('');
+
+  // status chart
+  const ctx = document.getElementById('statusChart');
+  if(statusChartInstance) statusChartInstance.destroy();
+  if(window.Chart){
+    statusChartInstance = new Chart(ctx, {
+      type:'doughnut',
+      data:{
+        labels:['Ongoing','Approved','Declined'],
+        datasets:[{ data:[ongoing, approved, declined], backgroundColor:['#c3a26b','#3a7a54','#a12626'] }]
+      },
+      options:{ responsive:true, plugins:{ legend:{ position:'bottom' } } }
+    });
+  }
+
+  // recent activity (last 6 saved applications)
+  const recent = appsList.sort((a,b)=> new Date(b.savedAt)-new Date(a.savedAt)).slice(0,6);
+  const recentHolder = document.getElementById('recentActivity');
+  if(recent.length===0){
+    recentHolder.innerHTML = '<p style="color:#8a93a3; font-size:12px;">Wala pang saved applications.</p>';
+  } else {
+    recentHolder.innerHTML = recent.map(r=>`
+      <div class="activity-row">
+        <span class="a-name">${escapeHtml(r.title)}</span>
+        <span class="a-meta">${new Date(r.savedAt).toLocaleDateString('en-PH')}</span>
+      </div>`).join('');
+  }
+}
+
+// ---------------- GitHub Cloud Sync ----------------
+// Uses the GitHub Contents API with the person's own Personal Access Token, so their
+// own free GitHub repo acts as simple cloud storage — no custom backend needed.
+function openGithubModal(){
+  const cfg = lsGet('cl_github_config', {});
+  document.getElementById('ghToken').value = cfg.token || '';
+  document.getElementById('ghRepo').value = cfg.repo || '';
+  document.getElementById('ghPath').value = cfg.path || 'citimotors-data.json';
+  document.getElementById('ghStatus').innerHTML = '';
+  document.getElementById('githubModal').classList.add('open');
+}
+function closeGithubModal(){ document.getElementById('githubModal').classList.remove('open'); }
+
+function ghShowStatus(msg, ok){
+  const el = document.getElementById('ghStatus');
+  el.className = 'gh-status ' + (ok ? 'ok' : 'err');
+  el.textContent = msg;
+}
+
+function saveGithubConfig(){
+  const cfg = {
+    token: document.getElementById('ghToken').value.trim(),
+    repo: document.getElementById('ghRepo').value.trim(),
+    path: document.getElementById('ghPath').value.trim() || 'citimotors-data.json'
+  };
+  lsSet('cl_github_config', cfg);
+  return cfg;
+}
+
+async function githubSave(){
+  const cfg = saveGithubConfig();
+  if(!cfg.token || !cfg.repo){ ghShowStatus('Punan muna ang Token at Repository.', false); return; }
+  ghShowStatus('Nagse-save sa GitHub...', true);
+  try{
+    const apiUrl = `https://api.github.com/repos/${cfg.repo}/contents/${encodeURIComponent(cfg.path)}`;
+    // check if file already exists, to get its sha (needed to update instead of create)
+    let sha = null;
+    try{
+      const getRes = await fetch(apiUrl, { headers: { 'Authorization': `Bearer ${cfg.token}`, 'Accept':'application/vnd.github+json' } });
+      if(getRes.ok){ const j = await getRes.json(); sha = j.sha; }
+    }catch(e){ /* file probably doesn't exist yet, that's fine */ }
+
+    const payload = {
+      applications: lsGet('cl_applications', {}),
+      bulletin: lsGet('cl_bulletin_vehicles', vehicles),
+      monitoring: lsGet('cl_monitoring', []),
+      savedAt: new Date().toISOString()
+    };
+    const content = utf8ToBase64(JSON.stringify(payload, null, 2));
+
+    const body = { message: 'Update Citimotors loan data — ' + new Date().toISOString(), content };
+    if(sha) body.sha = sha;
+
+    const putRes = await fetch(apiUrl, {
+      method: 'PUT',
+      headers: { 'Authorization': `Bearer ${cfg.token}`, 'Accept':'application/vnd.github+json', 'Content-Type':'application/json' },
+      body: JSON.stringify(body)
+    });
+    if(putRes.ok){
+      ghShowStatus('✅ Na-save sa GitHub repo mo!', true);
+    } else {
+      const errJson = await putRes.json().catch(()=>({}));
+      ghShowStatus('Hindi na-save: ' + (errJson.message || putRes.status), false);
+    }
+  }catch(e){
+    ghShowStatus('May error sa koneksyon sa GitHub. Suriin ang internet o token.', false);
+  }
+}
+
+async function githubLoad(){
+  const cfg = saveGithubConfig();
+  if(!cfg.token || !cfg.repo){ ghShowStatus('Punan muna ang Token at Repository.', false); return; }
+  ghShowStatus('Kinukuha ang data mula sa GitHub...', true);
+  try{
+    const apiUrl = `https://api.github.com/repos/${cfg.repo}/contents/${encodeURIComponent(cfg.path)}`;
+    const res = await fetch(apiUrl, { headers: { 'Authorization': `Bearer ${cfg.token}`, 'Accept':'application/vnd.github+json' } });
+    if(!res.ok){
+      const errJson = await res.json().catch(()=>({}));
+      ghShowStatus('Hindi makuha: ' + (errJson.message || res.status), false);
+      return;
+    }
+    const j = await res.json();
+    const jsonStr = decodeURIComponent(escape(atob(j.content.replace(/\n/g,''))));
+    const payload = JSON.parse(jsonStr);
+    const mode = confirm('Nakuha ang data mula sa GitHub! Pindutin OK para i-MERGE sa existing data dito, o Cancel para i-REPLACE (papalitan lahat).');
+    if(mode){
+      const apps = lsGet('cl_applications', {});
+      Object.assign(apps, payload.applications||{});
+      lsSet('cl_applications', apps);
+      const mon = lsGet('cl_monitoring', []);
+      (payload.monitoring||[]).forEach(rec=>{
+        const idx = mon.findIndex(m=>m.name.toUpperCase()===rec.name.toUpperCase() && m.vehicle.toUpperCase()===rec.vehicle.toUpperCase());
+        if(idx>=0) mon[idx]=rec; else mon.push(rec);
+      });
+      lsSet('cl_monitoring', mon);
+      if(payload.bulletin) lsSet('cl_bulletin_vehicles', payload.bulletin);
+    } else {
+      if(payload.applications) lsSet('cl_applications', payload.applications);
+      if(payload.monitoring) lsSet('cl_monitoring', payload.monitoring);
+      if(payload.bulletin) lsSet('cl_bulletin_vehicles', payload.bulletin);
+    }
+    loadBulletin();
+    ghShowStatus('✅ Na-load na ang data mula sa GitHub!', true);
+  }catch(e){
+    ghShowStatus('May error habang kinukuha ang data. Suriin ang token/repo/path.', false);
+  }
+}
+
+loadBulletin();
+initQuoteTab();
+switchTab('dashboard');
+</script>
+
+</body>
+</html>
