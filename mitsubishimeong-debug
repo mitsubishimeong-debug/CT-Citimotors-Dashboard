@@ -1,0 +1,187 @@
+{
+  "applications": {},
+  "bulletin": [
+    {
+      "unit": "2026 MIRAGE",
+      "srp": 781000,
+      "discount": 105000,
+      "c20": 15000,
+      "c25": 15000,
+      "c30": 59000,
+      "promo": "FREE FUEL SUBSIDY (₱20,000 VALUE)"
+    },
+    {
+      "unit": "2026 MIRAGE G4 GLX CVT",
+      "srp": 841000,
+      "discount": 104000,
+      "c20": 18000,
+      "c25": 48000,
+      "c30": 18000,
+      "promo": "FREE FUEL SUBSIDY WORTH 40,000\nFREE 2 YEARS PMS (30% DP)"
+    },
+    {
+      "unit": "2026 MIRAGE G4 GLS CVT",
+      "srp": 937000,
+      "discount": 96000,
+      "c20": 8000,
+      "c25": 68000,
+      "c30": 58000,
+      "promo": "FREE FUEL SUBSIDY (₱40,000 VALUE)"
+    },
+    {
+      "unit": "2026 L300 EXCEED FB BODY DUAL AC",
+      "srp": 1039000,
+      "discount": 112000,
+      "c20": 5000,
+      "c25": 25000,
+      "c30": 88000,
+      "promo": "FREE FUEL SUBSIDY (₱20,000 VALUE)"
+    },
+    {
+      "unit": "2026 XPANDER GLX MT",
+      "srp": 1099000,
+      "discount": 90000,
+      "c20": 8000,
+      "c25": 75000,
+      "c30": 138000,
+      "promo": "FREE FUEL SUBSIDY (₱40,000 VALUE)"
+    },
+    {
+      "unit": "2026 XPANDER GLX AT",
+      "srp": 1159000,
+      "discount": 90000,
+      "c20": 13000,
+      "c25": 88000,
+      "c30": 158000,
+      "promo": "FREE FUEL SUBSIDY (₱40,000 VALUE)"
+    },
+    {
+      "unit": "2026 XPANDER GLS",
+      "srp": 1259000,
+      "discount": 100000,
+      "c20": 18000,
+      "c25": 88000,
+      "c30": 158000,
+      "promo": "FREE FUEL SUBSIDY (₱40,000 VALUE)\nFREE PMS 2 YEARS OR 30,000KM"
+    },
+    {
+      "unit": "2026 XPANDER CROSS MONOTONE AT",
+      "srp": 1346000,
+      "discount": 90000,
+      "c20": 25000,
+      "c25": 118000,
+      "c30": 117500,
+      "promo": "FREE FUEL SUBSIDY (₱40,000 VALUE)"
+    },
+    {
+      "unit": "2026 XFORCE GLS",
+      "srp": 1367000,
+      "discount": 230000,
+      "c20": 20000,
+      "c25": 21000,
+      "c30": 38000,
+      "promo": "FREE FUEL SUBSIDY (₱40,000 VALUE)"
+    },
+    {
+      "unit": "2026 XPANDER CROSS TWOTONE AT",
+      "srp": 1378000,
+      "discount": 101000,
+      "c20": 25000,
+      "c25": 98000,
+      "c30": 188000,
+      "promo": "FREE FUEL SUBSIDY (₱40,000 VALUE)"
+    },
+    {
+      "unit": "2026 DESTINATOR GLX 4X2 AT",
+      "srp": 1389000,
+      "discount": 95000,
+      "c20": 23000,
+      "c25": 103000,
+      "c30": 183000,
+      "promo": "FREE FUEL SUBSIDY (₱40,000 VALUE)"
+    },
+    {
+      "unit": "2027 TRITON GX AT",
+      "srp": 1430000,
+      "discount": 131000,
+      "c20": 28000,
+      "c25": 98000,
+      "c30": 175000,
+      "promo": "FREE FUEL SUBSIDY (₱40,000 VALUE)"
+    },
+    {
+      "unit": "2026 MONTERO GLX MT",
+      "srp": 1568000,
+      "discount": 265000,
+      "c20": 0,
+      "c25": 24000,
+      "c30": 68000,
+      "promo": "FREE FUEL SUBSIDY WORTH 20,000"
+    },
+    {
+      "unit": "2026 XFORCE GT",
+      "srp": 1581000,
+      "discount": 230000,
+      "c20": 0,
+      "c25": 25000,
+      "c30": 88000,
+      "promo": "FREE FUEL SUBSIDY (₱40,000 VALUE)"
+    },
+    {
+      "unit": "2026 DESTINATOR GLS 4X2 AT",
+      "srp": 1599000,
+      "discount": 87000,
+      "c20": 48000,
+      "c25": 125000,
+      "c30": 215000,
+      "promo": "FREE FUEL SUBSIDY (₱40,000 VALUE)"
+    },
+    {
+      "unit": "2025 VERSA VAN MT",
+      "srp": 1649000,
+      "discount": 95000,
+      "c20": 68000,
+      "c25": 168000,
+      "c30": 258000,
+      "promo": "FREE FUEL SUBSIDY WORTH 20,000"
+    },
+    {
+      "unit": "2026 MONTERO GLS",
+      "srp": 1927000,
+      "discount": 120000,
+      "c20": 28000,
+      "c25": 138000,
+      "c30": 248000,
+      "promo": "FREE FUEL SUBSIDY (₱40,000 VALUE)\nFREE PMS 1 YEAR OR 20,000KM"
+    },
+    {
+      "unit": "2026 DESTINATOR GT MONOTONE CVT",
+      "srp": 1929000,
+      "discount": 119000,
+      "c20": 18000,
+      "c25": 128000,
+      "c30": 228000,
+      "promo": "FREE FUEL SUBSIDY (₱40,000 VALUE)"
+    },
+    {
+      "unit": "2026 DESTINATOR GT TWOTONE CVT",
+      "srp": 1939000,
+      "discount": 119000,
+      "c20": 28000,
+      "c25": 148000,
+      "c30": 248000,
+      "promo": "FREE FUEL SUBSIDY (₱40,000 VALUE)"
+    },
+    {
+      "unit": "2026 TRITON GLS AT",
+      "srp": 1959000,
+      "discount": 70000,
+      "c20": 58000,
+      "c25": 148000,
+      "c30": 248000,
+      "promo": "FREE FUEL SUBSIDY (₱40,000 VALUE)"
+    }
+  ],
+  "monitoring": [],
+  "savedAt": "2026-08-01T16:34:12.763Z"
+}
