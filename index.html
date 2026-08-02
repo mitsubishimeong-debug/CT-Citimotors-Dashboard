@@ -20,6 +20,14 @@
   .sidebar-footer{padding:14px 10px; border-top:1px solid rgba(255,255,255,0.12);}
   .sidebar-footer button{width:100%; background:rgba(255,255,255,0.08); color:#fff; border:1px solid rgba(255,255,255,0.2); padding:10px; border-radius:7px; cursor:pointer; font-size:11.5px;}
   .sidebar-footer button:hover{background:rgba(255,255,255,0.16);}
+  .sidebar{transition: width 0.18s ease, min-width 0.18s ease, padding 0.18s ease;}
+  body.sidebar-hidden .sidebar{width:0; min-width:0; padding:0; overflow:hidden; border:none;}
+  .sidebar-toggle{display:none; position:fixed; top:14px; left:14px; z-index:60; background:var(--sidebar-bg2); color:#fff; border:none; width:36px; height:36px; border-radius:7px; cursor:pointer; font-size:16px; box-shadow:0 2px 6px rgba(0,0,0,0.25);}
+  .sidebar-toggle:hover{background:var(--orange);}
+  body.sidebar-hidden .sidebar-toggle{display:block;}
+  .sidebar-logo{position:relative; padding-right:44px;}
+  .sidebar-collapse-btn{position:absolute; top:18px; right:14px; background:rgba(255,255,255,0.1); color:#fff; border:1px solid rgba(255,255,255,0.25); width:28px; height:28px; border-radius:6px; cursor:pointer; font-size:13px;}
+  .sidebar-collapse-btn:hover{background:rgba(255,255,255,0.2);}
   .main-content{flex:1; padding:22px 26px 40px 26px; overflow-x:hidden; min-width:0;}
   .toolbar{max-width:1000px; margin:0 auto 8px auto; display:flex; gap:8px; align-items:center; flex-wrap:wrap;}
   .toolbar button, .toolbar select{background:var(--orange); color:#fff; border:none; padding:9px 14px; font-size:12.5px; border-radius:4px; cursor:pointer;}
@@ -30,23 +38,30 @@
   .sheet{max-width:1000px; margin:0 auto; background:#fff; padding:12px 16px 18px 16px; border:1px solid #ccc;}
   table{width:100%; border-collapse:collapse;}
   td, th{border:1px solid var(--line); padding:4px 6px; vertical-align:top;}
-  .headtop td{border:none;}
+  .app-header{display:flex; align-items:stretch; border-bottom:2px solid var(--orange); margin-bottom:0;}
+  .ah-brand{flex:1.7; display:flex; flex-direction:column; justify-content:center; padding:8px 12px;}
+  .ah-calltime{flex:0.85; background:#ffff00; display:flex; flex-direction:column; justify-content:center; align-items:center; padding:6px 8px; gap:3px;}
+  .ah-calltime-label{font-weight:bold; font-size:10.5px; text-align:center;}
+  .ah-banner{flex:1.1; display:flex; flex-direction:column; justify-content:center; padding:6px 12px;}
   .company{font-weight:bold; font-style:italic; font-size:12px;}
   .addr{font-weight:bold;}
-  .banner{background:var(--orange); color:#fff; text-align:center; font-weight:bold; padding:5px;}
+  .banner{background:var(--orange); color:#fff; text-align:center; font-weight:bold; padding:5px; margin-bottom:4px; border-radius:3px; font-size:11px; line-height:1.3;}
   .note{font-size:9.5px; line-height:1.2;}
-  .calltime{background:#ffff00; font-weight:bold; text-align:center;}
   .section-title{background:var(--orange); color:#fff; text-align:center; font-weight:bold; padding:4px;}
   .label{font-size:10.5px; color:#333; margin-bottom:2px; display:block;}
   input[type="text"], input[type="email"]{width:100%; border:none; border-bottom:1px solid #aaa; font-family:inherit; font-size:12px; padding:2px 1px; background:transparent;}
   input[type="text"]:focus, input[type="email"]:focus{outline:none; border-bottom:1px solid var(--orange); background:#fffdf5;}
+  textarea.addr-field{width:100%; border:none; border-bottom:1px solid #aaa; font-family:inherit; font-size:12px; font-weight:700; text-transform:uppercase; padding:2px 1px; background:transparent; resize:none; overflow:hidden; white-space:pre-wrap; word-wrap:break-word; line-height:1.3;}
+  textarea.addr-field:focus{outline:none; border-bottom:1px solid var(--orange); background:#fffdf5;}
   .chk-row{display:flex; align-items:center; gap:4px; font-size:11px; margin-bottom:3px;}
   .chk-row input{width:auto;}
   .center{text-align:center;}
   .bold{font-weight:bold;}
   .small-note{font-size:9px; line-height:1.3; color:#222;}
   .sig-row td{border:none; text-align:center; padding-top:6px; vertical-align:bottom;}
-  .sig-line{border-top:1px solid #000; margin:0 20px; padding-top:2px; font-size:10.5px;}
+  .sig-line{border-top:1px solid #000; margin:0 20px; padding-top:2px; font-size:10.5px; display:flex; flex-direction:column; align-items:center;}
+  .sig-line input[type="text"]{text-align:center;}
+  .sig-line input[type="text"]{font-size:9.5px !important; letter-spacing:0; white-space:normal; overflow:visible; text-overflow:clip; height:auto; padding:2px 0;}
   .sig-img-holder{height:42px; display:flex; align-items:center; justify-content:center;}
   .sig-img-holder img{max-height:40px; max-width:100%;}
   .addrow-btn{background:#eee; border:1px dashed #999; padding:3px 8px; font-size:10px; cursor:pointer; margin-top:3px;}
@@ -98,6 +113,10 @@
   .kpi-card.accent-green{border-left:4px solid #3a7a54;}
   .kpi-card.accent-red{border-left:4px solid #a12626;}
   .kpi-card.accent-navy{border-left:4px solid #1c3350;}
+  .quick-actions{max-width:1200px; margin:0 auto 18px auto; display:flex; gap:12px; flex-wrap:wrap;}
+  .quick-action-btn{flex:1; min-width:150px; background:#fff; border:1px solid #e2e5ea; border-radius:10px; padding:16px; display:flex; flex-direction:column; align-items:center; gap:6px; font-size:12.5px; font-weight:700; color:#1c3350; cursor:pointer; box-shadow:0 1px 3px rgba(0,0,0,0.04);}
+  .quick-action-btn:hover{border-color:var(--sidebar-active); background:#fdf9f2;}
+  .quick-action-btn span{font-size:12px;}
   .dash-grid{max-width:1200px; margin:0 auto; display:grid; grid-template-columns:1.2fr 1fr; gap:16px;}
   @media (max-width:800px){ .dash-grid{grid-template-columns:1fr;} }
   .dash-panel{background:#fff; border-radius:10px; padding:16px 18px; border:1px solid #e2e5ea; box-shadow:0 1px 3px rgba(0,0,0,0.04);}
@@ -116,7 +135,17 @@
   .gh-status{font-size:11.5px; margin-top:10px; padding:8px; border-radius:5px;}
   .gh-status.ok{background:#d4edda; color:#1e5c30;}
   .gh-status.err{background:#f8d7da; color:#7a1f27;}
-  #tab-form, #tab-bulletin, #tab-saved, #tab-quote, #tab-monitoring, #tab-messages, #tab-sync{display:none;}
+
+  /* ---- Vehicle Specs modal ---- */
+  .specs-modal-box{max-width:480px; max-height:80vh; overflow-y:auto;}
+  .specs-modal-box h3{margin-top:0; color:var(--navy);}
+  .specs-group{margin-bottom:12px;}
+  .specs-group h4{font-size:11px; text-transform:uppercase; letter-spacing:0.06em; color:var(--orange); margin:0 0 6px 0; border-bottom:1px solid #eee; padding-bottom:3px;}
+  .specs-row{display:flex; justify-content:space-between; font-size:12px; padding:3px 0;}
+  .specs-row span:first-child{color:#666;}
+  .specs-row span:last-child{font-weight:700; text-align:right; max-width:60%;}
+  .specs-btn{background:var(--navy); color:#fff; border:none; border-radius:4px; padding:4px 9px; font-size:10.5px; cursor:pointer;}
+  #tab-form, #tab-bulletin, #tab-details, #tab-saved, #tab-quote, #tab-monitoring, #tab-messages, #tab-sync{display:none;}
 
   /* bold + all-caps as the borrower/co-borrower details are typed, so the bank checker reads them fast */
   #sheet input[type="text"]{font-weight:700; letter-spacing:0.2px; text-transform:uppercase;}
@@ -202,7 +231,7 @@
     body{background:#fff; padding:0; font-size:9.5px;}
     .sidebar{display:none !important;}
     .main-content{padding:0 !important;}
-    .toolbar, .hint, #tab-bulletin, #tab-saved, #tab-monitoring, #tab-dashboard, #tab-messages, #tab-sync, .modal-overlay, .quote-select-box, .quote-action-bar{display:none !important;}
+    .toolbar, .hint, #tab-bulletin, #tab-details, #tab-saved, #tab-monitoring, #tab-dashboard, #tab-messages, #tab-sync, .modal-overlay, .quote-select-box, .quote-action-bar{display:none !important;}
     #tab-form{display:block !important;}
     .sheet{border:none; max-width:100%; padding:4px 10px;}
     input{border-bottom:none !important;}
@@ -216,22 +245,27 @@
 
   body.pdf-mode .no-print{display:none !important;}
   body.pdf-mode input{border-bottom:none !important;}
-  body.pdf-mode .sheet{font-size:9.5px;}
+  body.pdf-mode textarea{border-bottom:none !important;}
+  body.pdf-mode .sheet{font-size:9.5px; border:none !important;}
 </style>
 </head>
 <body>
 
+<button class="sidebar-toggle no-print" onclick="toggleSidebar()" title="Show/Hide menu">☰</button>
+
 <div class="app-shell">
-  <aside class="sidebar no-print">
+  <aside class="sidebar no-print" id="sidebarEl">
     <div class="sidebar-logo">
       <div class="lg1">CT CITIMOTORS</div>
       <div class="lg2">Loan &amp; CRM System</div>
+      <button class="sidebar-collapse-btn" onclick="toggleSidebar()" title="Hide menu">⟨⟨</button>
     </div>
     <nav class="sidebar-nav">
       <button onclick="switchTab('dashboard')" id="btn-tab-dashboard">📊 Dashboard</button>
       <button onclick="switchTab('form')" id="btn-tab-form">📄 Application Form</button>
       <button onclick="switchTab('quote')" id="btn-tab-quote">🧮 Quotation</button>
       <button onclick="switchTab('bulletin')" id="btn-tab-bulletin">🚗 Vehicle Bulletin</button>
+      <button onclick="switchTab('details')" id="btn-tab-details">🚘 Vehicle Details</button>
       <button onclick="switchTab('saved')" id="btn-tab-saved">💾 Saved Applications</button>
       <button onclick="switchTab('monitoring')" id="btn-tab-monitoring">📋 Monitoring</button>
       <button onclick="switchTab('messages')" id="btn-tab-messages">📨 Messages</button>
@@ -250,8 +284,19 @@
     <p id="dashDateLabel">—</p>
   </div>
   <div class="kpi-grid" id="kpiGrid"></div>
+
+  <div class="quick-actions">
+    <button class="quick-action-btn" onclick="switchTab('quote')">🧮<span>Quotation</span></button>
+    <button class="quick-action-btn" onclick="switchTab('bulletin')">🚗<span>Vehicle Bulletin</span></button>
+    <button class="quick-action-btn" onclick="switchTab('details')">🚘<span>Vehicle Details</span></button>
+  </div>
+
+  <div class="dash-panel" style="max-width:1200px; margin:0 auto 16px auto;">
+    <h3>🔔 Reminders</h3>
+    <div id="dashReminders"><p style="color:#8a93a3; font-size:12px;">Wala pang reminders ngayon.</p></div>
+  </div>
   <div class="dash-grid">
-    <div class="dash-panel">
+    <div class="dash-panel" style="cursor:pointer;" onclick="switchTab('monitoring')">
       <h3>Status Breakdown</h3>
       <canvas id="statusChart"></canvas>
     </div>
@@ -282,24 +327,22 @@
 <div id="tab-form">
 <div class="sheet" id="sheet">
 
-  <table class="headtop">
-    <tr>
-      <td style="width:55%;">
-        <div class="company">CITIMOTORS LAS PIÑAS CORP.</div>
-        <div class="addr">Alabang Zapote Road. Cor. Sta.<br>Talos Dos, Las Piñas City</div>
-      </td>
-      <td style="width:20%;" class="calltime">
-        BEST TIME TO CALL:<br>
-        <input type="text" id="bestTime" placeholder="e.g. ANYTIME" style="text-align:center;font-weight:bold;">
-      </td>
-      <td style="width:25%;">
-        <div class="banner" style="margin-bottom:4px;">Auto Loan Application</div>
-        <div class="note">Important Information: Pls. fill out all entries in the form to
-        ensure rapid process of your loan application. Incomplete
-        information will cause delay in processing</div>
-      </td>
-    </tr>
-  </table>
+  <div class="app-header">
+    <div class="ah-brand">
+      <div class="company">CITIMOTORS LAS PIÑAS CORP.</div>
+      <div class="addr">Alabang Zapote Road. Cor. Sta.<br>Talos Dos, Las Piñas City</div>
+    </div>
+    <div class="ah-calltime">
+      <div class="ah-calltime-label">BEST TIME TO CALL:</div>
+      <input type="text" id="bestTime" placeholder="e.g. ANYTIME" style="text-align:center;font-weight:bold;">
+    </div>
+    <div class="ah-banner">
+      <div class="banner">Citimotors Las Piñas Best Offer by Romeo - Meong</div>
+      <div class="note">Important Information: Pls. fill out all entries in the form to
+      ensure rapid process of your loan application. Incomplete
+      information will cause delay in processing</div>
+    </div>
+  </div>
 
   <div class="section-title">VEHICLE / LOAN INFORMATION</div>
   <table>
@@ -341,8 +384,8 @@
       <td style="width:50%;"><span class="label">Birthdate:</span><input type="text" id="c_bday" placeholder="e.g. July 13, 1989"></td>
     </tr>
     <tr>
-      <td><span class="label">Residence Address:</span><input type="text" id="b_addr"></td>
-      <td><span class="label">Residence Address:</span><input type="text" id="c_addr"></td>
+      <td><span class="label">Residence Address:</span><textarea class="addr-field" id="b_addr" rows="1" oninput="autoGrow(this)"></textarea></td>
+      <td><span class="label">Residence Address:</span><textarea class="addr-field" id="c_addr" rows="1" oninput="autoGrow(this)"></textarea></td>
     </tr>
     <tr>
       <td>
@@ -457,8 +500,8 @@
       </td>
     </tr>
     <tr>
-      <td><span class="label">Office Address:</span><input type="text" id="b_office"></td>
-      <td><span class="label">Office Address:</span><input type="text" id="c_office"></td>
+      <td><span class="label">Office Address:</span><textarea class="addr-field" id="b_office" rows="1" oninput="autoGrow(this)"></textarea></td>
+      <td><span class="label">Office Address:</span><textarea class="addr-field" id="c_office" rows="1" oninput="autoGrow(this)"></textarea></td>
     </tr>
     <tr>
       <td>
@@ -614,6 +657,7 @@
       <button class="btn-navy" onclick="downloadQuotePDF()">⬇️ Download PDF</button>
       <button class="btn-gold" onclick="downloadQuoteImage()">📷 Download Image</button>
       <button class="btn-orange" onclick="applyQuoteToForm()">Use in Application Form →</button>
+      <button class="btn-navy" onclick="openVehicleDetailsForQuote()">🔧 View Full Specs</button>
     </div>
 
     <div class="quote-sheet" id="quoteSheet">
@@ -724,8 +768,8 @@
     <p class="hint" style="max-width:none;">Edits sync automatically to the vehicle dropdown and quotation sheet once you click "Save Table".</p>
     <table>
       <tr class="bold center">
-        <td style="width:20%;">UNIT</td><td style="width:10%;">SRP</td><td style="width:10%;">DISCOUNT</td>
-        <td style="width:11%;">CASH OUT @20%</td><td style="width:11%;">CASH OUT @25%</td><td style="width:11%;">CASH OUT @30%</td>
+        <td style="width:18%;">UNIT</td><td style="width:9%;">SRP</td><td style="width:9%;">DISCOUNT</td>
+        <td style="width:10%;">CASH OUT @20%</td><td style="width:10%;">CASH OUT @25%</td><td style="width:10%;">CASH OUT @30%</td>
         <td style="width:22%;">PROMO</td><td style="width:5%;"></td>
       </tr>
       <tbody id="bulletinRows"></tbody>
@@ -837,6 +881,16 @@
   </div>
 </div>
 
+<div id="tab-details">
+  <div class="quote-wrap">
+    <div class="quote-select-box">
+      <label>Select Vehicle for Full Details</label>
+      <select id="detailsVehicleSelect" onchange="renderVehicleDetails()"><option value="">— Choose a unit —</option></select>
+    </div>
+    <div id="detailsBody"><p class="hint" style="max-width:none;">Pumili ng vehicle sa itaas para makita ang specs, features, pros &amp; cons, at paghahambing sa ibang brands.</p></div>
+  </div>
+</div>
+
   </main>
 </div>
 
@@ -876,8 +930,13 @@ let sigDrawing = false;
 let sigCtx = null;
 
 // ---------------- Tabs ----------------
+function toggleSidebar(){
+  document.body.classList.toggle('sidebar-hidden');
+  lsSet('cl_sidebar_hidden', document.body.classList.contains('sidebar-hidden'));
+}
+
 function switchTab(name){
-  ['dashboard','form','quote','bulletin','saved','monitoring','messages','sync'].forEach(n=>{
+  ['dashboard','form','quote','bulletin','details','saved','monitoring','messages','sync'].forEach(n=>{
     document.getElementById('tab-'+n).style.display = (n===name)?'block':'none';
     document.getElementById('btn-tab-'+n).classList.toggle('active', n===name);
   });
@@ -887,6 +946,7 @@ function switchTab(name){
   if(name==='saved') refreshSavedList();
   if(name==='monitoring') renderMonitoringTable();
   if(name==='quote'){ refreshBulletinPicker(); renderQuoteSheet(); }
+  if(name==='details'){ refreshDetailsPicker(); }
   if(name==='messages') renderMessagesTab();
   if(name==='dashboard') renderDashboard();
 }
@@ -1262,7 +1322,7 @@ function saveSignature(){
 // ---------------- Save / Load / Backup applications ----------------
 function gatherFormData(){
   const data = {};
-  document.querySelectorAll('#sheet input[id]').forEach(el=>{
+  document.querySelectorAll('#sheet input[id], #sheet textarea[id]').forEach(el=>{
     data[el.id] = (el.type==='checkbox') ? el.checked : el.value;
   });
   data._bankRows = Array.from(document.querySelectorAll('#bankRows tr')).map(tr=>({
@@ -1279,6 +1339,7 @@ function applyFormData(data){
     const el = document.getElementById(id);
     if(!el) return;
     if(el.type==='checkbox') el.checked = !!data[id]; else el.value = data[id];
+    if(el.tagName==='TEXTAREA') autoGrow(el);
   });
   if(data._bankRows){
     const tbody = document.getElementById('bankRows');
@@ -1322,8 +1383,8 @@ function loadApplication(id){
   const apps = lsGet('cl_applications', {});
   const rec = apps[id];
   if(!rec) return;
-  applyFormData(rec.data);
   switchTab('form');
+  applyFormData(rec.data);
 }
 function deleteApplication(id){
   if(!confirm('Delete this saved application?')) return;
@@ -1337,6 +1398,16 @@ function deleteApplication(id){
 function getMonitoring(){ return lsGet('cl_monitoring', []); }
 function setMonitoring(list){ lsSet('cl_monitoring', list); }
 
+function parseFreeTextDateToISO(str){
+  if(!str) return '';
+  const d = new Date(str);
+  if(isNaN(d.getTime())) return '';
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth()+1).padStart(2,'0');
+  const dd = String(d.getDate()).padStart(2,'0');
+  return `${yyyy}-${mm}-${dd}`;
+}
+
 function addOrUpdateMonitoringFromForm(data){
   const list = getMonitoring();
   const name = data.b_name || '';
@@ -1344,12 +1415,14 @@ function addOrUpdateMonitoringFromForm(data){
   const address = data.b_addr || '';
   const vehicle = data.vehicle || '';
   const dp = data.downPayment || '';
+  const parsedBirthdate = parseFreeTextDateToISO(data.b_bday);
   // update existing record for same name+vehicle if found, else add new
   const existingIdx = list.findIndex(r => r.name.toUpperCase()===name.toUpperCase() && r.vehicle.toUpperCase()===vehicle.toUpperCase());
   const record = existingIdx>=0 ? list[existingIdx] : {
-    id: 'mon_' + Date.now(), status:'ONGOING', remarks:'', dateRelease:'', dateORCR:'', plateNumber:'', warrantyBooklet:''
+    id: 'mon_' + Date.now(), status:'ONGOING', remarks:'', dateRelease:'', dateORCR:'', plateNumber:'', warrantyBooklet:'', birthdate:''
   };
   record.name = name; record.contact = contact; record.address = address; record.vehicle = vehicle; record.dp = dp;
+  if(parsedBirthdate && !record.birthdate) record.birthdate = parsedBirthdate; // don't overwrite a birthdate already set manually
   if(existingIdx>=0) list[existingIdx] = record; else list.push(record);
   setMonitoring(list);
 }
@@ -1367,7 +1440,7 @@ function renderMonitoringTable(){
       <td><input type="text" class="mon-address" value="${escapeHtml(r.address)}"></td>
       <td><input type="text" class="mon-vehicle" value="${escapeHtml(r.vehicle)}"></td>
       <td><input type="text" class="mon-dp" value="${escapeHtml(r.dp)}"></td>
-      <td><input type="text" class="mon-birthdate" placeholder="MM/DD" value="${escapeHtml(r.birthdate||'')}"></td>
+      <td><input type="date" class="mon-birthdate" value="${escapeHtml(r.birthdate||'')}"></td>
       <td>
         <select class="mon-status" onchange="onMonitoringStatusChange(this)">
           <option value="ONGOING" ${r.status==='ONGOING'?'selected':''}>ONGOING</option>
@@ -1376,8 +1449,8 @@ function renderMonitoringTable(){
         </select>
       </td>
       <td><textarea class="mon-remarks">${escapeHtml(r.remarks)}</textarea></td>
-      <td><input type="text" class="mon-dateRelease" placeholder="MM/DD/YYYY" value="${escapeHtml(r.dateRelease)}"></td>
-      <td><input type="text" class="mon-dateORCR" placeholder="MM/DD/YYYY" value="${escapeHtml(r.dateORCR)}"></td>
+      <td><input type="date" class="mon-dateRelease" value="${escapeHtml(r.dateRelease)}"></td>
+      <td><input type="date" class="mon-dateORCR" value="${escapeHtml(r.dateORCR)}"></td>
       <td><input type="text" class="mon-plate" value="${escapeHtml(r.plateNumber)}"></td>
       <td><input type="text" class="mon-warranty" value="${escapeHtml(r.warrantyBooklet)}"></td>
       <td class="center"><button class="del-btn" onclick="this.closest('tr').remove()">✕</button></td>`;
@@ -1455,13 +1528,18 @@ function addBankRow(){
 }
 function clearAll(){
   if(!confirm('Start a new blank application? Any unsaved changes will be lost.')) return;
-  document.querySelectorAll('#sheet input[type=text], #sheet input[type=email]').forEach(el=>el.value='');
+  document.querySelectorAll('#sheet input[type=text], #sheet input[type=email], #sheet textarea').forEach(el=>{ el.value=''; if(el.tagName==='TEXTAREA') autoGrow(el); });
   document.querySelectorAll('#sheet input[type=checkbox]').forEach(el=>el.checked=false);
   document.getElementById('b_citizenship').value = 'FILIPINO';
   document.getElementById('c_citizenship').value = 'FILIPINO';
   document.getElementById('sigExec').value = 'ROMEO CUYACOT (MEONG)';
   sigDataUrl = null;
   document.getElementById('sigImgHolder').innerHTML = '';
+}
+
+function autoGrow(el){
+  el.style.height = 'auto';
+  el.style.height = el.scrollHeight + 'px';
 }
 
 // ---------------- PDF export (guaranteed single page + full color) ----------------
@@ -1471,6 +1549,7 @@ async function downloadPDF(){
   const [wmm, hmm] = paperSizesMM[paper];
   const sheet = document.getElementById('sheet');
 
+  document.querySelectorAll('#sheet textarea.addr-field').forEach(autoGrow);
   document.body.classList.add('pdf-mode');
   await new Promise(r=>setTimeout(r,50));
 
@@ -1519,11 +1598,11 @@ const PH_FIXED_HOLIDAYS = [
 // Malacañang proclamation and adjust PH_FIXED_HOLIDAYS above if you want to include them.
 
 function parseMonitoringDate(str){
-  // Expects MM/DD/YYYY; returns Date or null
+  // Native <input type="date"> gives YYYY-MM-DD; returns Date or null
   if(!str) return null;
-  const m = str.trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  const m = str.trim().match(/^(\d{4})-(\d{2})-(\d{2})$/);
   if(!m) return null;
-  return new Date(parseInt(m[3]), parseInt(m[1])-1, parseInt(m[2]));
+  return new Date(parseInt(m[1]), parseInt(m[2])-1, parseInt(m[3]));
 }
 function sameDay(a,b){ return a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate(); }
 
@@ -1551,10 +1630,10 @@ function computeTodaysAlerts(){
     }
   });
 
-  // Birthday (MM/DD stored on the record)
+  // Birthday (stored as YYYY-MM-DD from the native date picker)
   list.forEach(r=>{
     if(r.birthdate){
-      const m = r.birthdate.trim().match(/^(\d{1,2})\/(\d{1,2})$/);
+      const m = r.birthdate.trim().match(/^\d{4}-(\d{2})-(\d{2})$/);
       if(m && parseInt(m[1])===today.getMonth()+1 && parseInt(m[2])===today.getDate()){
         alerts.push({type:'birthday', text: `🎂 Birthday ngayon ni ${r.name || 'client'}!`, clients:[r]});
       }
@@ -1596,8 +1675,16 @@ function fillTemplate(tpl, r){
 }
 
 const MESSAGE_TEMPLATES = [
+  { title: '✅ Approved', body:
+`Magandang balita po {NAME}! Na-approve na po ang inyong loan application para sa {VEHICLE}. Kokontakin namin kayo para sa susunod na steps at signing ng documents. Maraming salamat po sa tiwala! — {AGENT}, {DEALER}` },
+  { title: '❌ Declined', body:
+`Magandang araw po {NAME}. Sa kasamaang palad, hindi po na-approve ang inyong loan application para sa {VEHICLE} sa ngayon. Kung gusto niyo pong pag-usapan ang ibang options (ibang bank, mas mataas na down payment, o ibang unit), narito lang po ako para tumulong. — {AGENT}, {DEALER}` },
+  { title: '📞 General Follow-up', body:
+`Magandang araw po {NAME}! Ito po si {AGENT} ng {DEALER}. Sumusundan ko lang po ang status ng inyong application/unit para sa {VEHICLE}. May tanong po ba kayo o kailangan ng tulong? — {AGENT}` },
   { title: '3-Day Follow-up (After Release)', body:
 `Magandang araw po {NAME}! Ito po si {AGENT} ng {DEALER}. Kamusta na po ang experience niyo sa inyong bagong {VEHICLE}? Kung may tanong o concern po kayo, huwag mag-atubiling mag-message lang po. Salamat sa tiwala! 🚗✨` },
+  { title: '📄 ORCR / Plate Number Update', body:
+`Magandang araw po {NAME}! Update lang po sa ORCR at plate number ng inyong {VEHICLE} ({PLATE}). Sasabihan po namin kayo kapag ready na para i-release o i-pick up. Salamat po sa paghihintay! — {AGENT}, {DEALER}` },
   { title: 'Birthday Greeting', body:
 `Maligayang Kaarawan po, {NAME}! 🎉 Nawa'y puno ng biyaya at kasiyahan ang taong ito para sa inyo. Salamat sa patuloy na tiwala sa {DEALER}. — {AGENT}` },
   { title: 'Philippine Holiday Greeting', body:
@@ -1779,28 +1866,28 @@ function renderDashboard(){
   const approved = monitoring.filter(r=>r.status==='APPROVED').length;
   const declined = monitoring.filter(r=>r.status==='DECLINED').length;
 
-  // estimate pipeline value using bulletin SRP matched to each monitoring record's vehicle
-  let pipelineValue = 0;
-  monitoring.forEach(r=>{
-    if(r.status==='DECLINED') return;
-    const v = vehicles.find(x=>x.unit.toUpperCase()===String(r.vehicle||'').toUpperCase());
-    if(v) pipelineValue += v.srp;
-  });
-
   const kpis = [
-    {label:'Total Clients', value: monitoring.length, sub:'sa Monitoring', accent:'navy'},
-    {label:'Ongoing', value: ongoing, sub:'currently processing', accent:'gold'},
-    {label:'Approved', value: approved, sub:'completed deals', accent:'green'},
-    {label:'Declined', value: declined, sub:'did not push through', accent:'red'},
-    {label:'Saved Applications', value: appsList.length, sub:'application forms filed', accent:'navy'},
-    {label:'Est. Pipeline Value', value: '₱' + pipelineValue.toLocaleString('en-PH'), sub:'Ongoing + Approved, based on SRP', accent:'gold'},
+    {label:'Total Clients', value: monitoring.length, sub:'sa Monitoring', accent:'navy', goto:'monitoring'},
+    {label:'Ongoing', value: ongoing, sub:'currently processing', accent:'gold', goto:'monitoring'},
+    {label:'Approved', value: approved, sub:'completed deals', accent:'green', goto:'monitoring'},
+    {label:'Declined', value: declined, sub:'did not push through', accent:'red', goto:'monitoring'},
+    {label:'Saved Applications', value: appsList.length, sub:'application forms filed', accent:'navy', goto:'saved'},
   ];
   document.getElementById('kpiGrid').innerHTML = kpis.map(k=>`
-    <div class="kpi-card accent-${k.accent}">
+    <div class="kpi-card accent-${k.accent}" style="cursor:pointer;" onclick="switchTab('${k.goto}')">
       <div class="kpi-label">${escapeHtml(k.label)}</div>
       <div class="kpi-value">${typeof k.value==='number' ? k.value.toLocaleString('en-US') : k.value}</div>
       <div class="kpi-sub">${escapeHtml(k.sub)}</div>
     </div>`).join('');
+
+  // Reminders (same alert logic used in the Messages tab: holidays, 3-day follow-up, birthdays)
+  const alerts = computeTodaysAlerts();
+  const remindersHolder = document.getElementById('dashReminders');
+  if(alerts.length===0){
+    remindersHolder.innerHTML = '<p style="color:#8a93a3; font-size:12px;">Wala pang reminders ngayon (walang holiday, 3-day follow-up, o birthday na tumutugma sa mga naka-save na client).</p>';
+  } else {
+    remindersHolder.innerHTML = alerts.map(a=>`<div class="alert-box ${a.type==='holiday'?'holiday':''}" style="cursor:pointer;" onclick="switchTab('messages')">${escapeHtml(a.text)}</div>`).join('');
+  }
 
   // status chart
   const ctx = document.getElementById('statusChart');
@@ -1812,18 +1899,22 @@ function renderDashboard(){
         labels:['Ongoing','Approved','Declined'],
         datasets:[{ data:[ongoing, approved, declined], backgroundColor:['#c3a26b','#3a7a54','#a12626'] }]
       },
-      options:{ responsive:true, plugins:{ legend:{ position:'bottom' } } }
+      options:{
+        responsive:true,
+        plugins:{ legend:{ position:'bottom' } },
+        onClick: () => switchTab('monitoring')
+      }
     });
   }
 
-  // recent activity (last 6 saved applications)
+  // recent activity (last 6 saved applications) — click to open that application
   const recent = appsList.sort((a,b)=> new Date(b.savedAt)-new Date(a.savedAt)).slice(0,6);
   const recentHolder = document.getElementById('recentActivity');
   if(recent.length===0){
     recentHolder.innerHTML = '<p style="color:#8a93a3; font-size:12px;">Wala pang saved applications.</p>';
   } else {
     recentHolder.innerHTML = recent.map(r=>`
-      <div class="activity-row">
+      <div class="activity-row" style="cursor:pointer;" onclick="loadApplication('${r.id}')">
         <span class="a-name">${escapeHtml(r.title)}</span>
         <span class="a-meta">${new Date(r.savedAt).toLocaleDateString('en-PH')}</span>
       </div>`).join('');
@@ -1938,8 +2029,213 @@ async function githubLoad(){
   }
 }
 
+// ---------------- Vehicle Details (Philippine market) ----------------
+// Sourced from Mitsubishi Motors Philippines Corporation (MMPC) official variant data
+// and PH auto-industry references (as of 2026 model year). Trims within the same
+// nameplate share the same platform/engine/suspension/brake architecture unless noted.
+// Pros/Cons and brand comparisons reflect general PH market positioning, not any one
+// dealer's opinion — meant as a quick talking-points reference for the sales team.
+const SPECS_DB = {
+  MIRAGE: {
+    label: 'Mirage / Mirage G4',
+    groups: {
+      'Engine & Transmission': {
+        'Engine': '1.2L 3-Cylinder MIVEC (3A92)',
+        'Displacement': '1,193 cc',
+        'Max Power': '78 hp @ 6,000 rpm',
+        'Max Torque': '100 Nm @ 4,000 rpm',
+        'Transmission': '5-speed MT or INVECS-III CVT'
+      },
+      'Suspension & Brakes': {
+        'Front Suspension': 'MacPherson Strut w/ Coil Spring & Stabilizer',
+        'Rear Suspension': 'Torsion Beam',
+        'Front Brakes': '14-in Ventilated Disc',
+        'Rear Brakes': '8-in Leading/Trailing Drum',
+        'Wheels': '15-inch Alloy',
+        'Tires': '185/55 R15'
+      },
+      'Colors (PH Market)': { 'Available Colors': 'Red Metallic, Cool Silver Metallic, White Solid, Titanium Gray Metallic' }
+    },
+    features: ['7-inch Smartphone Display Link', 'Dual SRS Airbags', 'ABS w/ EBD', 'Keyless Entry (GLS)', 'Fuel-efficient 3-cylinder engine'],
+    pros: ['Very fuel-efficient in the segment', 'Low maintenance cost, widely available parts', 'Easy to drive and park in the city', 'Most affordable Mitsubishi PH offering'],
+    cons: ['Smaller/less powerful engine than most rivals', 'Fewer safety features on base variants', 'Rear drum brakes vs rivals\' rear discs on some competitors'],
+    comparison: 'vs Toyota Vios / Wigo: the Mirage/Mirage G4 usually undercuts Vios on price and matches Wigo\'s fuel economy, but the Vios offers a roomier cabin and more familiar resale value. vs Honda Brio: similar city-car segment — Brio has a peppier engine feel, while the Mirage line counters with a lower price and Mitsubishi\'s reputation for reliability.'
+  },
+  XPANDER: {
+    label: 'Xpander / Xpander Cross',
+    groups: {
+      'Engine & Transmission': {
+        'Engine': '1.5L 4-Cylinder MIVEC (4A91)',
+        'Displacement': '1,499 cc',
+        'Max Power': '105 PS @ 6,000 rpm',
+        'Max Torque': '141 Nm @ 4,000 rpm',
+        'Transmission': '5-speed MT (GLX) or 4-speed AT (GLX/GLS/Cross)'
+      },
+      'Dimensions': { 'Length': '4,595 mm', 'Width': '1,750 mm (1,790 mm Cross)', 'Height': '1,750 mm', 'Wheelbase': '2,775 mm', 'Ground Clearance': '225 mm' },
+      'Suspension & Brakes': {
+        'Front Suspension': 'Independent MacPherson Strut', 'Rear Suspension': 'Torsion Beam Axle',
+        'Front Brakes': 'Ventilated Disc', 'Rear Brakes': 'Drum', 'Wheels': '17-inch Alloy', 'Tires': '205/55 R17'
+      },
+      'Colors (PH Market)': {
+        'GLX': 'Graphite Gray Metallic, Blade Silver Metallic, Jet Black Mica',
+        'GLS': 'Red Metallic, Green Bronze Metallic, Quartz White Pearl, Graphite Gray Metallic',
+        'Cross': 'Green Bronze Metallic w/ Black Roof, Quartz White Pearl w/ Black Roof, Sunrise Orange Metallic w/ Black Roof'
+      }
+    },
+    features: ['360° Multi-Around Monitor (GLS/Cross)', '10-inch touchscreen w/ wireless Apple CarPlay (GLS/Cross)', '8-inch LCD Instrument Cluster (GLS/Cross)', 'Active Yaw Control', '60:40 2nd-row / 50:50 3rd-row split-fold seats', 'Best-in-class 225mm ground clearance'],
+    pros: ['Class-leading interior space for a 7-seater MPV', 'Best-selling MPV in PH — strong resale value', 'High ground clearance handles floods/bad roads well', 'Wide dealer & service network nationwide'],
+    cons: ['Still uses an older 4-speed automatic (rivals now use CVT)', 'Only 2 airbags on base variants', 'Rear drum brakes across the range'],
+    comparison: 'vs Toyota Avanza/Veloz: the Xpander offers a more premium cabin feel and higher ground clearance, while the Veloz counters with more airbags and a CVT. vs Suzuki Ertiga: Ertiga is cheaper and has a hybrid-assist option, but the Xpander\'s interior quality and MMPC\'s service reputation keep it the class leader in PH sales.'
+  },
+  XFORCE: {
+    label: 'Xforce',
+    groups: {
+      'Engine & Transmission': { 'Engine': '1.5L 4-Cylinder MIVEC (4A91)', 'Displacement': '1,499 cc', 'Max Power': '105 PS @ 6,000 rpm', 'Max Torque': '141 Nm @ 4,000 rpm', 'Transmission': 'CVT (FWD)' },
+      'Dimensions': { 'Length': '4,390 mm', 'Width': '1,810 mm', 'Height': '1,660 mm', 'Wheelbase': '2,650 mm', 'Ground Clearance': '193 mm' },
+      'Suspension & Brakes': { 'Front Suspension': 'MacPherson Strut w/ Coil Spring & Stabilizer', 'Rear Suspension': 'Torsion Beam', 'Brakes': 'Disc, all four corners', 'Wheels': '18-inch Dual-Tone Alloy', 'Tires': '225/50 R18' },
+      'Colors (PH Market)': { 'Available Colors': 'Quartz White Pearl, Graphite Gray Metallic, Energetic Yellow Metallic, Blade Silver Metallic' }
+    },
+    features: ['12.3-inch touchscreen w/ wireless Apple CarPlay/Android Auto', '8-speaker Yamaha Premium sound system', 'GT trim: forward collision mitigation, blind-spot warning, rear cross-traffic alert', 'Ambient lighting & wireless charger (GT)', 'Active Yaw Control'],
+    pros: ['4-wheel disc brakes standard across the range', 'Distinctive, upscale styling for the price', 'GT trim brings semi-ADAS features rare in this segment', 'Roomy for a subcompact crossover'],
+    cons: ['No AWD/4WD option — FWD only', 'CVT can feel less engaging than a torque-converter AT', 'Ground clearance lower than the Xpander/Destinator'],
+    comparison: 'vs Toyota Yaris Cross: Yaris Cross has stronger resale and a hybrid variant, while the Xforce counters with sharper styling and more standard tech at a similar price. vs Honda WR-V: WR-V is more conservative/practical, the Xforce feels sportier and better equipped on the top GT trim.'
+  },
+  DESTINATOR: {
+    label: 'Destinator',
+    groups: {
+      'Engine & Transmission': { 'Engine': '1.5L Turbo 4-Cylinder MIVEC (4B40)', 'Displacement': '1,499 cc', 'Max Power': 'up to 163 PS', 'Max Torque': '250 Nm', 'Transmission': 'CVT (FWD)' },
+      'Dimensions': { 'Length': '4,680 mm', 'Width': '1,840 mm', 'Height': '1,780 mm', 'Wheelbase': '2,815 mm', 'Ground Clearance': '214 mm' },
+      'Suspension & Brakes': { 'Front Suspension': 'MacPherson Strut w/ Coil Spring & Stabilizer', 'Rear Suspension': 'Torsion Beam', 'Brakes': 'Disc, all four corners', 'Wheels': '18-inch Alloy (two-tone on higher trims)', 'Tires': '225/55 R18' },
+      'Colors (PH Market)': { 'Available Colors': 'Blade Silver Metallic, Graphite Gray Metallic, Jet Black Mica, Lunar Blue Mica w/ Black Roof, Quartz White Pearl w/ Black Roof, Red Metallic' }
+    },
+    features: ['Panoramic sunroof (GT)', '64-color ambient lighting (GT)', '2-tone leather seats w/ Heat Guard coating (GT)', 'Hands-free power tailgate (GT)', '40:20:40 split-fold 2nd row', '5 drive modes'],
+    pros: ['Turbocharged engine gives it strong power for its size', 'Sits neatly between the Xforce and Montero Sport in price/size', '7-seat flexibility with SUV road presence', '4-wheel disc brakes'],
+    cons: ['Turbo-CVT combo is newer/less proven long-term vs rivals\' conventional ATs', 'No 4WD option', 'Relatively new nameplate — fewer used-market data points'],
+    comparison: 'vs Toyota Fortuner: Fortuner has 4WD and a diesel option for heavier duty use; the Destinator counters with turbo-gas performance, more tech, and a lower price point. vs Honda BR-V/N7X: those are smaller and simpler — the Destinator offers more power and a more premium cabin.'
+  },
+  TRITON: {
+    label: 'Triton',
+    groups: {
+      'Engine & Transmission': { 'Engine': '2.4L Turbodiesel (4N16)', 'Displacement': '2,442 cc', 'Max Power': '181 PS (GLX-GLS), 201 PS (Athlete)', 'Max Torque': '430 Nm (GLX-GLS), 470 Nm (Athlete)', 'Transmission': '6-speed MT or 6-speed AT, Super Select 4WD-II on 4x4 variants' },
+      'Dimensions': { 'Length': '5,360 mm', 'Width': '1,930 mm', 'Wheelbase': '3,130 mm', 'Ground Clearance': 'up to 228 mm' },
+      'Suspension & Brakes': { 'Front Suspension': 'Double Wishbone w/ Coil Spring', 'Rear Suspension': 'Rigid Axle, Leaf Spring', 'Front Brakes': 'Ventilated Disc', 'Rear Brakes': 'Leading/Trailing Drum', 'Wheels': '18-inch Alloy (16-in steel on base trims)', 'Tires': 'up to 265/60 R18 (Athlete)' },
+      'Colors (PH Market)': { 'Available Colors': 'Check current dealer color chart — varies by trim (GLX/GLS/Athlete)' }
+    },
+    features: ['Super Select 4WD-II w/ active brake-controlled LSD (4x4)', 'Active Yaw Control (4WD variants)', '360° camera (Athlete)', '7 drive modes (Athlete)', 'New ladder frame w/ 60% more torsional rigidity'],
+    pros: ['Strong torque figures, great for towing/hauling', 'Well-regarded off-road system on 4x4 variants', 'Won the 2025 Asia Cross Country Rally, boosting durability reputation', 'Wide range of body/trim configurations'],
+    cons: ['Rear drum brakes on most variants', 'Ride can feel firm unloaded (leaf-spring rear)', 'Top Athlete trim pricing approaches midsize-SUV territory'],
+    comparison: 'vs Toyota Hilux: Hilux has stronger resale and a bigger service network, but the Triton counters with more torque and a more modern cabin/tech package. vs Ford Ranger: Ranger offers a punchier bi-turbo option and more ADAS, while the Triton is generally the more affordable, fuel-efficient choice.'
+  },
+  MONTERO: {
+    label: 'Montero Sport',
+    groups: {
+      'Engine & Transmission': { 'Engine': '2.4L Turbodiesel w/ VG Turbo & MIVEC (4N15)', 'Displacement': '2,398 cc', 'Max Power': '179 hp', 'Max Torque': '430 Nm', 'Transmission': '8-speed AT or 6-speed MT, 2WD or 4WD' },
+      'Dimensions': { 'Length': '4,825 mm', 'Width': '1,815 mm', 'Height': '1,835 mm', 'Wheelbase': '2,800 mm' },
+      'Suspension & Brakes': { 'Front Suspension': 'Double Wishbone w/ Coil Spring & Stabilizer', 'Rear Suspension': '3-Link Coil Spring w/ Stabilizer', 'Brakes': 'Disc, all four corners', 'Wheels': '18-inch Alloy' },
+      'Colors (PH Market)': { 'Available Colors': 'Jet Black Mica, Diamond White (colors vary by trim/model year)' }
+    },
+    features: ['8-speed automatic (segment-leading gear count)', '360° camera', 'Up to 7 airbags (Black Series/GLS)', 'Panoramic sunroof (higher trims)', 'Ladder-frame body-on-frame construction'],
+    pros: ['Proven ladder-frame toughness for rough roads/towing', 'Smooth 8-speed automatic is a segment highlight', 'Strong resale value in the PH midsize SUV segment', 'Roomy 7-seat cabin with flexible cargo config'],
+    cons: ['Diesel clatter more noticeable than car-based rivals', 'Fuel economy trails car-based SUVs', 'Turning radius larger due to ladder-frame body-on-frame design'],
+    comparison: 'vs Toyota Fortuner: Fortuner has stronger brand resale and wider parts availability; the Montero Sport counters with a smoother 8-speed AT and better low-end torque delivery. vs Ford Everest: Everest offers more tech/ADAS at a higher price, while the Montero Sport stays more accessible.'
+  },
+  L300: {
+    label: 'L300 / Versa Van',
+    groups: {
+      'Engine & Transmission': { 'Engine': '2.2L Turbo-Intercooled Diesel (4N14, Euro 4)', 'Displacement': '2,268 cc', 'Max Power': '98 hp @ 3,500 rpm', 'Max Torque': '200 Nm @ 3,500 rpm', 'Transmission': '5-speed Manual' },
+      'Dimensions': { 'Length': '4,440 mm', 'Width': '1,695 mm', 'Height': '1,915 mm', 'Wheelbase': '2,350 mm', 'Ground Clearance': '195 mm' },
+      'Suspension & Brakes': { 'Front Suspension': 'Independent Wishbone w/ Coil Spring', 'Rear Suspension': 'Semi-Elliptic Leaf Spring', 'Front Brakes': '10-in Ventilated Disc', 'Rear Brakes': '10-in Leading/Trailing Drum', 'Wheels': '14x5-inch Steel', 'Tires': '185 R14C-8PR' },
+      'Colors (PH Market)': { 'Available Colors': 'White (standard fleet/commercial color)' }
+    },
+    features: ['Up to 17-seat FB body configuration', 'Cab & chassis and freezer-van body options', 'Simple, rugged mechanicals for easy field repair', 'High cab for better road visibility'],
+    pros: ['Decades-long track record for durability in PH', 'Very low cost of ownership and parts', 'Flexible body configurations for business use', 'Strong resale as a commercial workhorse'],
+    cons: ['Basic safety features vs modern passenger vans', 'Manual transmission only', 'Ride comfort is utilitarian, not passenger-car-like'],
+    comparison: 'vs Hyundai H-100: H-100 has a slight power edge, but the L300\'s nationwide MMPC parts/service network and decades of fleet trust keep it the default choice for many PH businesses. vs Foton Gratour: Gratour undercuts on price, while the L300 wins on long-term reliability reputation.'
+  }
+};
+
+function getSpecsForUnit(unitName){
+  const u = (unitName||'').toUpperCase();
+  if(u.includes('MIRAGE')) return SPECS_DB.MIRAGE;
+  if(u.includes('XPANDER')) return SPECS_DB.XPANDER;
+  if(u.includes('XFORCE')) return SPECS_DB.XFORCE;
+  if(u.includes('DESTINATOR')) return SPECS_DB.DESTINATOR;
+  if(u.includes('TRITON')) return SPECS_DB.TRITON;
+  if(u.includes('MONTERO')) return SPECS_DB.MONTERO;
+  if(u.includes('L300') || u.includes('VERSA')) return SPECS_DB.L300;
+  return null;
+}
+
+// ---------------- Vehicle Details tab ----------------
+function refreshDetailsPicker(){
+  const sel = document.getElementById('detailsVehicleSelect');
+  const current = sel.value;
+  sel.innerHTML = '<option value="">— Choose a unit —</option>';
+  vehicles.forEach((v, idx)=>{
+    const o = document.createElement('option');
+    o.value = idx; o.textContent = v.unit;
+    sel.appendChild(o);
+  });
+  if(current) sel.value = current;
+  renderVehicleDetails();
+}
+
+function renderVehicleDetails(){
+  const sel = document.getElementById('detailsVehicleSelect');
+  const body = document.getElementById('detailsBody');
+  if(sel.value===''){
+    body.innerHTML = '<p class="hint" style="max-width:none;">Pumili ng vehicle sa itaas para makita ang specs, features, pros &amp; cons, at paghahambing sa ibang brands.</p>';
+    return;
+  }
+  const v = vehicles[parseInt(sel.value,10)];
+  const specs = getSpecsForUnit(v.unit);
+  if(!specs){
+    body.innerHTML = `<p class="hint" style="max-width:none;">Wala pang naka-file na detalyadong specs para sa <b>${escapeHtml(v.unit)}</b>. Pwede itong idagdag sa SPECS_DB sa code (Mirage/Xpander/Xforce/Destinator/Triton/Montero/L300 lang ang naka-cover ngayon).</p>`;
+    return;
+  }
+  let html = `<h2 style="margin-top:0;">${escapeHtml(v.unit)}</h2>`;
+  html += Object.keys(specs.groups).map(groupName=>{
+    const rows = specs.groups[groupName];
+    return `<div class="specs-group"><h4>${escapeHtml(groupName)}</h4>` +
+      Object.keys(rows).map(k=>`<div class="specs-row"><span>${escapeHtml(k)}</span><span>${escapeHtml(rows[k])}</span></div>`).join('') +
+      `</div>`;
+  }).join('');
+  if(specs.features){
+    html += `<div class="specs-group"><h4>Key Features</h4><ul style="margin:0; padding-left:18px; font-size:12px;">` +
+      specs.features.map(f=>`<li>${escapeHtml(f)}</li>`).join('') + `</ul></div>`;
+  }
+  if(specs.pros || specs.cons){
+    html += `<div class="specs-group"><h4>Pros &amp; Cons</h4><div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">`;
+    html += `<div><b style="color:#3a7a54; font-size:11.5px;">✓ PROS</b><ul style="margin:6px 0 0 0; padding-left:16px; font-size:12px;">` + (specs.pros||[]).map(p=>`<li>${escapeHtml(p)}</li>`).join('') + `</ul></div>`;
+    html += `<div><b style="color:#a12626; font-size:11.5px;">✕ CONS</b><ul style="margin:6px 0 0 0; padding-left:16px; font-size:12px;">` + (specs.cons||[]).map(c=>`<li>${escapeHtml(c)}</li>`).join('') + `</ul></div>`;
+    html += `</div></div>`;
+  }
+  if(specs.comparison){
+    html += `<div class="specs-group"><h4>Mitsubishi vs Other Brands</h4><p style="font-size:12px; line-height:1.6; margin:0;">${escapeHtml(specs.comparison)}</p></div>`;
+  }
+  body.innerHTML = html;
+}
+
+function openVehicleDetailsForQuote(){
+  let unit = '';
+  if(quoteCustomMode){
+    unit = document.getElementById('cModel').value.trim();
+  } else if(quoteSelectedIdx!==null && vehicles[quoteSelectedIdx]){
+    unit = vehicles[quoteSelectedIdx].unit;
+  }
+  switchTab('details');
+  if(unit){
+    const idx = vehicles.findIndex(v=>v.unit===unit);
+    if(idx>=0){
+      document.getElementById('detailsVehicleSelect').value = idx;
+      renderVehicleDetails();
+    }
+  }
+}
+
 loadBulletin();
 initQuoteTab();
+if(lsGet('cl_sidebar_hidden', false)) document.body.classList.add('sidebar-hidden');
 switchTab('dashboard');
 </script>
 
