@@ -36,7 +36,9 @@
   .toolbar select{background:#fff; color:#111; border:1px solid #999;}
   .hint{max-width:1000px; margin:0 auto 10px auto; font-size:11.5px; color:#444; background:#fffbe0; border:1px solid #e0d38a; padding:6px 10px; border-radius:4px;}
   .sheet{max-width:1000px; margin:0 auto; background:#fff; padding:12px 16px 18px 16px; border:1px solid #ccc;}
+  .sheet.borders-off table, .sheet.borders-off td, .sheet.borders-off th{border-color:transparent !important;}
   table{width:100%; border-collapse:collapse;}
+  .sheet table table{table-layout:fixed; width:100%;}
   td, th{border:1px solid var(--line); padding:4px 6px; vertical-align:top;}
   .app-header{display:flex; align-items:stretch; border-bottom:2px solid var(--orange); margin-bottom:0;}
   .ah-brand{flex:1.7; display:flex; flex-direction:column; justify-content:center; padding:8px 12px;}
@@ -59,7 +61,7 @@
   .bold{font-weight:bold;}
   .small-note{font-size:9px; line-height:1.3; color:#222;}
   .sig-row td{border:none; text-align:center; padding-top:6px; vertical-align:bottom;}
-  .sig-line{border-top:1px solid #000; margin:0 20px; padding-top:2px; font-size:10.5px; display:flex; flex-direction:column; align-items:center;}
+  .sig-line{border-top:2px solid #000 !important; margin:10px 20px 0 20px; padding-top:3px; font-size:10.5px; display:flex; flex-direction:column; align-items:center;}
   .sig-line input[type="text"]{text-align:center;}
   .sig-line input[type="text"]{font-size:9.5px !important; letter-spacing:0; white-space:normal; overflow:visible; text-overflow:clip; height:auto; padding:2px 0;}
   .sig-img-holder{height:42px; display:flex; align-items:center; justify-content:center;}
@@ -326,6 +328,15 @@
   <button class="navy" onclick="openSigModal()">✍️ Add Signature</button>
   <button class="secondary" onclick="clearAll()">New / Clear</button>
   <button onclick="saveApplication()">💾 Save Application</button>
+  <button class="navy" onclick="toggleDesignMode()" id="designModeBtn">🎨 Design Mode</button>
+</div>
+<div class="toolbar no-print" id="designToolbar" style="display:none; background:#2c2005; border-radius:6px; padding:8px 12px;">
+  <span style="color:#ecdfc4; font-size:12px; font-weight:bold;">Design Mode:</span>
+  <button class="secondary" onclick="adjustFontSize(-1)">A-</button>
+  <button class="secondary" onclick="adjustFontSize(1)">A+</button>
+  <button class="secondary" onclick="toggleBorders()">Toggle Borders</button>
+  <button class="secondary" onclick="addRowToLastTable()">+ Add Row</button>
+  <span style="color:#cfc09a; font-size:11px;">Tip: i-click ang kahit anong label (hal. "Vehicle:") para palitan ang pangalan nito.</span>
 </div>
 <div class="toolbar no-print" id="formToolbar3">
   <button class="secondary" onclick="exportBackup()">⬇️ Export Backup (.json)</button>
@@ -349,7 +360,7 @@
       <input type="text" id="bestTime" placeholder="e.g. ANYTIME" style="text-align:center;font-weight:bold;">
     </div>
     <div class="ah-banner">
-      <div class="banner">Citimotors Las Piñas Best Offer by Romeo - Meong</div>
+      <div class="banner">Auto Loan Application</div>
       <div class="note">Important Information: Pls. fill out all entries in the form to
       ensure rapid process of your loan application. Incomplete
       information will cause delay in processing</div>
@@ -388,8 +399,8 @@
       <td style="width:50%;"><span class="label">Last Name/ First Name / Middle Name (Co-Borrower):</span><input type="text" id="c_name"></td>
     </tr>
     <tr>
-      <td><span class="label">Relationship to Borrower (if co-borrower):</span><input type="text" id="b_rel"></td>
-      <td><span class="label">Relationship to Borrower:</span><input type="text" id="c_rel"></td>
+      <td><span class="label">Place of Birth:</span><input type="text" id="b_rel"></td>
+      <td><span class="label">Place of Birth:</span><input type="text" id="c_rel"></td>
     </tr>
     <tr>
       <td style="width:50%;"><span class="label">Birthdate:</span><input type="text" id="b_bday" placeholder="e.g. July 13, 1989"></td>
@@ -958,6 +969,7 @@ function switchTab(name){
   document.getElementById('formToolbar').style.display = (name==='form') ? 'flex' : 'none';
   document.getElementById('formToolbar2').style.display = (name==='form') ? 'block' : 'none';
   document.getElementById('formToolbar3').style.display = (name==='form') ? 'flex' : 'none';
+  if(name!=='form'){ document.getElementById('designToolbar').style.display = 'none'; disableDesignMode(); }
   if(name==='saved') refreshSavedList();
   if(name==='monitoring') renderMonitoringTable();
   if(name==='quote'){ refreshBulletinPicker(); renderQuoteSheet(); }
@@ -1525,6 +1537,9 @@ function importBackup(evt){
       if(backup.bulletin) lsSet('cl_bulletin_vehicles', backup.bulletin);
       if(backup.monitoring) lsSet('cl_monitoring', backup.monitoring);
       loadBulletin();
+      refreshSavedList();
+      renderMonitoringTable();
+      renderDashboard();
       alert('Na-import na ang backup. Puntahan ang "Saved Applications" o "Monitoring" tab para makita.');
     }catch(err){
       alert('Invalid backup file.');
@@ -1777,18 +1792,24 @@ function startSyncSend(){
   display.innerHTML = '';
   const qrDiv = document.createElement('div');
   display.appendChild(qrDiv);
-  const qr = new QRCode(qrDiv, { width:260, height:260, correctLevel: QRCode.CorrectLevel.L });
 
-  let frameIdx = 0;
-  clearInterval(syncSendTimer);
-  function showFrame(){
-    qr.clear();
-    qr.makeCode(frames[frameIdx]);
-    document.getElementById('sendProgress').textContent = `Frame ${frameIdx+1} / ${frames.length} — panatilihing bukas hanggang na-scan lahat sa kabilang gadget.`;
-    frameIdx = (frameIdx+1) % frames.length;
+  try{
+    const qr = new QRCode(qrDiv, { text: frames[0], width:260, height:260, correctLevel: QRCode.CorrectLevel.L });
+
+    let frameIdx = 0;
+    clearInterval(syncSendTimer);
+    function showFrame(){
+      qr.clear();
+      qr.makeCode(frames[frameIdx]);
+      document.getElementById('sendProgress').textContent = `Frame ${frameIdx+1} / ${frames.length} — panatilihing bukas hanggang na-scan lahat sa kabilang gadget.`;
+      frameIdx = (frameIdx+1) % frames.length;
+    }
+    frameIdx = 1 % frames.length;
+    document.getElementById('sendProgress').textContent = `Frame 1 / ${frames.length} — panatilihing bukas hanggang na-scan lahat sa kabilang gadget.`;
+    syncSendTimer = setInterval(showFrame, frames.length>1 ? 700 : 999999);
+  } catch(e){
+    display.innerHTML = '<p style="color:#a12626;">Hindi ma-generate ang QR code. Error: ' + escapeHtml(e.message||String(e)) + '</p>';
   }
-  showFrame();
-  syncSendTimer = setInterval(showFrame, frames.length>1 ? 700 : 999999);
 }
 
 function startSyncScan(){
@@ -1855,6 +1876,9 @@ function finishSyncScan(jsonStr){
       if(backup.bulletin) lsSet('cl_bulletin_vehicles', backup.bulletin);
     }
     loadBulletin();
+    refreshSavedList();
+    renderMonitoringTable();
+    renderDashboard();
     document.getElementById('scanProgress').textContent = '✅ Na-sync na ang data!';
     alert('Tagumpay ang pag-sync! Tingnan ang Saved Applications / Monitoring tabs.');
   }catch(e){
@@ -2041,9 +2065,12 @@ async function githubLoad(){
       if(payload.bulletin) lsSet('cl_bulletin_vehicles', payload.bulletin);
     }
     loadBulletin();
-    ghShowStatus('✅ Na-load na ang data mula sa GitHub!', true);
+    refreshSavedList();
+    renderMonitoringTable();
+    renderDashboard();
+    ghShowStatus('✅ Na-load na ang data mula sa GitHub! Puntahan ang Saved Applications / Monitoring tabs para makita.', true);
   }catch(e){
-    ghShowStatus('May error habang kinukuha ang data. Suriin ang token/repo/path.', false);
+    ghShowStatus('May error habang kinukuha ang data: ' + (e.message || String(e)), false);
   }
 }
 
@@ -2078,22 +2105,40 @@ const SPECS_DB = {
     pros: ['Very fuel-efficient in the segment', 'Low maintenance cost, widely available parts', 'Easy to drive and park in the city', 'Most affordable Mitsubishi PH offering'],
     cons: ['Smaller/less powerful engine than most rivals', 'Fewer safety features on base variants', 'Rear drum brakes vs rivals\' rear discs on some competitors'],
     comparison: 'vs Toyota Vios / Wigo: the Mirage/Mirage G4 usually undercuts Vios on price and matches Wigo\'s fuel economy, but the Vios offers a roomier cabin and more familiar resale value. vs Honda Brio: similar city-car segment — Brio has a peppier engine feel, while the Mirage line counters with a lower price and Mitsubishi\'s reputation for reliability.',
-    rival: {
-      name: 'Toyota Vios 1.3 XLE CVT',
-      ownName: 'Mirage G4 GLS CVT',
-      ownSpecs: {
-        'Price': '₱937,000', 'Engine': '1.2L 3-Cylinder DOHC 12V MIVEC', 'Displacement': '1,193 cc',
-        'Max Power': '76.9 hp @ 6,000 rpm', 'Max Torque': '100 Nm @ 4,000 rpm', 'Transmission': 'CVT',
-        'Fuel Tank': '42 L', 'Ground Clearance': '170 mm', 'Wheelbase': '2,550 mm', 'Tires': '185/55 R15',
-        'Length x Width x Height': '4,305 x 1,670 x 1,485 mm'
+    rivals: [
+      {
+        name: 'Toyota Vios 1.3 XLE CVT',
+        ownName: 'Mirage G4 GLS CVT',
+        ownSpecs: {
+          'Price': '₱937,000', 'Engine': '1.2L 3-Cylinder DOHC 12V MIVEC', 'Displacement': '1,193 cc',
+          'Max Power': '76.9 hp @ 6,000 rpm', 'Max Torque': '100 Nm @ 4,000 rpm', 'Transmission': 'CVT',
+          'Fuel Tank': '42 L', 'Ground Clearance': '170 mm', 'Wheelbase': '2,550 mm', 'Tires': '185/55 R15',
+          'Length x Width x Height': '4,305 x 1,670 x 1,485 mm'
+        },
+        specs: {
+          'Price': '₱908,000', 'Engine': '1.3L 4-Cylinder DOHC 16V', 'Displacement': '1,329 cc',
+          'Max Power': '97.6 hp @ 6,000 rpm', 'Max Torque': '123 Nm @ 4,200 rpm', 'Transmission': 'CVT',
+          'Fuel Tank': '42 L', 'Ground Clearance': '133 mm', 'Wheelbase': '2,550 mm', 'Tires': '185/60 R15',
+          'Length x Width x Height': '4,420 x 1,730 x 1,475 mm'
+        }
       },
-      specs: {
-        'Price': '₱908,000', 'Engine': '1.3L 4-Cylinder DOHC 16V', 'Displacement': '1,329 cc',
-        'Max Power': '97.6 hp @ 6,000 rpm', 'Max Torque': '123 Nm @ 4,200 rpm', 'Transmission': 'CVT',
-        'Fuel Tank': '42 L', 'Ground Clearance': '133 mm', 'Wheelbase': '2,550 mm', 'Tires': '185/60 R15',
-        'Length x Width x Height': '4,420 x 1,730 x 1,475 mm'
+      {
+        name: 'Honda City 1.5 V CVT',
+        ownName: 'Mirage G4 GLS CVT',
+        ownSpecs: {
+          'Price': '₱937,000', 'Engine': '1.2L 3-Cylinder DOHC 12V MIVEC', 'Displacement': '1,193 cc',
+          'Max Power': '76.9 hp @ 6,000 rpm', 'Max Torque': '100 Nm @ 4,000 rpm', 'Transmission': 'CVT',
+          'Ground Clearance': '170 mm', 'Wheelbase': '2,550 mm', 'Tires': '185/55 R15',
+          'Length x Width x Height': '4,305 x 1,670 x 1,485 mm'
+        },
+        specs: {
+          'Price': '₱973,000 - 1,138,000', 'Engine': '1.5L 4-Cylinder DOHC 16V i-VTEC', 'Displacement': '1,498 cc',
+          'Max Power': '119-121 hp @ 6,600 rpm', 'Max Torque': '145 Nm @ 4,300 rpm', 'Transmission': 'CVT',
+          'Ground Clearance': '134 mm', 'Wheelbase': '2,600 mm', 'Tires': '185/55 R16',
+          'Length x Width x Height': '4,580-4,589 x 1,748 x 1,467-1,489 mm'
+        }
       }
-    }
+    ]
   },
   XPANDER: {
     label: 'Xpander / Xpander Cross',
@@ -2340,40 +2385,119 @@ function renderVehicleDetails(){
     html += `<div><b style="color:#a12626; font-size:11.5px;">✕ CONS</b><ul style="margin:6px 0 0 0; padding-left:16px; font-size:12px;">` + (specs.cons||[]).map(c=>`<li>${escapeHtml(c)}</li>`).join('') + `</ul></div>`;
     html += `</div></div>`;
   }
-  if(specs.rival){
-    const r = specs.rival;
-    const rows = Object.keys(r.ownSpecs);
-    html += `<div class="specs-group"><h4>Mitsubishi vs Other Brands</h4>`;
-    html += `<table class="compare-table"><tr><th></th><th>${escapeHtml(r.ownName)}</th><th>${escapeHtml(r.name)}</th></tr>`;
-    rows.forEach(label=>{
-      const ownVal = r.ownSpecs[label] || '—';
-      const rivalVal = r.specs[label] || '—';
-      const ownNum = extractNumber(ownVal);
-      const rivalNum = extractNumber(rivalVal);
-      let ownCls = '', rivalCls = '';
-      if(ownNum!==null && rivalNum!==null && ownNum!==rivalNum){
-        const lowerIsBetter = (label==='Price');
-        const ownWins = lowerIsBetter ? ownNum < rivalNum : ownNum > rivalNum;
-        ownCls = ownWins ? 'cmp-better' : 'cmp-worse';
-        rivalCls = ownWins ? 'cmp-worse' : 'cmp-better';
-      }
-      html += `<tr><td class="cmp-label">${escapeHtml(label)}</td><td class="${ownCls}">${escapeHtml(ownVal)}</td><td class="${rivalCls}">${escapeHtml(rivalVal)}</td></tr>`;
-    });
-    html += `</table>`;
-    if(specs.comparison){
-      html += `<p style="font-size:12px; line-height:1.6; margin:10px 0 0 0;">${escapeHtml(specs.comparison)}</p>`;
-    }
-    html += `</div>`;
-  } else if(specs.comparison){
-    html += `<div class="specs-group"><h4>Mitsubishi vs Other Brands</h4><p style="font-size:12px; line-height:1.6; margin:0;">${escapeHtml(specs.comparison)}</p></div>`;
+  const rivalList = specs.rivals || (specs.rival ? [specs.rival] : []);
+  html += `<div class="specs-group" id="compareGroupWrap">`;
+  html += `<h4>Mitsubishi vs Other Brands</h4>`;
+  if(rivalList.length > 1){
+    html += `<label style="font-size:11px; color:#666; display:block; margin-bottom:6px;">Compare against:</label>`;
+    html += `<select id="rivalBrandSelect" onchange="renderComparisonTable()" style="padding:6px; border:1px solid #ccc; border-radius:4px; font-size:12px; margin-bottom:8px;">`;
+    html += rivalList.map((r,i)=>`<option value="${i}">${escapeHtml(r.name)}</option>`).join('');
+    html += `</select>`;
   }
+  html += `<div id="compareTableHolder"></div>`;
+  if(specs.comparison){
+    html += `<p style="font-size:12px; line-height:1.6; margin:10px 0 0 0;">${escapeHtml(specs.comparison)}</p>`;
+  }
+  html += `</div>`;
   body.innerHTML = html;
+  currentDetailsRivals = rivalList;
+  renderComparisonTable();
+}
+
+let currentDetailsRivals = [];
+
+function renderComparisonTable(){
+  const holder = document.getElementById('compareTableHolder');
+  if(!holder) return;
+  if(currentDetailsRivals.length===0){ holder.innerHTML = '<p style="color:#777; font-size:12px;">Wala pang naka-file na rival brand para dito.</p>'; return; }
+  const sel = document.getElementById('rivalBrandSelect');
+  const idx = sel ? parseInt(sel.value,10) : 0;
+  const r = currentDetailsRivals[idx] || currentDetailsRivals[0];
+  const rows = Object.keys(r.ownSpecs);
+  let html = `<table class="compare-table"><tr><th></th><th>${escapeHtml(r.ownName)}</th><th>${escapeHtml(r.name)}</th></tr>`;
+  rows.forEach(label=>{
+    const ownVal = r.ownSpecs[label] || '—';
+    const rivalVal = r.specs[label] || '—';
+    const ownNum = extractNumber(ownVal);
+    const rivalNum = extractNumber(rivalVal);
+    let ownCls = '', rivalCls = '';
+    if(ownNum!==null && rivalNum!==null && ownNum!==rivalNum){
+      const lowerIsBetter = (label==='Price');
+      const ownWins = lowerIsBetter ? ownNum < rivalNum : ownNum > rivalNum;
+      ownCls = ownWins ? 'cmp-better' : 'cmp-worse';
+      rivalCls = ownWins ? 'cmp-worse' : 'cmp-better';
+    }
+    html += `<tr><td class="cmp-label">${escapeHtml(label)}</td><td class="${ownCls}">${escapeHtml(ownVal)}</td><td class="${rivalCls}">${escapeHtml(rivalVal)}</td></tr>`;
+  });
+  html += `</table>`;
+  holder.innerHTML = html;
 }
 
 function extractNumber(str){
   if(!str) return null;
   const m = String(str).replace(/,/g,'').match(/-?\d+(\.\d+)?/);
   return m ? parseFloat(m[0]) : null;
+}
+
+// ---------------- Design Mode (Excel-style light editing for the Application Form) ----------------
+let designModeOn = false;
+let sheetFontSizePx = 12;
+let lastFocusedTable = null;
+
+function toggleDesignMode(){
+  designModeOn = !designModeOn;
+  const btn = document.getElementById('designModeBtn');
+  const bar = document.getElementById('designToolbar');
+  if(designModeOn){
+    enableDesignMode();
+    bar.style.display = 'flex';
+    btn.style.background = '#c3a26b';
+    btn.style.color = '#2c2005';
+  } else {
+    disableDesignMode();
+    bar.style.display = 'none';
+    btn.style.background = '';
+    btn.style.color = '';
+  }
+}
+function enableDesignMode(){
+  document.querySelectorAll('#sheet .label').forEach(el=>{
+    el.contentEditable = 'true';
+    el.style.outline = '1px dashed #c3a26b';
+    el.style.cursor = 'text';
+  });
+  document.querySelectorAll('#sheet table').forEach(t=>{
+    t.addEventListener('click', trackFocusedTable);
+  });
+}
+function disableDesignMode(){
+  designModeOn = false;
+  document.querySelectorAll('#sheet .label').forEach(el=>{
+    el.contentEditable = 'false';
+    el.style.outline = 'none';
+  });
+}
+function trackFocusedTable(e){
+  lastFocusedTable = e.currentTarget;
+}
+function adjustFontSize(delta){
+  sheetFontSizePx = Math.max(7, Math.min(18, sheetFontSizePx + delta));
+  document.getElementById('sheet').style.fontSize = sheetFontSizePx + 'px';
+}
+function toggleBorders(){
+  document.getElementById('sheet').classList.toggle('borders-off');
+}
+function addRowToLastTable(){
+  const table = lastFocusedTable || document.querySelector('#sheet table');
+  if(!table){ alert('I-click muna ang isang table sa form bago magdagdag ng row.'); return; }
+  const rows = table.querySelectorAll(':scope > tr, :scope > tbody > tr');
+  if(rows.length===0) return;
+  const lastRow = rows[rows.length-1];
+  const clone = lastRow.cloneNode(true);
+  clone.querySelectorAll('input[type="text"], input[type="email"]').forEach(el=>el.value='');
+  clone.querySelectorAll('textarea').forEach(el=>el.value='');
+  clone.querySelectorAll('input[type="checkbox"]').forEach(el=>el.checked=false);
+  lastRow.parentNode.insertBefore(clone, lastRow.nextSibling);
 }
 
 function openVehicleDetailsForQuote(){
