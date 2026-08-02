@@ -145,6 +145,12 @@
   .specs-row span:first-child{color:#666;}
   .specs-row span:last-child{font-weight:700; text-align:right; max-width:60%;}
   .specs-btn{background:var(--navy); color:#fff; border:none; border-radius:4px; padding:4px 9px; font-size:10.5px; cursor:pointer;}
+  .compare-table{width:100%; border-collapse:collapse; margin-top:8px; font-size:11.5px;}
+  .compare-table th{background:var(--navy); color:#fff; padding:7px 8px; text-align:center; font-size:11px;}
+  .compare-table td{padding:6px 8px; border-bottom:1px solid #eee; text-align:center;}
+  .compare-table .cmp-label{text-align:left; font-weight:700; color:#555; background:#f7f7f8;}
+  .compare-table .cmp-better{color:#1e7a3d; font-weight:800; background:#e9f7ee;}
+  .compare-table .cmp-worse{color:#8a1f1f; font-weight:600;}
   #tab-form, #tab-bulletin, #tab-details, #tab-saved, #tab-quote, #tab-monitoring, #tab-messages, #tab-sync{display:none;}
 
   /* bold + all-caps as the borrower/co-borrower details are typed, so the bank checker reads them fast */
@@ -228,18 +234,22 @@
   .modal-actions button{flex:1; padding:10px; border:none; border-radius:5px; cursor:pointer; font-size:12.5px;}
 
   @media print{
-    body{background:#fff; padding:0; font-size:9.5px;}
+    @page{ size: letter; margin: 6mm; }
+    html, body{background:#fff; padding:0; font-size:9px; height:auto;}
     .sidebar{display:none !important;}
     .main-content{padding:0 !important;}
     .toolbar, .hint, #tab-bulletin, #tab-details, #tab-saved, #tab-monitoring, #tab-dashboard, #tab-messages, #tab-sync, .modal-overlay, .quote-select-box, .quote-action-bar{display:none !important;}
     #tab-form{display:block !important;}
-    .sheet{border:none; max-width:100%; padding:4px 10px;}
+    .sheet{border:none; max-width:100%; padding:0; zoom:0.8; page-break-inside:avoid;}
+    table{page-break-inside:avoid;}
     input{border-bottom:none !important;}
+    textarea{border-bottom:none !important;}
     .addrow-btn, .del-btn{display:none !important;}
-    td, th{padding:2px 4px;}
-    .note{font-size:7.5px;}
-    .small-note{font-size:7px; line-height:1.15;}
-    .label{font-size:8.5px;}
+    td, th{padding:1px 3px;}
+    .note{font-size:7px;}
+    .small-note{font-size:6.5px; line-height:1.1;}
+    .label{font-size:8px;}
+    .sig-row td{padding-top:2px;}
     * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }
   }
 
@@ -247,6 +257,8 @@
   body.pdf-mode input{border-bottom:none !important;}
   body.pdf-mode textarea{border-bottom:none !important;}
   body.pdf-mode .sheet{font-size:9.5px; border:none !important;}
+  body.pdf-mode .sig-line input[type="text"]{display:none;}
+  body.pdf-mode .sig-print-only{display:block !important;}
 </style>
 </head>
 <body>
@@ -256,8 +268,8 @@
 <div class="app-shell">
   <aside class="sidebar no-print" id="sidebarEl">
     <div class="sidebar-logo">
-      <div class="lg1">CT CITIMOTORS</div>
-      <div class="lg2">Loan &amp; CRM System</div>
+      <div class="lg1">CITIMOTORS LAS PIÑAS</div>
+      <div class="lg2">Best Offer by Romeo - Meong</div>
       <button class="sidebar-collapse-btn" onclick="toggleSidebar()" title="Hide menu">⟨⟨</button>
     </div>
     <nav class="sidebar-nav">
@@ -610,6 +622,7 @@
         <div class="sig-line">
           <div class="sig-img-holder" id="sigImgHolder"></div>
           <input type="text" id="sigBorrower" style="text-align:center;" placeholder="Borrower Name">
+          <span class="sig-print-only" id="sigBorrowerPrint" style="display:none; text-align:center; font-weight:700; text-transform:uppercase; font-size:9.5px;"></span>
           <div>Borrower's Signature Over Printed Name</div>
         </div>
       </td>
@@ -617,6 +630,7 @@
         <div class="sig-line">
           <div class="sig-img-holder"></div>
           <input type="text" id="sigExec" style="text-align:center;" value="ROMEO CUYACOT (MEONG)">
+          <span class="sig-print-only" id="sigExecPrint" style="display:none; text-align:center; font-weight:700; text-transform:uppercase; font-size:9.5px;"></span>
           <div>Sales Executives (SRC Group)</div>
         </div>
       </td>
@@ -624,6 +638,7 @@
         <div class="sig-line">
           <div class="sig-img-holder"></div>
           <input type="text" id="sigManager" style="text-align:center;" placeholder="Sales Manager Name">
+          <span class="sig-print-only" id="sigManagerPrint" style="display:none; text-align:center; font-weight:700; text-transform:uppercase; font-size:9.5px;"></span>
           <div>Sales Manager</div>
         </div>
       </td>
@@ -1550,6 +1565,9 @@ async function downloadPDF(){
   const sheet = document.getElementById('sheet');
 
   document.querySelectorAll('#sheet textarea.addr-field').forEach(autoGrow);
+  document.getElementById('sigBorrowerPrint').textContent = document.getElementById('sigBorrower').value || 'BORROWER NAME';
+  document.getElementById('sigExecPrint').textContent = document.getElementById('sigExec').value || 'SALES EXECUTIVE NAME';
+  document.getElementById('sigManagerPrint').textContent = document.getElementById('sigManager').value || 'SALES MANAGER NAME';
   document.body.classList.add('pdf-mode');
   await new Promise(r=>setTimeout(r,50));
 
@@ -2059,7 +2077,23 @@ const SPECS_DB = {
     features: ['7-inch Smartphone Display Link', 'Dual SRS Airbags', 'ABS w/ EBD', 'Keyless Entry (GLS)', 'Fuel-efficient 3-cylinder engine'],
     pros: ['Very fuel-efficient in the segment', 'Low maintenance cost, widely available parts', 'Easy to drive and park in the city', 'Most affordable Mitsubishi PH offering'],
     cons: ['Smaller/less powerful engine than most rivals', 'Fewer safety features on base variants', 'Rear drum brakes vs rivals\' rear discs on some competitors'],
-    comparison: 'vs Toyota Vios / Wigo: the Mirage/Mirage G4 usually undercuts Vios on price and matches Wigo\'s fuel economy, but the Vios offers a roomier cabin and more familiar resale value. vs Honda Brio: similar city-car segment — Brio has a peppier engine feel, while the Mirage line counters with a lower price and Mitsubishi\'s reputation for reliability.'
+    comparison: 'vs Toyota Vios / Wigo: the Mirage/Mirage G4 usually undercuts Vios on price and matches Wigo\'s fuel economy, but the Vios offers a roomier cabin and more familiar resale value. vs Honda Brio: similar city-car segment — Brio has a peppier engine feel, while the Mirage line counters with a lower price and Mitsubishi\'s reputation for reliability.',
+    rival: {
+      name: 'Toyota Vios 1.3 XLE CVT',
+      ownName: 'Mirage G4 GLS CVT',
+      ownSpecs: {
+        'Price': '₱937,000', 'Engine': '1.2L 3-Cylinder DOHC 12V MIVEC', 'Displacement': '1,193 cc',
+        'Max Power': '76.9 hp @ 6,000 rpm', 'Max Torque': '100 Nm @ 4,000 rpm', 'Transmission': 'CVT',
+        'Fuel Tank': '42 L', 'Ground Clearance': '170 mm', 'Wheelbase': '2,550 mm', 'Tires': '185/55 R15',
+        'Length x Width x Height': '4,305 x 1,670 x 1,485 mm'
+      },
+      specs: {
+        'Price': '₱908,000', 'Engine': '1.3L 4-Cylinder DOHC 16V', 'Displacement': '1,329 cc',
+        'Max Power': '97.6 hp @ 6,000 rpm', 'Max Torque': '123 Nm @ 4,200 rpm', 'Transmission': 'CVT',
+        'Fuel Tank': '42 L', 'Ground Clearance': '133 mm', 'Wheelbase': '2,550 mm', 'Tires': '185/60 R15',
+        'Length x Width x Height': '4,420 x 1,730 x 1,475 mm'
+      }
+    }
   },
   XPANDER: {
     label: 'Xpander / Xpander Cross',
@@ -2085,7 +2119,23 @@ const SPECS_DB = {
     features: ['360° Multi-Around Monitor (GLS/Cross)', '10-inch touchscreen w/ wireless Apple CarPlay (GLS/Cross)', '8-inch LCD Instrument Cluster (GLS/Cross)', 'Active Yaw Control', '60:40 2nd-row / 50:50 3rd-row split-fold seats', 'Best-in-class 225mm ground clearance'],
     pros: ['Class-leading interior space for a 7-seater MPV', 'Best-selling MPV in PH — strong resale value', 'High ground clearance handles floods/bad roads well', 'Wide dealer & service network nationwide'],
     cons: ['Still uses an older 4-speed automatic (rivals now use CVT)', 'Only 2 airbags on base variants', 'Rear drum brakes across the range'],
-    comparison: 'vs Toyota Avanza/Veloz: the Xpander offers a more premium cabin feel and higher ground clearance, while the Veloz counters with more airbags and a CVT. vs Suzuki Ertiga: Ertiga is cheaper and has a hybrid-assist option, but the Xpander\'s interior quality and MMPC\'s service reputation keep it the class leader in PH sales.'
+    comparison: 'vs Toyota Avanza/Veloz: the Xpander offers a more premium cabin feel and higher ground clearance, while the Veloz counters with more airbags and a CVT. vs Suzuki Ertiga: Ertiga is cheaper and has a hybrid-assist option, but the Xpander\'s interior quality and MMPC\'s service reputation keep it the class leader in PH sales.',
+    rival: {
+      name: 'Toyota Avanza 1.5 G CVT',
+      ownName: 'Xpander GLS AT',
+      ownSpecs: {
+        'Price': '₱1,259,000 (GLS AT)', 'Engine': '1.5L 4-Cylinder MIVEC', 'Displacement': '1,499 cc',
+        'Max Power': '105 PS @ 6,000 rpm', 'Max Torque': '141 Nm @ 4,000 rpm', 'Transmission': '4-speed AT',
+        'Ground Clearance': '225 mm', 'Wheelbase': '2,775 mm', 'Tires': '205/55 R17',
+        'Length x Width x Height': '4,595 x 1,750 x 1,750 mm'
+      },
+      specs: {
+        'Price': '₱1,071,000', 'Engine': '1.5L 4-Cylinder DOHC 16V', 'Displacement': '1,496 cc',
+        'Max Power': '105-106 hp @ 6,000 rpm', 'Max Torque': '138 Nm @ 4,200 rpm', 'Transmission': 'CVT',
+        'Fuel Tank': '43 L', 'Ground Clearance': '190 mm', 'Wheelbase': '2,750 mm', 'Tires': '—',
+        'Length x Width x Height': '4,395 x 1,730 x 1,700 mm'
+      }
+    }
   },
   XFORCE: {
     label: 'Xforce',
@@ -2098,7 +2148,23 @@ const SPECS_DB = {
     features: ['12.3-inch touchscreen w/ wireless Apple CarPlay/Android Auto', '8-speaker Yamaha Premium sound system', 'GT trim: forward collision mitigation, blind-spot warning, rear cross-traffic alert', 'Ambient lighting & wireless charger (GT)', 'Active Yaw Control'],
     pros: ['4-wheel disc brakes standard across the range', 'Distinctive, upscale styling for the price', 'GT trim brings semi-ADAS features rare in this segment', 'Roomy for a subcompact crossover'],
     cons: ['No AWD/4WD option — FWD only', 'CVT can feel less engaging than a torque-converter AT', 'Ground clearance lower than the Xpander/Destinator'],
-    comparison: 'vs Toyota Yaris Cross: Yaris Cross has stronger resale and a hybrid variant, while the Xforce counters with sharper styling and more standard tech at a similar price. vs Honda WR-V: WR-V is more conservative/practical, the Xforce feels sportier and better equipped on the top GT trim.'
+    comparison: 'vs Toyota Yaris Cross: Yaris Cross has stronger resale and a hybrid variant, while the Xforce counters with sharper styling and more standard tech at a similar price. vs Honda WR-V: WR-V is more conservative/practical, the Xforce feels sportier and better equipped on the top GT trim.',
+    rival: {
+      name: 'Toyota Yaris Cross 1.5 G CVT',
+      ownName: 'Xforce GT',
+      ownSpecs: {
+        'Price': '₱1,581,000 (GT)', 'Engine': '1.5L 4-Cylinder MIVEC', 'Displacement': '1,499 cc',
+        'Max Power': '105 PS @ 6,000 rpm', 'Max Torque': '141 Nm @ 4,000 rpm', 'Transmission': 'CVT',
+        'Ground Clearance': '193 mm', 'Wheelbase': '2,650 mm', 'Tires': '225/50 R18',
+        'Length x Width x Height': '4,390 x 1,810 x 1,660 mm'
+      },
+      specs: {
+        'Price': '₱1,210,000 - 1,690,000', 'Engine': '1.5L 4-Cylinder DOHC 16V', 'Displacement': '1,496 cc',
+        'Max Power': '104-105 hp @ 6,000 rpm', 'Max Torque': '138 Nm @ 4,200 rpm', 'Transmission': 'CVT',
+        'Fuel Tank': '42 L', 'Ground Clearance': '212 mm', 'Wheelbase': '2,620 mm', 'Tires': '215/60 R17',
+        'Length x Width x Height': '4,310 x 1,770 x 1,615 mm'
+      }
+    }
   },
   DESTINATOR: {
     label: 'Destinator',
@@ -2111,7 +2177,23 @@ const SPECS_DB = {
     features: ['Panoramic sunroof (GT)', '64-color ambient lighting (GT)', '2-tone leather seats w/ Heat Guard coating (GT)', 'Hands-free power tailgate (GT)', '40:20:40 split-fold 2nd row', '5 drive modes'],
     pros: ['Turbocharged engine gives it strong power for its size', 'Sits neatly between the Xforce and Montero Sport in price/size', '7-seat flexibility with SUV road presence', '4-wheel disc brakes'],
     cons: ['Turbo-CVT combo is newer/less proven long-term vs rivals\' conventional ATs', 'No 4WD option', 'Relatively new nameplate — fewer used-market data points'],
-    comparison: 'vs Toyota Fortuner: Fortuner has 4WD and a diesel option for heavier duty use; the Destinator counters with turbo-gas performance, more tech, and a lower price point. vs Honda BR-V/N7X: those are smaller and simpler — the Destinator offers more power and a more premium cabin.'
+    comparison: 'vs Toyota Corolla Cross: Corolla Cross counters with a hybrid powertrain and Toyota resale value, while the Destinator offers a turbocharged engine with more power, a lower price, and higher ground clearance. vs Honda BR-V/N7X: those are smaller and simpler — the Destinator offers more power and a more premium cabin.',
+    rival: {
+      name: 'Toyota Corolla Cross 1.8 V HEV',
+      ownName: 'Destinator GT',
+      ownSpecs: {
+        'Price': '₱1,929,000 - 1,939,000', 'Engine': '1.5L Turbo 4-Cylinder MIVEC', 'Displacement': '1,499 cc',
+        'Max Power': 'up to 163 PS', 'Max Torque': '250 Nm', 'Transmission': 'CVT',
+        'Ground Clearance': '214 mm', 'Wheelbase': '2,815 mm', 'Tires': '225/55 R18',
+        'Length x Width x Height': '4,680 x 1,840 x 1,780 mm'
+      },
+      specs: {
+        'Price': '₱1,514,000 - 1,943,000', 'Engine': '1.8L 4-Cyl Hybrid (2ZR-FXE)', 'Displacement': '1,798 cc',
+        'Max Power': '122 PS combined system', 'Max Torque': '142 Nm', 'Transmission': 'E-CVT',
+        'Fuel Tank': '36 L', 'Ground Clearance': '161 mm', 'Wheelbase': '2,640 mm', 'Tires': '215/60 R17 - 225/50 R18',
+        'Length x Width x Height': '4,460 x 1,825 x 1,620 mm'
+      }
+    }
   },
   TRITON: {
     label: 'Triton',
@@ -2124,7 +2206,23 @@ const SPECS_DB = {
     features: ['Super Select 4WD-II w/ active brake-controlled LSD (4x4)', 'Active Yaw Control (4WD variants)', '360° camera (Athlete)', '7 drive modes (Athlete)', 'New ladder frame w/ 60% more torsional rigidity'],
     pros: ['Strong torque figures, great for towing/hauling', 'Well-regarded off-road system on 4x4 variants', 'Won the 2025 Asia Cross Country Rally, boosting durability reputation', 'Wide range of body/trim configurations'],
     cons: ['Rear drum brakes on most variants', 'Ride can feel firm unloaded (leaf-spring rear)', 'Top Athlete trim pricing approaches midsize-SUV territory'],
-    comparison: 'vs Toyota Hilux: Hilux has stronger resale and a bigger service network, but the Triton counters with more torque and a more modern cabin/tech package. vs Ford Ranger: Ranger offers a punchier bi-turbo option and more ADAS, while the Triton is generally the more affordable, fuel-efficient choice.'
+    comparison: 'vs Toyota Hilux: Hilux has stronger resale and a bigger service network, but the Triton counters with more torque and a more modern cabin/tech package. vs Ford Ranger: Ranger offers a punchier bi-turbo option and more ADAS, while the Triton is generally the more affordable, fuel-efficient choice.',
+    rival: {
+      name: 'Toyota Hilux 2.8L 4x4',
+      ownName: 'Triton GLS 4x4 AT',
+      ownSpecs: {
+        'Price': 'Check current dealer price list', 'Engine': '2.4L Turbodiesel', 'Displacement': '2,442 cc',
+        'Max Power': '181 PS', 'Max Torque': '430 Nm', 'Transmission': '6-speed AT, Super Select 4WD-II',
+        'Wheelbase': '3,130 mm', 'Ground Clearance': 'up to 228 mm', 'Tires': 'up to 265/60 R18',
+        'Length x Width x Height': '5,360 x 1,930 x — mm'
+      },
+      specs: {
+        'Price': '₱1,772,000 - 2,460,000', 'Engine': '2.8L Turbodiesel (1GD-FTV)', 'Displacement': '2,755 cc',
+        'Max Power': '201-204 hp @ 3,000-3,400 rpm', 'Max Torque': '420-500 Nm', 'Transmission': '6-speed MT or 6-speed AT',
+        'Wheelbase': '3,085 mm', 'Ground Clearance': '—', 'Tires': '—',
+        'Length x Width x Height': '5,320 x 1,885 x 1,865 mm'
+      }
+    }
   },
   MONTERO: {
     label: 'Montero Sport',
@@ -2137,7 +2235,23 @@ const SPECS_DB = {
     features: ['8-speed automatic (segment-leading gear count)', '360° camera', 'Up to 7 airbags (Black Series/GLS)', 'Panoramic sunroof (higher trims)', 'Ladder-frame body-on-frame construction'],
     pros: ['Proven ladder-frame toughness for rough roads/towing', 'Smooth 8-speed automatic is a segment highlight', 'Strong resale value in the PH midsize SUV segment', 'Roomy 7-seat cabin with flexible cargo config'],
     cons: ['Diesel clatter more noticeable than car-based rivals', 'Fuel economy trails car-based SUVs', 'Turning radius larger due to ladder-frame body-on-frame design'],
-    comparison: 'vs Toyota Fortuner: Fortuner has stronger brand resale and wider parts availability; the Montero Sport counters with a smoother 8-speed AT and better low-end torque delivery. vs Ford Everest: Everest offers more tech/ADAS at a higher price, while the Montero Sport stays more accessible.'
+    comparison: 'vs Toyota Fortuner: Fortuner has stronger brand resale and wider parts availability; the Montero Sport counters with a smoother 8-speed AT and better low-end torque delivery. vs Ford Everest: Everest offers more tech/ADAS at a higher price, while the Montero Sport stays more accessible.',
+    rival: {
+      name: 'Toyota Fortuner 2.8L',
+      ownName: 'Montero Sport GLS',
+      ownSpecs: {
+        'Price': 'Check current dealer price list', 'Engine': '2.4L Turbodiesel w/ VG Turbo MIVEC', 'Displacement': '2,398 cc',
+        'Max Power': '179 hp', 'Max Torque': '430 Nm', 'Transmission': '8-speed AT or 6-speed MT',
+        'Wheelbase': '2,800 mm', 'Tires': '18-inch Alloy',
+        'Length x Width x Height': '4,825 x 1,815 x 1,835 mm'
+      },
+      specs: {
+        'Price': '₱1,775,000 - 2,656,000', 'Engine': '2.8L Turbodiesel (1GD-FTV)', 'Displacement': '2,755 cc',
+        'Max Power': '201 hp', 'Max Torque': '500 Nm', 'Transmission': '6-speed AT',
+        'Wheelbase': '—', 'Tires': '265/60 R18',
+        'Length x Width x Height': '4,795 x 1,855 x 1,835 mm'
+      }
+    }
   },
   L300: {
     label: 'L300 / Versa Van',
@@ -2150,7 +2264,23 @@ const SPECS_DB = {
     features: ['Up to 17-seat FB body configuration', 'Cab & chassis and freezer-van body options', 'Simple, rugged mechanicals for easy field repair', 'High cab for better road visibility'],
     pros: ['Decades-long track record for durability in PH', 'Very low cost of ownership and parts', 'Flexible body configurations for business use', 'Strong resale as a commercial workhorse'],
     cons: ['Basic safety features vs modern passenger vans', 'Manual transmission only', 'Ride comfort is utilitarian, not passenger-car-like'],
-    comparison: 'vs Hyundai H-100: H-100 has a slight power edge, but the L300\'s nationwide MMPC parts/service network and decades of fleet trust keep it the default choice for many PH businesses. vs Foton Gratour: Gratour undercuts on price, while the L300 wins on long-term reliability reputation.'
+    comparison: 'vs Hyundai H-100: H-100 has a slight power edge, but the L300\'s nationwide MMPC parts/service network and decades of fleet trust keep it the default choice for many PH businesses. vs Foton Gratour: Gratour undercuts on price, while the L300 wins on long-term reliability reputation.',
+    rival: {
+      name: 'Hyundai H-100 2.5 CRDi',
+      ownName: 'L300 Versa Van',
+      ownSpecs: {
+        'Price': 'Check current dealer price list', 'Engine': '2.2L Turbo-Intercooled Diesel', 'Displacement': '2,268 cc',
+        'Max Power': '98 hp @ 3,500 rpm', 'Max Torque': '200 Nm @ 3,500 rpm', 'Transmission': '5-speed Manual',
+        'Ground Clearance': '195 mm', 'Wheelbase': '2,350 mm', 'Tires': '185 R14C-8PR',
+        'Length x Width x Height': '4,440 x 1,695 x 1,915 mm'
+      },
+      specs: {
+        'Price': '₱1,024,000 - 1,355,000', 'Engine': '2.5L CRDi Diesel', 'Displacement': '2,497 cc',
+        'Max Power': '128 hp', 'Max Torque': '255 Nm', 'Transmission': '6-speed Manual',
+        'Fuel Tank': '65 L', 'Ground Clearance': '185 mm', 'Wheelbase': '2,430 mm', 'Tires': '195/70 R15',
+        'Length x Width x Height': '4,850 x 1,740 x 1,965 mm'
+      }
+    }
   }
 };
 
@@ -2210,10 +2340,40 @@ function renderVehicleDetails(){
     html += `<div><b style="color:#a12626; font-size:11.5px;">✕ CONS</b><ul style="margin:6px 0 0 0; padding-left:16px; font-size:12px;">` + (specs.cons||[]).map(c=>`<li>${escapeHtml(c)}</li>`).join('') + `</ul></div>`;
     html += `</div></div>`;
   }
-  if(specs.comparison){
+  if(specs.rival){
+    const r = specs.rival;
+    const rows = Object.keys(r.ownSpecs);
+    html += `<div class="specs-group"><h4>Mitsubishi vs Other Brands</h4>`;
+    html += `<table class="compare-table"><tr><th></th><th>${escapeHtml(r.ownName)}</th><th>${escapeHtml(r.name)}</th></tr>`;
+    rows.forEach(label=>{
+      const ownVal = r.ownSpecs[label] || '—';
+      const rivalVal = r.specs[label] || '—';
+      const ownNum = extractNumber(ownVal);
+      const rivalNum = extractNumber(rivalVal);
+      let ownCls = '', rivalCls = '';
+      if(ownNum!==null && rivalNum!==null && ownNum!==rivalNum){
+        const lowerIsBetter = (label==='Price');
+        const ownWins = lowerIsBetter ? ownNum < rivalNum : ownNum > rivalNum;
+        ownCls = ownWins ? 'cmp-better' : 'cmp-worse';
+        rivalCls = ownWins ? 'cmp-worse' : 'cmp-better';
+      }
+      html += `<tr><td class="cmp-label">${escapeHtml(label)}</td><td class="${ownCls}">${escapeHtml(ownVal)}</td><td class="${rivalCls}">${escapeHtml(rivalVal)}</td></tr>`;
+    });
+    html += `</table>`;
+    if(specs.comparison){
+      html += `<p style="font-size:12px; line-height:1.6; margin:10px 0 0 0;">${escapeHtml(specs.comparison)}</p>`;
+    }
+    html += `</div>`;
+  } else if(specs.comparison){
     html += `<div class="specs-group"><h4>Mitsubishi vs Other Brands</h4><p style="font-size:12px; line-height:1.6; margin:0;">${escapeHtml(specs.comparison)}</p></div>`;
   }
   body.innerHTML = html;
+}
+
+function extractNumber(str){
+  if(!str) return null;
+  const m = String(str).replace(/,/g,'').match(/-?\d+(\.\d+)?/);
+  return m ? parseFloat(m[0]) : null;
 }
 
 function openVehicleDetailsForQuote(){
