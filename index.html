@@ -61,7 +61,9 @@
   .bold{font-weight:bold;}
   .small-note{font-size:9px; line-height:1.3; color:#222;}
   .sig-row td{border:none; text-align:center; padding-top:6px; vertical-align:bottom;}
-  .sig-line{border-top:2px solid #000 !important; margin:10px 20px 0 20px; padding-top:3px; font-size:10.5px; display:flex; flex-direction:column; align-items:center;}
+  .sig-line{margin:10px 20px 0 20px; padding-top:0; font-size:10.5px;}
+  .sig-underline{border-top:2px solid #000; width:100%; height:1px; margin-bottom:3px;}
+  .sig-line-inner{display:flex; flex-direction:column; align-items:center;}
   .sig-line input[type="text"]{text-align:center;}
   .sig-line input[type="text"]{font-size:9.5px !important; letter-spacing:0; white-space:normal; overflow:visible; text-overflow:clip; height:auto; padding:2px 0;}
   .sig-img-holder{height:42px; display:flex; align-items:center; justify-content:center;}
@@ -631,26 +633,35 @@
     <tr class="sig-row">
       <td style="width:34%;">
         <div class="sig-line">
+          <div class="sig-underline"></div>
+          <div class="sig-line-inner">
           <div class="sig-img-holder" id="sigImgHolder"></div>
           <input type="text" id="sigBorrower" style="text-align:center;" placeholder="Borrower Name">
           <span class="sig-print-only" id="sigBorrowerPrint" style="display:none; text-align:center; font-weight:700; text-transform:uppercase; font-size:9.5px;"></span>
           <div>Borrower's Signature Over Printed Name</div>
+          </div>
         </div>
       </td>
       <td style="width:33%;">
         <div class="sig-line">
+          <div class="sig-underline"></div>
+          <div class="sig-line-inner">
           <div class="sig-img-holder"></div>
           <input type="text" id="sigExec" style="text-align:center;" value="ROMEO CUYACOT (MEONG)">
           <span class="sig-print-only" id="sigExecPrint" style="display:none; text-align:center; font-weight:700; text-transform:uppercase; font-size:9.5px;"></span>
           <div>Sales Executives (SRC Group)</div>
+          </div>
         </div>
       </td>
       <td style="width:33%;">
         <div class="sig-line">
+          <div class="sig-underline"></div>
+          <div class="sig-line-inner">
           <div class="sig-img-holder"></div>
           <input type="text" id="sigManager" style="text-align:center;" placeholder="Sales Manager Name">
           <span class="sig-print-only" id="sigManagerPrint" style="display:none; text-align:center; font-weight:700; text-transform:uppercase; font-size:9.5px;"></span>
           <div>Sales Manager</div>
+          </div>
         </div>
       </td>
     </tr>
@@ -1756,7 +1767,6 @@ function copyTemplate(i){
 }
 
 // ---------------- Sync tab: offline QR-based transfer ----------------
-const QR_CHUNK_SIZE = 700;
 let syncScanStream = null;
 let syncScanTimer = null;
 let syncReceivedChunks = {};
@@ -1780,12 +1790,15 @@ function startSyncSend(){
   backup.applications = trimmedApps;
 
   const json = JSON.stringify(backup);
-  const sessionId = 's' + Date.now().toString(36);
-  const chunks = [];
-  for(let i=0; i<json.length; i+=QR_CHUNK_SIZE){
-    chunks.push(json.slice(i, i+QR_CHUNK_SIZE));
+  const b64 = utf8ToBase64(json);
+  const sessionId = Date.now().toString(36).slice(-6);
+  const CHUNK = 300; // conservative size per QR frame — avoids capacity overflow
+  const totalChunks = Math.max(1, Math.ceil(b64.length / CHUNK));
+  const frames = [];
+  for(let i=0; i<totalChunks; i++){
+    const part = b64.slice(i*CHUNK, (i+1)*CHUNK);
+    frames.push(`CTQR|${sessionId}|${i}|${totalChunks}|${part}`);
   }
-  const frames = chunks.map((c, idx)=> JSON.stringify({s:sessionId, i:idx, n:chunks.length, d:c}));
 
   const display = document.getElementById('qrDisplay');
   display.style.display = 'block';
@@ -1835,27 +1848,34 @@ function scanFrame(video, canvas){
   ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
   const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
   const code = jsQR(imageData.data, imageData.width, imageData.height);
-  if(code){
-    try{
-      const frame = JSON.parse(code.data);
-      if(syncSessionId===null) syncSessionId = frame.s;
-      if(frame.s !== syncSessionId) return; // ignore frames from a different send session
-      syncExpectedTotal = frame.n;
-      syncReceivedChunks[frame.i] = frame.d;
-      const gotCount = Object.keys(syncReceivedChunks).length;
-      document.getElementById('scanProgress').textContent = `Na-scan: ${gotCount} / ${syncExpectedTotal} frames...`;
-      if(gotCount >= syncExpectedTotal){
-        let full = '';
-        for(let i=0;i<syncExpectedTotal;i++) full += (syncReceivedChunks[i]||'');
-        finishSyncScan(full);
-      }
-    }catch(e){ /* not our frame format, ignore */ }
+  if(code && code.data && code.data.startsWith('CTQR|')){
+    const parts = code.data.split('|');
+    if(parts.length < 5) return;
+    const sessionId = parts[1];
+    const idx = parseInt(parts[2], 10);
+    const total = parseInt(parts[3], 10);
+    const data = parts.slice(4).join('|');
+    if(isNaN(idx) || isNaN(total)) return;
+    if(syncSessionId===null) syncSessionId = sessionId;
+    if(sessionId !== syncSessionId) return; // ignore frames from a different send session
+    syncExpectedTotal = total;
+    syncReceivedChunks[idx] = data;
+    const gotCount = Object.keys(syncReceivedChunks).length;
+    document.getElementById('scanProgress').textContent = `Na-scan: ${gotCount} / ${syncExpectedTotal} frames...`;
+    if(gotCount >= syncExpectedTotal){
+      let fullB64 = '';
+      for(let i=0;i<syncExpectedTotal;i++) fullB64 += (syncReceivedChunks[i]||'');
+      finishSyncScan(fullB64);
+    }
   }
 }
 
-function finishSyncScan(jsonStr){
+function base64ToUtf8(str){ return decodeURIComponent(escape(atob(str))); }
+
+function finishSyncScan(fullB64){
   stopSyncScan();
   try{
+    const jsonStr = base64ToUtf8(fullB64);
     const backup = JSON.parse(jsonStr);
     const mode = confirm('Na-scan na ang data! Pindutin OK para i-MERGE sa existing data, o Cancel para i-REPLACE (papalitan lahat).');
     if(mode){
@@ -1882,7 +1902,7 @@ function finishSyncScan(jsonStr){
     document.getElementById('scanProgress').textContent = '✅ Na-sync na ang data!';
     alert('Tagumpay ang pag-sync! Tingnan ang Saved Applications / Monitoring tabs.');
   }catch(e){
-    document.getElementById('scanProgress').textContent = 'Error sa pag-decode ng data. Subukan muli.';
+    document.getElementById('scanProgress').textContent = 'Error sa pag-decode ng data: ' + (e.message||String(e));
   }
 }
 
@@ -2107,6 +2127,7 @@ const SPECS_DB = {
     comparison: 'vs Toyota Vios / Wigo: the Mirage/Mirage G4 usually undercuts Vios on price and matches Wigo\'s fuel economy, but the Vios offers a roomier cabin and more familiar resale value. vs Honda Brio: similar city-car segment — Brio has a peppier engine feel, while the Mirage line counters with a lower price and Mitsubishi\'s reputation for reliability.',
     rivals: [
       {
+        brand: 'Toyota',
         name: 'Toyota Vios 1.3 XLE CVT',
         ownName: 'Mirage G4 GLS CVT',
         ownSpecs: {
@@ -2123,6 +2144,7 @@ const SPECS_DB = {
         }
       },
       {
+        brand: 'Honda',
         name: 'Honda City 1.5 V CVT',
         ownName: 'Mirage G4 GLS CVT',
         ownSpecs: {
@@ -2165,7 +2187,8 @@ const SPECS_DB = {
     pros: ['Class-leading interior space for a 7-seater MPV', 'Best-selling MPV in PH — strong resale value', 'High ground clearance handles floods/bad roads well', 'Wide dealer & service network nationwide'],
     cons: ['Still uses an older 4-speed automatic (rivals now use CVT)', 'Only 2 airbags on base variants', 'Rear drum brakes across the range'],
     comparison: 'vs Toyota Avanza/Veloz: the Xpander offers a more premium cabin feel and higher ground clearance, while the Veloz counters with more airbags and a CVT. vs Suzuki Ertiga: Ertiga is cheaper and has a hybrid-assist option, but the Xpander\'s interior quality and MMPC\'s service reputation keep it the class leader in PH sales.',
-    rival: {
+    rivals: [{
+      brand: 'Toyota',
       name: 'Toyota Avanza 1.5 G CVT',
       ownName: 'Xpander GLS AT',
       ownSpecs: {
@@ -2180,7 +2203,7 @@ const SPECS_DB = {
         'Fuel Tank': '43 L', 'Ground Clearance': '190 mm', 'Wheelbase': '2,750 mm', 'Tires': '—',
         'Length x Width x Height': '4,395 x 1,730 x 1,700 mm'
       }
-    }
+    }]
   },
   XFORCE: {
     label: 'Xforce',
@@ -2194,7 +2217,8 @@ const SPECS_DB = {
     pros: ['4-wheel disc brakes standard across the range', 'Distinctive, upscale styling for the price', 'GT trim brings semi-ADAS features rare in this segment', 'Roomy for a subcompact crossover'],
     cons: ['No AWD/4WD option — FWD only', 'CVT can feel less engaging than a torque-converter AT', 'Ground clearance lower than the Xpander/Destinator'],
     comparison: 'vs Toyota Yaris Cross: Yaris Cross has stronger resale and a hybrid variant, while the Xforce counters with sharper styling and more standard tech at a similar price. vs Honda WR-V: WR-V is more conservative/practical, the Xforce feels sportier and better equipped on the top GT trim.',
-    rival: {
+    rivals: [{
+      brand: 'Toyota',
       name: 'Toyota Yaris Cross 1.5 G CVT',
       ownName: 'Xforce GT',
       ownSpecs: {
@@ -2209,7 +2233,7 @@ const SPECS_DB = {
         'Fuel Tank': '42 L', 'Ground Clearance': '212 mm', 'Wheelbase': '2,620 mm', 'Tires': '215/60 R17',
         'Length x Width x Height': '4,310 x 1,770 x 1,615 mm'
       }
-    }
+    }]
   },
   DESTINATOR: {
     label: 'Destinator',
@@ -2223,7 +2247,8 @@ const SPECS_DB = {
     pros: ['Turbocharged engine gives it strong power for its size', 'Sits neatly between the Xforce and Montero Sport in price/size', '7-seat flexibility with SUV road presence', '4-wheel disc brakes'],
     cons: ['Turbo-CVT combo is newer/less proven long-term vs rivals\' conventional ATs', 'No 4WD option', 'Relatively new nameplate — fewer used-market data points'],
     comparison: 'vs Toyota Corolla Cross: Corolla Cross counters with a hybrid powertrain and Toyota resale value, while the Destinator offers a turbocharged engine with more power, a lower price, and higher ground clearance. vs Honda BR-V/N7X: those are smaller and simpler — the Destinator offers more power and a more premium cabin.',
-    rival: {
+    rivals: [{
+      brand: 'Toyota',
       name: 'Toyota Corolla Cross 1.8 V HEV',
       ownName: 'Destinator GT',
       ownSpecs: {
@@ -2238,7 +2263,7 @@ const SPECS_DB = {
         'Fuel Tank': '36 L', 'Ground Clearance': '161 mm', 'Wheelbase': '2,640 mm', 'Tires': '215/60 R17 - 225/50 R18',
         'Length x Width x Height': '4,460 x 1,825 x 1,620 mm'
       }
-    }
+    }]
   },
   TRITON: {
     label: 'Triton',
@@ -2252,7 +2277,8 @@ const SPECS_DB = {
     pros: ['Strong torque figures, great for towing/hauling', 'Well-regarded off-road system on 4x4 variants', 'Won the 2025 Asia Cross Country Rally, boosting durability reputation', 'Wide range of body/trim configurations'],
     cons: ['Rear drum brakes on most variants', 'Ride can feel firm unloaded (leaf-spring rear)', 'Top Athlete trim pricing approaches midsize-SUV territory'],
     comparison: 'vs Toyota Hilux: Hilux has stronger resale and a bigger service network, but the Triton counters with more torque and a more modern cabin/tech package. vs Ford Ranger: Ranger offers a punchier bi-turbo option and more ADAS, while the Triton is generally the more affordable, fuel-efficient choice.',
-    rival: {
+    rivals: [{
+      brand: 'Toyota',
       name: 'Toyota Hilux 2.8L 4x4',
       ownName: 'Triton GLS 4x4 AT',
       ownSpecs: {
@@ -2267,7 +2293,7 @@ const SPECS_DB = {
         'Wheelbase': '3,085 mm', 'Ground Clearance': '—', 'Tires': '—',
         'Length x Width x Height': '5,320 x 1,885 x 1,865 mm'
       }
-    }
+    }]
   },
   MONTERO: {
     label: 'Montero Sport',
@@ -2281,7 +2307,8 @@ const SPECS_DB = {
     pros: ['Proven ladder-frame toughness for rough roads/towing', 'Smooth 8-speed automatic is a segment highlight', 'Strong resale value in the PH midsize SUV segment', 'Roomy 7-seat cabin with flexible cargo config'],
     cons: ['Diesel clatter more noticeable than car-based rivals', 'Fuel economy trails car-based SUVs', 'Turning radius larger due to ladder-frame body-on-frame design'],
     comparison: 'vs Toyota Fortuner: Fortuner has stronger brand resale and wider parts availability; the Montero Sport counters with a smoother 8-speed AT and better low-end torque delivery. vs Ford Everest: Everest offers more tech/ADAS at a higher price, while the Montero Sport stays more accessible.',
-    rival: {
+    rivals: [{
+      brand: 'Toyota',
       name: 'Toyota Fortuner 2.8L',
       ownName: 'Montero Sport GLS',
       ownSpecs: {
@@ -2296,7 +2323,7 @@ const SPECS_DB = {
         'Wheelbase': '—', 'Tires': '265/60 R18',
         'Length x Width x Height': '4,795 x 1,855 x 1,835 mm'
       }
-    }
+    }]
   },
   L300: {
     label: 'L300 / Versa Van',
@@ -2310,7 +2337,8 @@ const SPECS_DB = {
     pros: ['Decades-long track record for durability in PH', 'Very low cost of ownership and parts', 'Flexible body configurations for business use', 'Strong resale as a commercial workhorse'],
     cons: ['Basic safety features vs modern passenger vans', 'Manual transmission only', 'Ride comfort is utilitarian, not passenger-car-like'],
     comparison: 'vs Hyundai H-100: H-100 has a slight power edge, but the L300\'s nationwide MMPC parts/service network and decades of fleet trust keep it the default choice for many PH businesses. vs Foton Gratour: Gratour undercuts on price, while the L300 wins on long-term reliability reputation.',
-    rival: {
+    rivals: [{
+      brand: 'Hyundai',
       name: 'Hyundai H-100 2.5 CRDi',
       ownName: 'L300 Versa Van',
       ownSpecs: {
@@ -2325,7 +2353,7 @@ const SPECS_DB = {
         'Fuel Tank': '65 L', 'Ground Clearance': '185 mm', 'Wheelbase': '2,430 mm', 'Tires': '195/70 R15',
         'Length x Width x Height': '4,850 x 1,740 x 1,965 mm'
       }
-    }
+    }]
   }
 };
 
@@ -2385,26 +2413,52 @@ function renderVehicleDetails(){
     html += `<div><b style="color:#a12626; font-size:11.5px;">✕ CONS</b><ul style="margin:6px 0 0 0; padding-left:16px; font-size:12px;">` + (specs.cons||[]).map(c=>`<li>${escapeHtml(c)}</li>`).join('') + `</ul></div>`;
     html += `</div></div>`;
   }
-  const rivalList = specs.rivals || (specs.rival ? [specs.rival] : []);
+  const rivalList = specs.rivals || [];
+  currentDetailsRivals = rivalList;
   html += `<div class="specs-group" id="compareGroupWrap">`;
   html += `<h4>Mitsubishi vs Other Brands</h4>`;
-  if(rivalList.length > 1){
-    html += `<label style="font-size:11px; color:#666; display:block; margin-bottom:6px;">Compare against:</label>`;
-    html += `<select id="rivalBrandSelect" onchange="renderComparisonTable()" style="padding:6px; border:1px solid #ccc; border-radius:4px; font-size:12px; margin-bottom:8px;">`;
-    html += rivalList.map((r,i)=>`<option value="${i}">${escapeHtml(r.name)}</option>`).join('');
-    html += `</select>`;
-  }
+  html += `<div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:8px;">`;
+  html += `<div><label style="font-size:11px; color:#666; display:block; margin-bottom:4px;">Brand</label>`;
+  html += `<select id="rivalBrandFilter" onchange="onRivalBrandChange()" style="padding:6px; border:1px solid #ccc; border-radius:4px; font-size:12px;">`;
+  html += `<option value="">— Select Brand —</option>`;
+  html += BRAND_LIST.map(b=>`<option value="${escapeHtml(b)}">${escapeHtml(b)}</option>`).join('');
+  html += `</select></div>`;
+  html += `<div><label style="font-size:11px; color:#666; display:block; margin-bottom:4px;">Model</label>`;
+  html += `<select id="rivalBrandSelect" onchange="renderComparisonTable()" style="padding:6px; border:1px solid #ccc; border-radius:4px; font-size:12px; min-width:200px;"><option value="">— Pumili muna ng Brand —</option></select></div>`;
+  html += `</div>`;
   html += `<div id="compareTableHolder"></div>`;
   if(specs.comparison){
     html += `<p style="font-size:12px; line-height:1.6; margin:10px 0 0 0;">${escapeHtml(specs.comparison)}</p>`;
   }
   html += `</div>`;
   body.innerHTML = html;
-  currentDetailsRivals = rivalList;
-  renderComparisonTable();
+  // auto-select the first available brand so a comparison shows immediately
+  if(rivalList.length){
+    document.getElementById('rivalBrandFilter').value = rivalList[0].brand;
+    onRivalBrandChange();
+  }
 }
 
+const BRAND_LIST = ['Toyota','Honda','Suzuki','Kia','Nissan','Ford','Hyundai','MG','BYD','GAC','Chery','Geely','Jetour','Tesla','Other Electric Brands','Others'];
 let currentDetailsRivals = [];
+
+function onRivalBrandChange(){
+  const brand = document.getElementById('rivalBrandFilter').value;
+  const modelSelect = document.getElementById('rivalBrandSelect');
+  const matches = currentDetailsRivals.filter(r=>r.brand===brand);
+  if(!brand){
+    modelSelect.innerHTML = '<option value="">— Pumili muna ng Brand —</option>';
+    document.getElementById('compareTableHolder').innerHTML = '';
+    return;
+  }
+  if(matches.length===0){
+    modelSelect.innerHTML = '<option value="">— Wala pang model na naka-file —</option>';
+    document.getElementById('compareTableHolder').innerHTML = `<p style="color:#777; font-size:12px;">Wala pang naka-file na ${escapeHtml(brand)} na model sa segment na ito. Pwede itong idagdag sa COMPETITOR data sa code.</p>`;
+    return;
+  }
+  modelSelect.innerHTML = matches.map((r)=>`<option value="${currentDetailsRivals.indexOf(r)}">${escapeHtml(r.name)}</option>`).join('');
+  renderComparisonTable();
+}
 
 function renderComparisonTable(){
   const holder = document.getElementById('compareTableHolder');
