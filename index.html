@@ -3,11 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <title>Auto Loan Application - CT Citimotors Las Piñas Corp</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  :root{ --orange:#c0521a; --line:#333; --yellow:#fff8b0; --navy:#1e3a5f; --sidebar-bg:#152238; --sidebar-bg2:#1c3350; --sidebar-active:#c3a26b; }
+  :root{ --orange:#c0521a; --line:#333; --yellow:#fff8b0; --navy:#1e3a5f; --sidebar-bg:#152238; --sidebar-bg2:#1c3350; --sidebar-active:#c3a26b;
+    /* ---- Enterprise design system (dashboard/shell layer only — form/quote print sheets keep their brand look) ---- */
+    --ent-primary:#0F172A; --ent-secondary:#2563EB; --ent-accent:#3B82F6; --ent-success:#10B981; --ent-warning:#F59E0B; --ent-danger:#EF4444;
+    --ent-bg:#F8FAFC; --ent-card:#FFFFFF; --ent-radius:16px; --ent-radius-sm:10px;
+    --ent-border:#E2E8F0; --ent-text:#0F172A; --ent-text-mut:#64748B;
+    --ent-shadow:0 1px 2px rgba(15,23,42,0.04), 0 4px 14px rgba(15,23,42,0.06);
+    --ent-shadow-hover:0 2px 4px rgba(15,23,42,0.06), 0 10px 24px rgba(15,23,42,0.10);
+  }
+  body.dark-mode{ --ent-bg:#0B1220; --ent-card:#111A2C; --ent-border:#1F2A3D; --ent-text:#E7ECF3; --ent-text-mut:#93A2B8; }
   *{box-sizing:border-box;}
   html, body{height:100%;}
-  body{font-family:Arial, Helvetica, sans-serif; font-size:12px; color:#111; background:#eef0f3; margin:0; padding:0;}
+  body{font-family:'Inter', Arial, Helvetica, sans-serif; font-size:12px; color:#111; background:#eef0f3; margin:0; padding:0;}
+  body.dark-mode{ background:var(--ent-bg); color:var(--ent-text); }
   .app-shell{display:flex; min-height:100vh;}
   .sidebar{width:240px; flex-shrink:0; background:linear-gradient(180deg, var(--sidebar-bg) 0%, var(--sidebar-bg2) 100%); color:#fff; display:flex; flex-direction:column; position:sticky; top:0; height:100vh; overflow-y:auto;}
   .sidebar-logo{padding:22px 18px 16px 18px; border-bottom:1px solid rgba(255,255,255,0.12);}
@@ -62,12 +74,19 @@
   .small-note{font-size:9px; line-height:1.3; color:#222;}
   .sig-row td{border:none; text-align:center; padding-top:6px; vertical-align:bottom;}
   .sig-line{margin:10px 20px 0 20px; padding-top:0; font-size:10.5px;}
-  .sig-underline{border-top:2px solid #000; width:100%; height:1px; margin-bottom:3px;}
+  .sig-underline{border-top:2px solid #000; width:100%; height:1px; margin:4px 0 3px 0;}
   .sig-line-inner{display:flex; flex-direction:column; align-items:center;}
+  .sig-img-holder{position:relative; width:160px; height:60px; margin-bottom:2px;}
+  .sig-img-holder.has-image{border:1px dashed transparent;}
+  .sig-img-holder:empty::before{content:"(walang signature)"; font-size:9px; color:#bbb; display:flex; align-items:center; justify-content:center; height:100%;}
+  .sig-img-el{position:absolute; cursor:move; user-select:none; touch-action:none;}
+  .sig-resize-handle{position:absolute; right:-6px; bottom:-6px; width:12px; height:12px; background:var(--orange); border-radius:50%; cursor:nwse-resize; border:2px solid #fff;}
+  .sig-add-btn{background:var(--navy); color:#fff; border:none; border-radius:4px; padding:3px 9px; font-size:10px; cursor:pointer; margin-bottom:4px;}
+  @media print{ .sig-img-holder{border:none !important;} .sig-resize-handle{display:none !important;} }
+  body.pdf-mode .sig-resize-handle{display:none !important;}
   .sig-line input[type="text"]{text-align:center;}
   .sig-line input[type="text"]{font-size:9.5px !important; letter-spacing:0; white-space:normal; overflow:visible; text-overflow:clip; height:auto; padding:2px 0;}
   .sig-img-holder{height:42px; display:flex; align-items:center; justify-content:center;}
-  .sig-img-holder img{max-height:40px; max-width:100%;}
   .addrow-btn{background:#eee; border:1px dashed #999; padding:3px 8px; font-size:10px; cursor:pointer; margin-top:3px;}
   .del-btn{background:#a12626; color:#fff; border:none; border-radius:3px; padding:2px 7px; cursor:pointer; font-size:11px;}
   .bulletin-wrap, .saved-wrap, .quote-wrap{max-width:1000px; margin:0 auto; background:#fff; padding:16px; border:1px solid #ccc; overflow-x:auto;}
@@ -121,6 +140,25 @@
   .quick-action-btn{flex:1; min-width:150px; background:#fff; border:1px solid #e2e5ea; border-radius:10px; padding:16px; display:flex; flex-direction:column; align-items:center; gap:6px; font-size:12.5px; font-weight:700; color:#1c3350; cursor:pointer; box-shadow:0 1px 3px rgba(0,0,0,0.04);}
   .quick-action-btn:hover{border-color:var(--sidebar-active); background:#fdf9f2;}
   .quick-action-btn span{font-size:12px;}
+
+  /* ---- Calendar & Notepad ---- */
+  .cal-nav-btn{background:var(--navy); color:#fff; border:none; width:24px; height:24px; border-radius:4px; cursor:pointer; font-size:13px;}
+  .cal-grid{display:grid; grid-template-columns:repeat(7, 1fr); gap:3px;}
+  .cal-dow{text-align:center; font-size:9.5px; color:#8a93a3; font-weight:700; padding:2px 0;}
+  .cal-day{text-align:center; font-size:11.5px; padding:6px 2px; border-radius:5px; cursor:pointer; position:relative; background:#f7f8fa;}
+  .cal-day:hover{background:#eef1f5;}
+  .cal-day.other-month{color:#ccc; background:transparent;}
+  .cal-day.today{border:1.5px solid var(--orange); font-weight:700;}
+  .cal-day.selected{background:var(--sidebar-active); color:#241a04; font-weight:700;}
+  .cal-day.has-event::after{content:''; position:absolute; bottom:2px; left:50%; transform:translateX(-50%); width:4px; height:4px; border-radius:50%; background:var(--orange);}
+  .cal-day.selected.has-event::after{background:#241a04;}
+  .cal-event-row{display:flex; justify-content:space-between; align-items:center; background:#f7f8fa; border-radius:5px; padding:6px 8px; margin-bottom:5px; font-size:11.5px;}
+  .cal-event-row button{background:#a12626; color:#fff; border:none; border-radius:3px; padding:2px 6px; font-size:10px; cursor:pointer;}
+  .cal-add-form{display:flex; gap:6px; margin-top:6px; flex-wrap:wrap;}
+  .cal-add-form input{padding:5px; border:1px solid #ccc; border-radius:4px; font-size:11.5px;}
+  .cal-add-form input[type="text"]{flex:1; min-width:100px;}
+  .cal-add-form button{background:var(--orange); color:#fff; border:none; border-radius:4px; padding:5px 10px; font-size:11.5px; cursor:pointer;}
+  #dashNotepad{width:100%; min-height:260px; border:1px solid #e2e5ea; border-radius:6px; padding:10px; font-size:12.5px; font-family:inherit; resize:vertical;}
   .dash-grid{max-width:1200px; margin:0 auto; display:grid; grid-template-columns:1.2fr 1fr; gap:16px;}
   @media (max-width:800px){ .dash-grid{grid-template-columns:1fr;} }
   .dash-panel{background:#fff; border-radius:10px; padding:16px 18px; border:1px solid #e2e5ea; box-shadow:0 1px 3px rgba(0,0,0,0.04);}
@@ -130,6 +168,67 @@
   .activity-row:last-child{border-bottom:none;}
   .activity-row .a-name{font-weight:700; color:#333;}
   .activity-row .a-meta{color:#8a93a3; font-size:11px;}
+
+  /* ================= ENTERPRISE SHELL (topnav + sidebar polish + KPI cards) ================= */
+  body.dark-mode .main-content{ background:var(--ent-bg); }
+  .main-content{ transition: background 0.2s ease; }
+
+  /* Sidebar polish */
+  .sidebar{ box-shadow: 2px 0 18px rgba(0,0,0,0.18); }
+  .sidebar-logo .lg1{ letter-spacing:0.04em; }
+  .sidebar-nav button{ font-weight:600; position:relative; transition: background 0.15s ease, color 0.15s ease, padding-left 0.15s ease; }
+  .sidebar-nav button:hover{ padding-left:16px; }
+  .sidebar-nav button.active{ box-shadow: 0 2px 8px rgba(195,162,107,0.35); }
+  .sidebar-nav button.active::before{ content:''; position:absolute; left:-10px; top:50%; transform:translateY(-50%); width:4px; height:60%; background:var(--ent-accent); border-radius:3px; }
+  .sidebar-profile{ display:flex; align-items:center; gap:9px; padding:12px 14px; border-top:1px solid rgba(255,255,255,0.12); }
+  .sidebar-profile .avatar{ width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg,var(--ent-accent),var(--sidebar-active)); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:12.5px; color:#151f33; flex-shrink:0; }
+  .sidebar-profile .info{ min-width:0; flex:1; }
+  .sidebar-profile .pname{ font-size:11.5px; font-weight:700; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .sidebar-profile .pstatus{ font-size:9.5px; color:#8fd6a8; display:flex; align-items:center; gap:4px; margin-top:1px; }
+  .sidebar-profile .pstatus .dot{ width:6px; height:6px; border-radius:50%; background:#2fbf6e; box-shadow:0 0 0 2px rgba(47,191,110,0.25); flex-shrink:0; }
+  .sidebar-version{ font-size:9px; color:#5c6b85; text-align:center; padding:6px 10px 12px 10px; letter-spacing:0.04em; }
+
+  /* Top navigation */
+  .topnav{ display:flex; align-items:center; gap:14px; background:var(--ent-card); border:1px solid var(--ent-border); border-radius:var(--ent-radius); padding:10px 16px; max-width:1200px; margin:0 auto 18px auto; box-shadow:var(--ent-shadow); flex-wrap:wrap; }
+  body.dark-mode .topnav{ color:var(--ent-text); }
+  .topnav .tn-breadcrumb{ font-size:11.5px; color:var(--ent-text-mut); font-weight:600; white-space:nowrap; }
+  .topnav .tn-breadcrumb b{ color:var(--ent-text); }
+  .topnav .tn-search{ flex:1; min-width:140px; display:flex; align-items:center; gap:6px; background:var(--ent-bg); border:1px solid var(--ent-border); border-radius:9px; padding:7px 10px; }
+  .topnav .tn-search input{ border:none; background:transparent; outline:none; font-size:12px; width:100%; font-family:inherit; color:var(--ent-text); }
+  .topnav .tn-right{ display:flex; align-items:center; gap:10px; margin-left:auto; }
+  .topnav .tn-clock{ font-size:11px; color:var(--ent-text-mut); text-align:right; line-height:1.3; white-space:nowrap; }
+  .topnav .tn-clock b{ color:var(--ent-text); font-size:11.5px; }
+  .topnav .tn-icon-btn{ position:relative; width:32px; height:32px; border-radius:9px; border:1px solid var(--ent-border); background:var(--ent-bg); cursor:pointer; font-size:14px; display:flex; align-items:center; justify-content:center; color:var(--ent-text); }
+  .topnav .tn-icon-btn:hover{ background:#eef2f7; }
+  body.dark-mode .topnav .tn-icon-btn:hover{ background:#1a2740; }
+  .topnav .tn-badge{ position:absolute; top:-4px; right:-4px; background:var(--ent-danger); color:#fff; font-size:9px; font-weight:800; border-radius:8px; padding:1px 4px; min-width:14px; text-align:center; line-height:1.4; }
+  .topnav .tn-user{ display:flex; align-items:center; gap:7px; padding-left:10px; border-left:1px solid var(--ent-border); }
+  .topnav .tn-user .avatar{ width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg,var(--ent-secondary),var(--ent-accent)); color:#fff; font-weight:800; font-size:11px; display:flex; align-items:center; justify-content:center; }
+  .topnav .tn-user .uname{ font-size:11.5px; font-weight:700; color:var(--ent-text); line-height:1.2; }
+  .topnav .tn-user .urole{ font-size:9.5px; color:var(--ent-text-mut); }
+
+  /* Dashboard header + KPI enterprise upgrade */
+  body.dark-mode .dash-header h1{ color:var(--ent-text); }
+  body.dark-mode .dash-header p{ color:var(--ent-text-mut); }
+  .kpi-card{ border-radius:var(--ent-radius-sm); box-shadow:var(--ent-shadow); transition: transform 0.15s ease, box-shadow 0.15s ease; display:flex; align-items:flex-start; gap:12px; }
+  .kpi-card:hover{ transform:translateY(-2px); box-shadow:var(--ent-shadow-hover); }
+  .kpi-card .kpi-icon{ width:38px; height:38px; border-radius:11px; display:flex; align-items:center; justify-content:center; font-size:17px; flex-shrink:0; }
+  .kpi-card.accent-navy .kpi-icon{ background:rgba(15,23,42,0.08); }
+  .kpi-card.accent-gold .kpi-icon{ background:rgba(245,158,11,0.14); }
+  .kpi-card.accent-green .kpi-icon{ background:rgba(16,185,129,0.14); }
+  .kpi-card.accent-red .kpi-icon{ background:rgba(239,68,68,0.14); }
+  body.dark-mode .kpi-card{ background:var(--ent-card); border-color:var(--ent-border); }
+  body.dark-mode .kpi-card .kpi-value{ color:var(--ent-text); }
+  body.dark-mode .kpi-card .kpi-label, body.dark-mode .kpi-card .kpi-sub{ color:var(--ent-text-mut); }
+  body.dark-mode .dash-panel{ background:var(--ent-card); border-color:var(--ent-border); }
+  body.dark-mode .dash-panel h3{ color:var(--ent-text); }
+  body.dark-mode .quick-action-btn{ background:var(--ent-card); border-color:var(--ent-border); color:var(--ent-text); }
+
+  @media (max-width:700px){
+    .topnav .tn-breadcrumb{ display:none; }
+    .topnav .tn-clock{ display:none; }
+  }
+  @media print{ .topnav{ display:none !important; } }
 
   /* ---- GitHub Cloud Sync modal ---- */
   .gh-modal-box{max-width:440px;}
@@ -287,12 +386,41 @@
       <button onclick="switchTab('messages')" id="btn-tab-messages">📨 Messages</button>
       <button onclick="switchTab('sync')" id="btn-tab-sync">🔗 Sync (QR)</button>
     </nav>
-    <div class="sidebar-footer">
-      <button onclick="openGithubModal()">☁️ Cloud Sync (GitHub)</button>
+    <div class="sidebar-profile" id="sidebarProfile">
+      <div class="avatar" id="sidebarAvatar">?</div>
+      <div class="info">
+        <div class="pname" id="sidebarPname">Hindi naka-login</div>
+        <div class="pstatus" id="sidebarPstatus"><span class="dot" style="background:#8a93a3;"></span> Local lang (walang sync)</div>
+      </div>
     </div>
+    <div class="sidebar-footer">
+      <button onclick="openGithubModal()" id="sidebarLoginBtn">🔐 Log In / Sync</button>
+    </div>
+    <div id="syncStatusFooter" style="font-size:9.5px; color:#8fd6a8; text-align:center; padding:0 10px 8px 10px; display:none;"></div>
+    <div class="sidebar-version">CT Citimotors CRM · v2.0 Enterprise</div>
   </aside>
 
   <main class="main-content">
+
+<div class="topnav no-print" id="topNav">
+  <div class="tn-breadcrumb">CRM / <b id="tnBreadcrumb">Dashboard</b></div>
+  <div class="tn-search">
+    <span>🔎</span>
+    <input type="text" id="tnSearchInput" placeholder="Search client, phone, vehicle, status..." onkeydown="if(event.key==='Enter') tnGlobalSearch()">
+  </div>
+  <div class="tn-right">
+    <div class="tn-clock"><b id="tnTime">--:--</b><br><span id="tnDate">—</span></div>
+    <button class="tn-icon-btn" id="tnNotifBtn" onclick="switchTab('messages')" title="Notifications">🔔<span class="tn-badge" id="tnNotifBadge" style="display:none;">0</span></button>
+    <button class="tn-icon-btn" onclick="toggleDarkMode()" title="Toggle dark mode" id="tnDarkBtn">🌙</button>
+    <div class="tn-user">
+      <div class="avatar">RM</div>
+      <div>
+        <div class="uname">Romeo Meong</div>
+        <div class="urole">Sales Executive</div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div id="tab-dashboard">
   <div class="dash-header">
@@ -321,13 +449,85 @@
       <div id="recentActivity"><p style="color:#8a93a3; font-size:12px;">Wala pang saved applications.</p></div>
     </div>
   </div>
+
+  <div class="dash-grid" style="margin-top:16px;">
+    <div class="dash-panel">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <h3 style="margin:0;">📅 Calendar / Appointments</h3>
+        <div>
+          <button class="cal-nav-btn" onclick="calChangeMonth(-1)">‹</button>
+          <span id="calMonthLabel" style="font-weight:700; font-size:12.5px; margin:0 6px;"></span>
+          <button class="cal-nav-btn" onclick="calChangeMonth(1)">›</button>
+        </div>
+      </div>
+      <div class="cal-grid" id="calGrid"></div>
+      <div id="calSelectedDayPanel" style="margin-top:10px;"></div>
+      <h4 style="font-size:11.5px; color:#8a93a3; margin:14px 0 4px 0; text-transform:uppercase;">Upcoming Appointments</h4>
+      <div id="upcomingAppointments"><p style="color:#8a93a3; font-size:12px;">Wala pang naka-schedule.</p></div>
+    </div>
+    <div class="dash-panel">
+      <h3>📝 Notepad</h3>
+      <textarea id="dashNotepad" placeholder="Mag-type ng quick notes dito — awtomatikong na-sasave..." oninput="saveNotepad()"></textarea>
+    </div>
+  </div>
+
+  <div class="dash-panel" id="bankCreditDirPanel" style="max-width:1200px; margin:16px auto 0 auto;">
+    <h3>🏦 Bank &amp; Credit Partners Directory</h3>
+    <p style="font-size:11.5px; color:#667; margin:0 0 10px 0;">Listahan ng mga contact person sa bangko/credit companies na madalas mong kausap — para readily available agad sa dashboard mo.</p>
+    <div id="bcdForm" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:8px; margin-bottom:10px;">
+      <input type="text" id="bcdName" placeholder="Contact Person Name">
+      <input type="text" id="bcdContact" placeholder="Contact Number">
+      <input type="email" id="bcdEmail" placeholder="Email Address">
+      <input type="text" id="bcdCompany" list="bankCreditCompanyList" placeholder="Bank / Credit Company">
+    </div>
+    <datalist id="bankCreditCompanyList">
+      <option value="BDO"><option value="Metrobank"><option value="BPI"><option value="Security Bank"><option value="China Bank"><option value="RCBC"><option value="UnionBank"><option value="PSBank"><option value="EastWest"><option value="PNB"><option value="Maybank"><option value="LandBank"><option value="DBP"><option value="AUB"><option value="Tonik">
+      <option value="Asialink"><option value="Global Dominion"><option value="Radiowealth"><option value="BPI MS"><option value="SB Finance"><option value="Mitsubishi Motors Finance"><option value="Toyota Financial"><option value="Orix"><option value="Home Credit"><option value="BDO Finance"><option value="Robinsons Bank">
+    </datalist>
+    <div style="display:flex; gap:8px; margin-bottom:12px;">
+      <button class="addrow-btn" id="bcdSaveBtn" style="padding:8px 14px; font-size:12px; background:var(--ent-secondary,#2563EB); color:#fff; border:none;" onclick="bcdAddEntry()">+ Add Contact</button>
+      <button class="addrow-btn" id="bcdCancelBtn" style="padding:8px 14px; font-size:12px; display:none;" onclick="bcdCancelEdit()">Cancel</button>
+    </div>
+    <div id="bcdList" style="display:flex; flex-direction:column; gap:6px;"></div>
+  </div>
+
+  <div class="dash-grid" style="margin-top:16px;">
+    <div class="dash-panel" id="docMergerPanel">
+      <h3>📎 Document Merger <span style="font-weight:400; color:#8a93a3; font-size:11px;">(scan-and-merge, CamScanner-style)</span></h3>
+      <p style="font-size:11.5px; color:#667; margin:0 0 10px 0;">Mag-upload ng mga litrato ng requirements (ID, payslip, atbp.) o kahit existing PDF files — pwede i-reorder, tapos i-merge lahat as <b>iisang PDF</b>. Hindi ito na-sasave sa storage — direkta lang i-do-download pagkatapos i-merge.</p>
+      <input type="file" id="dmFileInput" accept="image/*,.pdf" multiple onchange="dmAddFiles(event)" style="font-size:11.5px; margin-bottom:10px;">
+      <div id="dmFileList" style="display:flex; flex-direction:column; gap:6px; margin-bottom:10px;"></div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button class="addrow-btn" style="padding:8px 14px; font-size:12px; background:var(--ent-secondary,#2563EB); color:#fff; border:none;" onclick="dmMergeAndDownload()">📄 Merge &amp; Download PDF</button>
+        <button class="addrow-btn" style="padding:8px 14px; font-size:12px;" onclick="dmClearFiles()">Clear All</button>
+      </div>
+      <div id="dmStatus" style="font-size:11px; color:#667; margin-top:8px;"></div>
+    </div>
+    <div class="dash-panel" id="idPrintPanel">
+      <h3>🪪 ID Card Print Layout <span style="font-weight:400; color:#8a93a3; font-size:11px;">(auto front/back sizing)</span></h3>
+      <p style="font-size:11.5px; color:#667; margin:0 0 10px 0;">Mag-upload ng litrato ng <b>Front</b> at <b>Back</b> ng ID — awtomatikong ia-align at ia-size sa tamang standard ID card size (85.6mm × 54mm, actual size) para tama ang laki once i-print.</p>
+      <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:10px;">
+        <div style="flex:1; min-width:140px;">
+          <label class="label">Front of ID</label>
+          <input type="file" id="idFrontInput" accept="image/*" onchange="idPreview(event,'idFrontPreview')" style="font-size:11px;">
+          <img id="idFrontPreview" style="display:none; margin-top:6px; max-width:100%; border:1px solid #ddd; border-radius:6px;">
+        </div>
+        <div style="flex:1; min-width:140px;">
+          <label class="label">Back of ID</label>
+          <input type="file" id="idBackInput" accept="image/*" onchange="idPreview(event,'idBackPreview')" style="font-size:11px;">
+          <img id="idBackPreview" style="display:none; margin-top:6px; max-width:100%; border:1px solid #ddd; border-radius:6px;">
+        </div>
+      </div>
+      <button class="addrow-btn" style="padding:8px 14px; font-size:12px; background:var(--ent-secondary,#2563EB); color:#fff; border:none;" onclick="idGeneratePrintPdf()">🖨️ Generate ID Print PDF</button>
+      <div id="idPrintStatus" style="font-size:11px; color:#667; margin-top:8px;"></div>
+    </div>
+  </div>
 </div>
 
 <div class="toolbar no-print" id="formToolbar">
   <button onclick="downloadPDF()">⬇️ Download PDF (1-page, colored)</button>
   <button class="secondary" onclick="window.print()">🖨️ Print (browser dialog)</button>
   <select id="paperSize"><option value="letter">Letter</option><option value="A4">A4</option><option value="legal">Legal</option></select>
-  <button class="navy" onclick="openSigModal()">✍️ Add Signature</button>
   <button class="secondary" onclick="clearAll()">New / Clear</button>
   <button onclick="saveApplication()">💾 Save Application</button>
   <button class="navy" onclick="toggleDesignMode()" id="designModeBtn">🎨 Design Mode</button>
@@ -633,33 +833,36 @@
     <tr class="sig-row">
       <td style="width:34%;">
         <div class="sig-line">
-          <div class="sig-underline"></div>
           <div class="sig-line-inner">
-          <div class="sig-img-holder" id="sigImgHolder"></div>
+          <div class="sig-img-holder" id="sigImgHolderBorrower"></div>
+          <button class="sig-add-btn no-print" onclick="openSigModal('borrower')">✍️ Signature</button>
           <input type="text" id="sigBorrower" style="text-align:center;" placeholder="Borrower Name">
           <span class="sig-print-only" id="sigBorrowerPrint" style="display:none; text-align:center; font-weight:700; text-transform:uppercase; font-size:9.5px;"></span>
+          <div class="sig-underline"></div>
           <div>Borrower's Signature Over Printed Name</div>
           </div>
         </div>
       </td>
       <td style="width:33%;">
         <div class="sig-line">
-          <div class="sig-underline"></div>
           <div class="sig-line-inner">
-          <div class="sig-img-holder"></div>
+          <div class="sig-img-holder" id="sigImgHolderExec"></div>
+          <button class="sig-add-btn no-print" onclick="openSigModal('exec')">✍️ Signature</button>
           <input type="text" id="sigExec" style="text-align:center;" value="ROMEO CUYACOT (MEONG)">
           <span class="sig-print-only" id="sigExecPrint" style="display:none; text-align:center; font-weight:700; text-transform:uppercase; font-size:9.5px;"></span>
+          <div class="sig-underline"></div>
           <div>Sales Executives (SRC Group)</div>
           </div>
         </div>
       </td>
       <td style="width:33%;">
         <div class="sig-line">
-          <div class="sig-underline"></div>
           <div class="sig-line-inner">
-          <div class="sig-img-holder"></div>
+          <div class="sig-img-holder" id="sigImgHolderManager"></div>
+          <button class="sig-add-btn no-print" onclick="openSigModal('manager')">✍️ Signature</button>
           <input type="text" id="sigManager" style="text-align:center;" placeholder="Sales Manager Name">
           <span class="sig-print-only" id="sigManagerPrint" style="display:none; text-align:center; font-weight:700; text-transform:uppercase; font-size:9.5px;"></span>
+          <div class="sig-underline"></div>
           <div>Sales Manager</div>
           </div>
         </div>
@@ -830,11 +1033,15 @@
   <div class="monitoring-wrap">
     <h2>Client Monitoring</h2>
     <p class="hint" style="max-width:none;">Automatic na nadadagdag dito ang client kapag pinindot mo ang "💾 Save Application" sa Application Form. Pwede mo ring idagdag manually gamit ang "+ Add Client".</p>
+    <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:10px;">
+      <input type="text" id="monFilterInput" placeholder="🔎 Filter by name, contact, vehicle, status..." oninput="filterMonitoringRows()" style="flex:1; min-width:220px; padding:9px 10px; border:1px solid #ccc; border-radius:6px; font-size:12px;">
+      <button class="addrow-btn" style="padding:8px 14px; font-size:12px; background:var(--ent-secondary,#2563EB); color:#fff; border:none;" onclick="exportMonitoringCSV()">⬇️ Export CSV</button>
+    </div>
     <table>
       <tr class="bold center">
-        <td>NAME</td><td>CONTACT NUMBER</td><td>ADDRESS</td><td>VEHICLE MODEL</td><td>DP%</td><td>BIRTHDATE (MM/DD)</td>
-        <td>STATUS</td><td>REMARKS</td>
-        <td>DATE OF RELEASE</td><td>ORCR RELEASE DATE</td><td>PLATE NUMBER</td><td>WARRANTY BOOKLET</td><td></td>
+        <td>NAME</td><td>CONTACT NUMBER</td><td>EMAIL ADDRESS</td><td>ADDRESS</td><td>VEHICLE MODEL</td><td>DP%</td><td>BIRTHDATE (MM/DD)</td>
+        <td>STATUS</td><td>SALES EXECUTIVE</td><td>REMARKS</td>
+        <td>DATE OF RELEASE</td><td>ORCR RELEASE DATE</td><td>PLATE NUMBER</td><td>WARRANTY BOOKLET</td><td>ACTIONS</td>
       </tr>
       <tbody id="monitoringRows"></tbody>
     </table>
@@ -884,13 +1091,16 @@
 
 <div class="modal-overlay no-print" id="sigModal">
   <div class="modal-box">
-    <h3>Borrower's Signature</h3>
+    <h3 id="sigModalTitle">Signature</h3>
     <canvas id="sigCanvas" width="360" height="140"></canvas>
     <div class="modal-actions">
       <button style="background:#eee;" onclick="clearSigCanvas()">Clear</button>
       <button style="background:#eee;" onclick="document.getElementById('sigUpload').click()">Upload Photo</button>
       <input type="file" id="sigUpload" accept="image/*" style="display:none" onchange="handleSigUpload(event)">
     </div>
+    <label style="font-size:11.5px; display:flex; align-items:center; gap:6px; margin-top:6px;">
+      <input type="checkbox" id="sigRemoveBg" checked> Auto-remove white background (para transparent, di kahon ang lalabas)
+    </label>
     <div class="modal-actions">
       <button style="background:#555; color:#fff;" onclick="closeSigModal()">Cancel</button>
       <button style="background:var(--orange); color:#fff;" onclick="saveSignature()">Use this Signature</button>
@@ -900,8 +1110,10 @@
 
 <div class="modal-overlay no-print" id="githubModal">
   <div class="modal-box gh-modal-box">
-    <h3>☁️ Cloud Sync via GitHub</h3>
-    <p class="gh-hint">Gamitin ang sarili mong libreng GitHub account bilang "cloud storage" — dito ma-sasave ang Saved Applications, Monitoring, at Bulletin data, kaya magagamit mo rin sa laptop o ibang phone basta parehong naka-configure ang settings dito.</p>
+    <h3>🔐 Account Login / Cloud Sync</h3>
+    <p class="gh-hint">Mag-login gamit ang email mo para awtomatikong ma-sync ang data mo (applications, monitoring, bulletin, bank/credit contacts, calendar, notes) sa kahit anong device — laptop, phone, atbp. Ang totoong storage ay ang sarili mong libreng GitHub repo; ang GitHub token + repo ang gumagana bilang "password" ng account mo, kaya ito rin ang ibibigay mo sa ibang tao balang araw para maka-login din sila sa parehong account.</p>
+    <label>Email Address (account name)</label>
+    <input type="email" id="ghEmail" placeholder="e.g. romeo@citimotors.com">
     <label>Personal Access Token</label>
     <input type="password" id="ghToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
     <div class="gh-hint">Gawa ka ng token sa github.com → Settings → Developer settings → Personal access tokens → Fine-grained token → bigyan ng <b>Read & Write access sa "Contents"</b> ng repo na gagamitin mo. Naka-save lang ito dito sa browser mo — hindi ito ipinapadala kahit saan maliban sa GitHub mismo.</div>
@@ -911,8 +1123,10 @@
     <input type="text" id="ghPath" value="citimotors-data.json">
     <div class="modal-actions" style="margin-top:14px;">
       <button style="background:#eee;" onclick="closeGithubModal()">Close</button>
-      <button style="background:var(--navy); color:#fff;" onclick="githubSave()">☁️ Save to GitHub</button>
-      <button style="background:var(--orange); color:#fff;" onclick="githubLoad()">⬇️ Load from GitHub</button>
+      <button style="background:#a12626; color:#fff; display:none;" id="ghLogoutBtn" onclick="logoutAccount()">Log Out</button>
+      <button style="background:var(--navy); color:#fff;" onclick="githubSave()">☁️ Save Now</button>
+      <button style="background:var(--orange); color:#fff;" onclick="githubLoad()">⬇️ Load Now</button>
+      <button style="background:#3a7a54; color:#fff;" onclick="loginAccount()">🔐 Log In &amp; Sync</button>
     </div>
     <div id="ghStatus"></div>
   </div>
@@ -936,6 +1150,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
 <script>
 const DEFAULT_VEHICLES = [
 {unit:"2026 MIRAGE", srp:781000, discount:105000, c20:15000, c25:15000, c30:59000, promo:"FREE FUEL SUBSIDY (₱20,000 VALUE)"},
@@ -962,7 +1177,6 @@ const DEFAULT_VEHICLES = [
 
 let vehicles = [];
 let quoteDP = 30;
-let sigDataUrl = null;
 let sigDrawing = false;
 let sigCtx = null;
 
@@ -987,7 +1201,61 @@ function switchTab(name){
   if(name==='details'){ refreshDetailsPicker(); }
   if(name==='messages') renderMessagesTab();
   if(name==='dashboard') renderDashboard();
+  const bcLabels = {dashboard:'Dashboard', form:'Application Form', quote:'Quotation', bulletin:'Vehicle Bulletin', details:'Vehicle Details', saved:'Saved Applications', monitoring:'Monitoring', messages:'Messages', sync:'Sync (QR)'};
+  const bcEl = document.getElementById('tnBreadcrumb');
+  if(bcEl) bcEl.textContent = bcLabels[name] || name;
 }
+
+// ---------------- Top nav: clock, dark mode, notifications, global search ----------------
+function tnUpdateClock(){
+  const now = new Date();
+  const timeEl = document.getElementById('tnTime');
+  const dateEl = document.getElementById('tnDate');
+  if(timeEl) timeEl.textContent = now.toLocaleTimeString('en-PH', {hour:'2-digit', minute:'2-digit'});
+  if(dateEl) dateEl.textContent = now.toLocaleDateString('en-PH', {month:'short', day:'numeric', year:'numeric'});
+}
+setInterval(tnUpdateClock, 15000);
+
+function toggleDarkMode(){
+  document.body.classList.toggle('dark-mode');
+  const on = document.body.classList.contains('dark-mode');
+  lsSet('cl_dark_mode', on);
+  const btn = document.getElementById('tnDarkBtn');
+  if(btn) btn.textContent = on ? '☀️' : '🌙';
+}
+
+function tnUpdateNotifBadge(){
+  const badge = document.getElementById('tnNotifBadge');
+  if(!badge) return;
+  let count = 0;
+  try{ count = computeTodaysAlerts().length; }catch(e){ count = 0; }
+  if(count > 0){ badge.style.display='block'; badge.textContent = count > 9 ? '9+' : String(count); }
+  else{ badge.style.display='none'; }
+}
+
+function tnGlobalSearch(){
+  const q = (document.getElementById('tnSearchInput').value||'').trim();
+  if(!q) return;
+  switchTab('monitoring');
+  setTimeout(()=>{
+    const rows = document.querySelectorAll('#monitoringRows tr');
+    const needle = q.toLowerCase();
+    let firstMatch = null;
+    rows.forEach(row=>{
+      const match = row.textContent.toLowerCase().includes(needle);
+      row.style.outline = match ? '2px solid var(--ent-accent)' : 'none';
+      if(match && !firstMatch) firstMatch = row;
+    });
+    if(firstMatch) firstMatch.scrollIntoView({behavior:'smooth', block:'center'});
+  }, 60);
+}
+
+if(lsGet('cl_dark_mode', false)){
+  document.body.classList.add('dark-mode');
+  const _db = document.getElementById('tnDarkBtn');
+  if(_db) _db.textContent = '☀️';
+}
+tnUpdateClock();
 
 function formatNumber(n){ const num=Number(n); return isNaN(num)? n : num.toLocaleString('en-US'); }
 function parseNumber(str){ if(!str) return NaN; return parseFloat(String(str).replace(/[^0-9.]/g,'')); }
@@ -1032,8 +1300,78 @@ function saveTextAsFile(text, filename, mimeType){
 function lsGet(key, fallback){
   try{ const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }catch(e){ return fallback; }
 }
+let _suppressAutoSync = false;
 function lsSet(key, val){
-  try{ localStorage.setItem(key, JSON.stringify(val)); return true; }catch(e){ return false; }
+  try{
+    localStorage.setItem(key, JSON.stringify(val));
+    if(!_suppressAutoSync && key !== 'cl_login_session' && key !== 'cl_github_config') queueAutoSync();
+    return true;
+  }catch(e){ return false; }
+}
+
+// ---------------- Account login (email + GitHub repo acts as the "account" so data follows you across devices) ----------------
+function getLoginSession(){ return lsGet('cl_login_session', null); }
+function setLoginSession(session){
+  _suppressAutoSync = true;
+  lsSet('cl_login_session', session);
+  _suppressAutoSync = false;
+}
+function isLoggedIn(){
+  const s = getLoginSession();
+  const cfg = lsGet('cl_github_config', {});
+  return !!(s && s.email && cfg.token && cfg.repo);
+}
+function updateAccountUI(){
+  const s = getLoginSession();
+  const avatar = document.getElementById('sidebarAvatar');
+  const pname = document.getElementById('sidebarPname');
+  const pstatus = document.getElementById('sidebarPstatus');
+  const loginBtn = document.getElementById('sidebarLoginBtn');
+  const logoutBtn = document.getElementById('ghLogoutBtn');
+  if(isLoggedIn()){
+    const email = s.email;
+    avatar.textContent = email.slice(0,2).toUpperCase();
+    pname.textContent = email;
+    pstatus.innerHTML = '<span class="dot"></span> Naka-login · Auto-sync ON';
+    loginBtn.textContent = '🔐 Account (naka-login)';
+    if(logoutBtn) logoutBtn.style.display = '';
+  } else {
+    avatar.textContent = '?';
+    pname.textContent = 'Hindi naka-login';
+    pstatus.innerHTML = '<span class="dot" style="background:#8a93a3;"></span> Local lang (walang sync)';
+    loginBtn.textContent = '🔐 Log In / Sync';
+    if(logoutBtn) logoutBtn.style.display = 'none';
+  }
+}
+async function loginAccount(){
+  const email = document.getElementById('ghEmail').value.trim();
+  const token = document.getElementById('ghToken').value.trim();
+  const repo = document.getElementById('ghRepo').value.trim();
+  if(!email){ ghShowStatus('Lagyan ng email address.', false); return; }
+  if(!token || !repo){ ghShowStatus('Punan muna ang Token at Repository.', false); return; }
+  saveGithubConfig();
+  setLoginSession({ email });
+  ghShowStatus('Naglo-login at kinukuha ang existing data (kung meron)...', true);
+  updateAccountUI();
+  await githubLoad(true);
+  await githubSave(true);
+  ghShowStatus('✅ Naka-login bilang ' + email + '. Awtomatiko nang ma-sasync ang data mo sa lahat ng device na maglo-login gamit itong parehong token/repo.', true);
+}
+function logoutAccount(){
+  if(!confirm('Mag-log out? Mananatili ang data dito sa device na ito, pero titigil ang auto-sync hanggang mag-login ka ulit.')) return;
+  _suppressAutoSync = true;
+  localStorage.removeItem('cl_login_session');
+  _suppressAutoSync = false;
+  updateAccountUI();
+  closeGithubModal();
+}
+let _autoSyncTimer = null;
+function queueAutoSync(){
+  if(!isLoggedIn()) return;
+  clearTimeout(_autoSyncTimer);
+  const footer = document.getElementById('syncStatusFooter');
+  if(footer){ footer.style.display='block'; footer.textContent = '● May bagong edit, magsi-sync...'; footer.style.color = '#c3a26b'; }
+  _autoSyncTimer = setTimeout(()=> githubSave(true), 2500);
 }
 
 // ---------------- Bulletin ----------------
@@ -1302,8 +1640,15 @@ async function downloadQuoteImage(){
   }
 }
 
-// ---------------- Signature pad ----------------
-function openSigModal(){
+// ---------------- Signature pad (multi-role: borrower, exec, manager) ----------------
+const SIG_ROLE_LABELS = { borrower: "Borrower's Signature", exec: "Sales Executive's Signature", manager: "Sales Manager's Signature" };
+const SIG_ROLE_HOLDER = { borrower: 'sigImgHolderBorrower', exec: 'sigImgHolderExec', manager: 'sigImgHolderManager' };
+let currentSigRole = 'borrower';
+let sigData = { borrower: null, exec: null, manager: null }; // each: {dataUrl, x, y, w, h}
+
+function openSigModal(role){
+  currentSigRole = role || 'borrower';
+  document.getElementById('sigModalTitle').textContent = SIG_ROLE_LABELS[currentSigRole];
   document.getElementById('sigModal').classList.add('open');
   const canvas = document.getElementById('sigCanvas');
   sigCtx = canvas.getContext('2d');
@@ -1350,11 +1695,102 @@ function handleSigUpload(evt){
   };
   reader.readAsDataURL(file);
 }
+
+// Simple color-key background removal: makes near-white/light pixels transparent,
+// which works well for a photographed or drawn signature (dark ink on light paper).
+function removeWhiteBackground(canvas){
+  const ctx = canvas.getContext('2d');
+  const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  const d = imgData.data;
+  const threshold = 235;
+  for(let i=0; i<d.length; i+=4){
+    const r=d[i], g=d[i+1], b=d[i+2];
+    if(r>threshold && g>threshold && b>threshold){
+      d[i+3] = 0; // fully transparent
+    }
+  }
+  ctx.putImageData(imgData, 0, 0);
+}
+
 function saveSignature(){
   const canvas = document.getElementById('sigCanvas');
-  sigDataUrl = canvas.toDataURL('image/png');
-  document.getElementById('sigImgHolder').innerHTML = `<img src="${sigDataUrl}">`;
+  if(document.getElementById('sigRemoveBg').checked){
+    removeWhiteBackground(canvas);
+  }
+  const dataUrl = canvas.toDataURL('image/png');
+  placeSignatureImage(currentSigRole, dataUrl, 20, 5, 140, 55);
   closeSigModal();
+}
+
+function placeSignatureImage(role, dataUrl, x, y, w, h){
+  sigData[role] = { dataUrl, x, y, w, h };
+  renderSignatureImage(role);
+}
+
+function renderSignatureImage(role){
+  const holder = document.getElementById(SIG_ROLE_HOLDER[role]);
+  const d = sigData[role];
+  holder.innerHTML = '';
+  if(!d) return;
+  const img = document.createElement('img');
+  img.src = d.dataUrl;
+  img.className = 'sig-img-el';
+  img.style.left = d.x + 'px';
+  img.style.top = d.y + 'px';
+  img.style.width = d.w + 'px';
+  img.style.height = d.h + 'px';
+  holder.appendChild(img);
+
+  const handle = document.createElement('div');
+  handle.className = 'sig-resize-handle no-print';
+  handle.style.left = (d.x + d.w - 6) + 'px';
+  handle.style.top = (d.y + d.h - 6) + 'px';
+  holder.appendChild(handle);
+
+  makeDraggable(img, holder, role, handle);
+  makeResizable(handle, img, holder, role);
+}
+
+function makeDraggable(img, holder, role, handle){
+  let dragging = false, startX=0, startY=0, origX=0, origY=0;
+  img.addEventListener('pointerdown', e=>{
+    dragging = true;
+    startX = e.clientX; startY = e.clientY;
+    origX = sigData[role].x; origY = sigData[role].y;
+    img.setPointerCapture(e.pointerId);
+  });
+  img.addEventListener('pointermove', e=>{
+    if(!dragging) return;
+    const dx = e.clientX - startX, dy = e.clientY - startY;
+    sigData[role].x = origX + dx;
+    sigData[role].y = origY + dy;
+    img.style.left = sigData[role].x + 'px';
+    img.style.top = sigData[role].y + 'px';
+    handle.style.left = (sigData[role].x + sigData[role].w - 6) + 'px';
+    handle.style.top = (sigData[role].y + sigData[role].h - 6) + 'px';
+  });
+  img.addEventListener('pointerup', ()=> dragging=false);
+}
+function makeResizable(handle, img, holder, role){
+  let resizing = false, startX=0, startY=0, origW=0, origH=0;
+  handle.addEventListener('pointerdown', e=>{
+    resizing = true;
+    startX = e.clientX; startY = e.clientY;
+    origW = sigData[role].w; origH = sigData[role].h;
+    handle.setPointerCapture(e.pointerId);
+    e.stopPropagation();
+  });
+  handle.addEventListener('pointermove', e=>{
+    if(!resizing) return;
+    const dx = e.clientX - startX, dy = e.clientY - startY;
+    sigData[role].w = Math.max(20, origW + dx);
+    sigData[role].h = Math.max(15, origH + dy);
+    img.style.width = sigData[role].w + 'px';
+    img.style.height = sigData[role].h + 'px';
+    handle.style.left = (sigData[role].x + sigData[role].w - 6) + 'px';
+    handle.style.top = (sigData[role].y + sigData[role].h - 6) + 'px';
+  });
+  handle.addEventListener('pointerup', ()=> resizing=false);
 }
 
 // ---------------- Save / Load / Backup applications ----------------
@@ -1368,7 +1804,7 @@ function gatherFormData(){
     acct: tr.querySelector('.bank-acct').value, ccCompany: tr.querySelector('.cc-company').value,
     ccLimit: tr.querySelector('.cc-limit').value, ccExpiry: tr.querySelector('.cc-expiry').value,
   }));
-  data._signature = sigDataUrl;
+  data._signature = sigData;
   return data;
 }
 function applyFormData(data){
@@ -1388,8 +1824,8 @@ function applyFormData(data){
       tbody.appendChild(tr);
     });
   }
-  sigDataUrl = data._signature || null;
-  document.getElementById('sigImgHolder').innerHTML = sigDataUrl ? `<img src="${sigDataUrl}">` : '';
+  sigData = data._signature || { borrower:null, exec:null, manager:null };
+  ['borrower','exec','manager'].forEach(renderSignatureImage);
 }
 function saveApplication(){
   const data = gatherFormData();
@@ -1450,6 +1886,7 @@ function addOrUpdateMonitoringFromForm(data){
   const list = getMonitoring();
   const name = data.b_name || '';
   const contact = data.b_mobile || data.b_tel || '';
+  const email = data.b_email || '';
   const address = data.b_addr || '';
   const vehicle = data.vehicle || '';
   const dp = data.downPayment || '';
@@ -1457,9 +1894,10 @@ function addOrUpdateMonitoringFromForm(data){
   // update existing record for same name+vehicle if found, else add new
   const existingIdx = list.findIndex(r => r.name.toUpperCase()===name.toUpperCase() && r.vehicle.toUpperCase()===vehicle.toUpperCase());
   const record = existingIdx>=0 ? list[existingIdx] : {
-    id: 'mon_' + Date.now(), status:'ONGOING', remarks:'', dateRelease:'', dateORCR:'', plateNumber:'', warrantyBooklet:'', birthdate:''
+    id: 'mon_' + Date.now(), status:'ONGOING', remarks:'', dateRelease:'', dateORCR:'', plateNumber:'', warrantyBooklet:'', birthdate:'', salesExec:''
   };
   record.name = name; record.contact = contact; record.address = address; record.vehicle = vehicle; record.dp = dp;
+  if(email && !record.email) record.email = email; // don't overwrite an email already set manually
   if(parsedBirthdate && !record.birthdate) record.birthdate = parsedBirthdate; // don't overwrite a birthdate already set manually
   if(existingIdx>=0) list[existingIdx] = record; else list.push(record);
   setMonitoring(list);
@@ -1475,6 +1913,7 @@ function renderMonitoringTable(){
     tr.innerHTML = `
       <td><input type="text" class="mon-name" value="${escapeHtml(r.name)}"></td>
       <td><input type="text" class="mon-contact" value="${escapeHtml(r.contact)}"></td>
+      <td><input type="email" class="mon-email" value="${escapeHtml(r.email||'')}"></td>
       <td><input type="text" class="mon-address" value="${escapeHtml(r.address)}"></td>
       <td><input type="text" class="mon-vehicle" value="${escapeHtml(r.vehicle)}"></td>
       <td><input type="text" class="mon-dp" value="${escapeHtml(r.dp)}"></td>
@@ -1486,12 +1925,18 @@ function renderMonitoringTable(){
           <option value="APPROVED" ${r.status==='APPROVED'?'selected':''}>APPROVED</option>
         </select>
       </td>
+      <td><input type="text" class="mon-salesExec" value="${escapeHtml(r.salesExec||'')}" placeholder="Sales Exec"></td>
       <td><textarea class="mon-remarks">${escapeHtml(r.remarks)}</textarea></td>
       <td><input type="date" class="mon-dateRelease" value="${escapeHtml(r.dateRelease)}"></td>
       <td><input type="date" class="mon-dateORCR" value="${escapeHtml(r.dateORCR)}"></td>
       <td><input type="text" class="mon-plate" value="${escapeHtml(r.plateNumber)}"></td>
       <td><input type="text" class="mon-warranty" value="${escapeHtml(r.warrantyBooklet)}"></td>
-      <td class="center"><button class="del-btn" onclick="this.closest('tr').remove()">✕</button></td>`;
+      <td class="center" style="white-space:nowrap;">
+        <a href="tel:${encodeURIComponent(r.contact||'')}" title="Call" style="text-decoration:none; margin-right:4px;">📞</a>
+        <a href="sms:${encodeURIComponent(r.contact||'')}" title="SMS" style="text-decoration:none; margin-right:4px;">💬</a>
+        <a href="mailto:${encodeURIComponent(r.email||'')}" title="Email" style="text-decoration:none; margin-right:4px;">✉️</a>
+        <button class="del-btn" onclick="this.closest('tr').remove()">✕</button>
+      </td>`;
     tbody.appendChild(tr);
   });
 }
@@ -1499,9 +1944,94 @@ function onMonitoringStatusChange(sel){
   const tr = sel.closest('tr');
   tr.className = 'status-' + sel.value;
 }
+
+// ---------------- Bank / Credit-company partner directory (dashboard overview widget — not tied to individual clients) ----------------
+function getBankCreditDirectory(){ return lsGet('cl_bank_credit_directory', []); }
+function setBankCreditDirectory(list){ lsSet('cl_bank_credit_directory', list); }
+
+let bcdEditingId = null;
+
+function bcdAddEntry(){
+  const name = document.getElementById('bcdName').value.trim();
+  const contact = document.getElementById('bcdContact').value.trim();
+  const email = document.getElementById('bcdEmail').value.trim();
+  const company = document.getElementById('bcdCompany').value.trim();
+  if(!name && !company){ alert('Lagyan ng pangalan ng contact person o bank/credit company.'); return; }
+  const list = getBankCreditDirectory();
+  if(bcdEditingId){
+    const idx = list.findIndex(e=>e.id===bcdEditingId);
+    if(idx > -1){ list[idx] = { ...list[idx], name, contact, email, company }; }
+    setBankCreditDirectory(list);
+    bcdCancelEdit();
+  } else {
+    list.push({ id:'bcd_'+Date.now(), name, contact, email, company });
+    setBankCreditDirectory(list);
+    ['bcdName','bcdContact','bcdEmail','bcdCompany'].forEach(id=> document.getElementById(id).value = '');
+  }
+  renderBankCreditDirectory();
+}
+function bcdEditEntry(id){
+  const e = getBankCreditDirectory().find(x=>x.id===id);
+  if(!e) return;
+  bcdEditingId = id;
+  document.getElementById('bcdName').value = e.name || '';
+  document.getElementById('bcdContact').value = e.contact || '';
+  document.getElementById('bcdEmail').value = e.email || '';
+  document.getElementById('bcdCompany').value = e.company || '';
+  document.getElementById('bcdSaveBtn').textContent = '✓ Update Contact';
+  document.getElementById('bcdCancelBtn').style.display = '';
+  document.getElementById('bcdName').scrollIntoView({behavior:'smooth', block:'center'});
+  document.getElementById('bcdName').focus();
+}
+function bcdCancelEdit(){
+  bcdEditingId = null;
+  ['bcdName','bcdContact','bcdEmail','bcdCompany'].forEach(id=> document.getElementById(id).value = '');
+  document.getElementById('bcdSaveBtn').textContent = '+ Add Contact';
+  document.getElementById('bcdCancelBtn').style.display = 'none';
+}
+function bcdDeleteEntry(id){
+  if(!confirm('Alisin ang contact na ito?')) return;
+  setBankCreditDirectory(getBankCreditDirectory().filter(e=>e.id!==id));
+  if(bcdEditingId === id) bcdCancelEdit();
+  renderBankCreditDirectory();
+}
+function renderBankCreditDirectory(){
+  const holder = document.getElementById('bcdList');
+  if(!holder) return;
+  const list = getBankCreditDirectory();
+  if(list.length===0){ holder.innerHTML = '<p style="color:#8a93a3; font-size:11.5px;">Wala pang naka-listang bank/credit contact.</p>'; return; }
+  holder.innerHTML = list.map(e=>`
+    <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap; background:#f7f8fa; border-radius:8px; padding:9px 12px; font-size:11.5px;">
+      <div style="font-weight:800; color:var(--ent-secondary,#2563EB); width:90px; flex-shrink:0;">${escapeHtml(e.company||'—')}</div>
+      <div style="width:150px; flex-shrink:0;"><b>${escapeHtml(e.name||'—')}</b></div>
+      ${e.contact ? `<div style="color:#555; white-space:nowrap;">📞 ${escapeHtml(e.contact)}</div>` : ''}
+      ${e.email ? `<div style="color:#555; white-space:nowrap;">✉️ ${escapeHtml(e.email)}</div>` : ''}
+      <div style="display:flex; gap:6px; margin-left:auto; flex-shrink:0;">
+        <button class="addrow-btn" style="padding:2px 8px; font-size:11px;" onclick="bcdEditEntry('${e.id}')">✎ Edit</button>
+        <button class="del-btn" onclick="bcdDeleteEntry('${e.id}')">✕</button>
+      </div>
+    </div>`).join('');
+}
+
+function filterMonitoringRows(){
+  const q = (document.getElementById('monFilterInput').value||'').toLowerCase().trim();
+  document.querySelectorAll('#monitoringRows tr').forEach(tr=>{
+    tr.style.display = !q || tr.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+
+function exportMonitoringCSV(){
+  const list = getMonitoring();
+  const headers = ['Name','Contact','Email','Address','Vehicle','DP%','Birthdate','Status','Sales Executive','Remarks','Date of Release','ORCR Release Date','Plate Number','Warranty Booklet'];
+  const csvEsc = v => `"${String(v||'').replace(/"/g,'""')}"`;
+  const rows = list.map(r=>[r.name,r.contact,r.email,r.address,r.vehicle,r.dp,r.birthdate,r.status,r.salesExec,r.remarks,r.dateRelease,r.dateORCR,r.plateNumber,r.warrantyBooklet].map(csvEsc).join(','));
+  const csv = headers.map(csvEsc).join(',') + '\n' + rows.join('\n');
+  saveTextAsFile(csv, 'citimotors_monitoring_' + Date.now() + '.csv', 'text/csv');
+}
+
 function addMonitoringRow(){
   const list = getMonitoring();
-  list.push({ id:'mon_'+Date.now(), name:'', contact:'', address:'', vehicle:'', dp:'', birthdate:'', status:'ONGOING', remarks:'', dateRelease:'', dateORCR:'', plateNumber:'', warrantyBooklet:'' });
+  list.push({ id:'mon_'+Date.now(), name:'', contact:'', email:'', address:'', vehicle:'', dp:'', birthdate:'', status:'ONGOING', salesExec:'', remarks:'', dateRelease:'', dateORCR:'', plateNumber:'', warrantyBooklet:'' });
   setMonitoring(list);
   renderMonitoringTable();
 }
@@ -1513,11 +2043,13 @@ function saveMonitoringTable(){
       id: 'mon_' + Date.now() + '_' + i,
       name: tr.querySelector('.mon-name').value.trim(),
       contact: tr.querySelector('.mon-contact').value.trim(),
+      email: tr.querySelector('.mon-email').value.trim(),
       address: tr.querySelector('.mon-address').value.trim(),
       vehicle: tr.querySelector('.mon-vehicle').value.trim(),
       dp: tr.querySelector('.mon-dp').value.trim(),
       birthdate: tr.querySelector('.mon-birthdate').value.trim(),
       status: tr.querySelector('.mon-status').value,
+      salesExec: tr.querySelector('.mon-salesExec').value.trim(),
       remarks: tr.querySelector('.mon-remarks').value.trim(),
       dateRelease: tr.querySelector('.mon-dateRelease').value.trim(),
       dateORCR: tr.querySelector('.mon-dateORCR').value.trim(),
@@ -1574,8 +2106,8 @@ function clearAll(){
   document.getElementById('b_citizenship').value = 'FILIPINO';
   document.getElementById('c_citizenship').value = 'FILIPINO';
   document.getElementById('sigExec').value = 'ROMEO CUYACOT (MEONG)';
-  sigDataUrl = null;
-  document.getElementById('sigImgHolder').innerHTML = '';
+  sigData = { borrower:null, exec:null, manager:null };
+  ['borrower','exec','manager'].forEach(renderSignatureImage);
 }
 
 function autoGrow(el){
@@ -1929,19 +2461,23 @@ function renderDashboard(){
   const declined = monitoring.filter(r=>r.status==='DECLINED').length;
 
   const kpis = [
-    {label:'Total Clients', value: monitoring.length, sub:'sa Monitoring', accent:'navy', goto:'monitoring'},
-    {label:'Ongoing', value: ongoing, sub:'currently processing', accent:'gold', goto:'monitoring'},
-    {label:'Approved', value: approved, sub:'completed deals', accent:'green', goto:'monitoring'},
-    {label:'Declined', value: declined, sub:'did not push through', accent:'red', goto:'monitoring'},
-    {label:'Saved Applications', value: appsList.length, sub:'application forms filed', accent:'navy', goto:'saved'},
+    {label:'Total Clients', value: monitoring.length, sub:'sa Monitoring', accent:'navy', goto:'monitoring', icon:'👥'},
+    {label:'Ongoing', value: ongoing, sub:'currently processing', accent:'gold', goto:'monitoring', icon:'⏳'},
+    {label:'Approved', value: approved, sub:'completed deals', accent:'green', goto:'monitoring', icon:'✅'},
+    {label:'Declined', value: declined, sub:'did not push through', accent:'red', goto:'monitoring', icon:'⛔'},
+    {label:'Saved Applications', value: appsList.length, sub:'application forms filed', accent:'navy', goto:'saved', icon:'💾'},
   ];
   document.getElementById('kpiGrid').innerHTML = kpis.map(k=>`
     <div class="kpi-card accent-${k.accent}" style="cursor:pointer;" onclick="switchTab('${k.goto}')">
-      <div class="kpi-label">${escapeHtml(k.label)}</div>
-      <div class="kpi-value">${typeof k.value==='number' ? k.value.toLocaleString('en-US') : k.value}</div>
-      <div class="kpi-sub">${escapeHtml(k.sub)}</div>
+      <div class="kpi-icon">${k.icon}</div>
+      <div>
+        <div class="kpi-label">${escapeHtml(k.label)}</div>
+        <div class="kpi-value">${typeof k.value==='number' ? k.value.toLocaleString('en-US') : k.value}</div>
+        <div class="kpi-sub">${escapeHtml(k.sub)}</div>
+      </div>
     </div>`).join('');
-
+  tnUpdateNotifBadge();
+  renderBankCreditDirectory();
   // Reminders (same alert logic used in the Messages tab: holidays, 3-day follow-up, birthdays)
   const alerts = computeTodaysAlerts();
   const remindersHolder = document.getElementById('dashReminders');
@@ -1988,6 +2524,8 @@ function renderDashboard(){
 // own free GitHub repo acts as simple cloud storage — no custom backend needed.
 function openGithubModal(){
   const cfg = lsGet('cl_github_config', {});
+  const session = getLoginSession();
+  document.getElementById('ghEmail').value = (session && session.email) || '';
   document.getElementById('ghToken').value = cfg.token || '';
   document.getElementById('ghRepo').value = cfg.repo || '';
   document.getElementById('ghPath').value = cfg.path || 'citimotors-data.json';
@@ -2012,10 +2550,12 @@ function saveGithubConfig(){
   return cfg;
 }
 
-async function githubSave(){
+async function githubSave(silent){
   const cfg = saveGithubConfig();
-  if(!cfg.token || !cfg.repo){ ghShowStatus('Punan muna ang Token at Repository.', false); return; }
-  ghShowStatus('Nagse-save sa GitHub...', true);
+  if(!cfg.token || !cfg.repo){ if(!silent) ghShowStatus('Punan muna ang Token at Repository.', false); return; }
+  if(!silent) ghShowStatus('Nagse-save sa GitHub...', true);
+  const footer = document.getElementById('syncStatusFooter');
+  if(footer && silent){ footer.style.display='block'; footer.textContent = '● Nagsi-sync...'; footer.style.color = '#c3a26b'; }
   try{
     const apiUrl = `https://api.github.com/repos/${cfg.repo}/contents/${encodeURIComponent(cfg.path)}`;
     // check if file already exists, to get its sha (needed to update instead of create)
@@ -2025,10 +2565,15 @@ async function githubSave(){
       if(getRes.ok){ const j = await getRes.json(); sha = j.sha; }
     }catch(e){ /* file probably doesn't exist yet, that's fine */ }
 
+    const session = getLoginSession();
     const payload = {
+      account: session ? session.email : null,
       applications: lsGet('cl_applications', {}),
       bulletin: lsGet('cl_bulletin_vehicles', vehicles),
       monitoring: lsGet('cl_monitoring', []),
+      bankCreditDirectory: lsGet('cl_bank_credit_directory', []),
+      calendarEvents: lsGet('cl_calendar_events', {}),
+      notepad: lsGet('cl_notepad', ''),
       savedAt: new Date().toISOString()
     };
     const content = utf8ToBase64(JSON.stringify(payload, null, 2));
@@ -2042,32 +2587,37 @@ async function githubSave(){
       body: JSON.stringify(body)
     });
     if(putRes.ok){
-      ghShowStatus('✅ Na-save sa GitHub repo mo!', true);
+      if(!silent) ghShowStatus('✅ Na-save sa GitHub repo mo!', true);
+      if(footer){ footer.textContent = '✅ Naka-sync · ' + new Date().toLocaleTimeString('en-PH',{hour:'2-digit',minute:'2-digit'}); footer.style.color = '#8fd6a8'; }
     } else {
       const errJson = await putRes.json().catch(()=>({}));
-      ghShowStatus('Hindi na-save: ' + (errJson.message || putRes.status), false);
+      if(!silent) ghShowStatus('Hindi na-save: ' + (errJson.message || putRes.status), false);
+      if(footer){ footer.textContent = '❌ Sync error'; footer.style.color = '#e59a9a'; }
     }
   }catch(e){
-    ghShowStatus('May error sa koneksyon sa GitHub. Suriin ang internet o token.', false);
+    if(!silent) ghShowStatus('May error sa koneksyon sa GitHub. Suriin ang internet o token.', false);
+    if(footer){ footer.textContent = '❌ Sync error (walang internet?)'; footer.style.color = '#e59a9a'; }
   }
 }
 
-async function githubLoad(){
+async function githubLoad(silent){
   const cfg = saveGithubConfig();
-  if(!cfg.token || !cfg.repo){ ghShowStatus('Punan muna ang Token at Repository.', false); return; }
-  ghShowStatus('Kinukuha ang data mula sa GitHub...', true);
+  if(!cfg.token || !cfg.repo){ if(!silent) ghShowStatus('Punan muna ang Token at Repository.', false); return; }
+  if(!silent) ghShowStatus('Kinukuha ang data mula sa GitHub...', true);
   try{
     const apiUrl = `https://api.github.com/repos/${cfg.repo}/contents/${encodeURIComponent(cfg.path)}`;
     const res = await fetch(apiUrl, { headers: { 'Authorization': `Bearer ${cfg.token}`, 'Accept':'application/vnd.github+json' } });
     if(!res.ok){
+      if(res.status === 404){ if(!silent) ghShowStatus('Wala pang data sa GitHub — unang beses mo pa lang ito i-se-set up. I-save Now para gumawa ng file.', true); return; }
       const errJson = await res.json().catch(()=>({}));
-      ghShowStatus('Hindi makuha: ' + (errJson.message || res.status), false);
+      if(!silent) ghShowStatus('Hindi makuha: ' + (errJson.message || res.status), false);
       return;
     }
     const j = await res.json();
     const jsonStr = decodeURIComponent(escape(atob(j.content.replace(/\n/g,''))));
     const payload = JSON.parse(jsonStr);
-    const mode = confirm('Nakuha ang data mula sa GitHub! Pindutin OK para i-MERGE sa existing data dito, o Cancel para i-REPLACE (papalitan lahat).');
+    const mode = silent ? true : confirm('Nakuha ang data mula sa GitHub! Pindutin OK para i-MERGE sa existing data dito, o Cancel para i-REPLACE (papalitan lahat).');
+    _suppressAutoSync = true;
     if(mode){
       const apps = lsGet('cl_applications', {});
       Object.assign(apps, payload.applications||{});
@@ -2079,18 +2629,32 @@ async function githubLoad(){
       });
       lsSet('cl_monitoring', mon);
       if(payload.bulletin) lsSet('cl_bulletin_vehicles', payload.bulletin);
+      const dir = lsGet('cl_bank_credit_directory', []);
+      (payload.bankCreditDirectory||[]).forEach(rec=>{
+        const idx = dir.findIndex(d=>d.id===rec.id);
+        if(idx>=0) dir[idx]=rec; else dir.push(rec);
+      });
+      lsSet('cl_bank_credit_directory', dir);
+      if(payload.calendarEvents) lsSet('cl_calendar_events', Object.assign(lsGet('cl_calendar_events', {}), payload.calendarEvents));
+      if(payload.notepad && !lsGet('cl_notepad','')) lsSet('cl_notepad', payload.notepad);
     } else {
       if(payload.applications) lsSet('cl_applications', payload.applications);
       if(payload.monitoring) lsSet('cl_monitoring', payload.monitoring);
       if(payload.bulletin) lsSet('cl_bulletin_vehicles', payload.bulletin);
+      if(payload.bankCreditDirectory) lsSet('cl_bank_credit_directory', payload.bankCreditDirectory);
+      if(payload.calendarEvents) lsSet('cl_calendar_events', payload.calendarEvents);
+      if(typeof payload.notepad === 'string') lsSet('cl_notepad', payload.notepad);
     }
+    _suppressAutoSync = false;
     loadBulletin();
     refreshSavedList();
     renderMonitoringTable();
     renderDashboard();
-    ghShowStatus('✅ Na-load na ang data mula sa GitHub! Puntahan ang Saved Applications / Monitoring tabs para makita.', true);
+    loadNotepad();
+    if(typeof renderCalendar === 'function') renderCalendar();
+    if(!silent) ghShowStatus('✅ Na-load na ang data mula sa GitHub! Puntahan ang Saved Applications / Monitoring tabs para makita.', true);
   }catch(e){
-    ghShowStatus('May error habang kinukuha ang data: ' + (e.message || String(e)), false);
+    if(!silent) ghShowStatus('May error habang kinukuha ang data: ' + (e.message || String(e)), false);
   }
 }
 
@@ -2101,8 +2665,85 @@ async function githubLoad(){
 // Pros/Cons and brand comparisons reflect general PH market positioning, not any one
 // dealer's opinion — meant as a quick talking-points reference for the sales team.
 const SPECS_DB = {
-  MIRAGE: {
-    label: 'Mirage / Mirage G4',
+  MIRAGE_HATCH: {
+    label: 'Mirage (Hatchback)',
+    groups: {
+      'Engine & Transmission': {
+        'Engine': '1.2L 3-Cylinder DOHC MIVEC (3A92)',
+        'Displacement': '1,193 cc',
+        'Max Power': '77 hp @ 6,000 rpm',
+        'Max Torque': '100 Nm @ 4,000 rpm',
+        'Transmission': '5-speed MT or CVT'
+      },
+      'Dimensions': {
+        'Length': '3,795 mm', 'Width': '1,665 mm', 'Height': '1,500 mm',
+        'Wheelbase': '2,450 mm', 'Ground Clearance': '160 mm'
+      },
+      'Suspension & Brakes': {
+        'Front Suspension': 'MacPherson Strut', 'Rear Suspension': 'Torsion Beam',
+        'Front Brakes': 'Ventilated Disc', 'Rear Brakes': 'Drum',
+        'Wheels': '15-inch Alloy', 'Tires': '175/55 R15'
+      },
+      'Colors (PH Market)': { 'Available Colors': 'Red Metallic, Cool Silver Metallic, White Solid, Titanium Gray Metallic' }
+    },
+    features: ['7-inch Smartphone Display Link', 'Dual SRS Airbags', 'ABS w/ EBD', 'Fuel-efficient 3-cylinder engine', 'Compact hatchback footprint — easy city parking'],
+    pros: ['Most affordable Mitsubishi PH offering', 'Very fuel-efficient (up to ~27 km/L claimed)', 'Low maintenance cost, widely available parts', 'Easiest to park/maneuver in tight city spaces'],
+    cons: ['Only 2 variants (1.2 MT, 1.2 CVT) — limited feature choices', 'Fewer safety features than newer rivals', 'Smaller cabin/trunk than sedan rivals'],
+    comparison: 'vs Toyota Wigo: the Wigo is fresher and slightly cheaper at the entry trim, but the Mirage counters with a proven MIVEC engine and Mitsubishi\'s reliability reputation. vs Suzuki Celerio / Kia Picanto: similar price and size class — the Mirage tends to have a roomier rear seat, while these rivals may edge it out on infotainment tech.',
+    rivals: [{
+      brand: 'Toyota',
+      name: 'Toyota Wigo G CVT',
+      ownName: 'Mirage 1.2 CVT',
+      ownSpecs: {
+        'Price': '₱781,000', 'Engine': '1.2L 3-Cylinder DOHC MIVEC', 'Displacement': '1,193 cc',
+        'Max Power': '77 hp @ 6,000 rpm', 'Max Torque': '100 Nm @ 4,000 rpm', 'Transmission': 'CVT',
+        'Fuel Tank': '35 L', 'Ground Clearance': '160 mm', 'Wheelbase': '2,450 mm', 'Tires': '175/55 R15',
+        'Length x Width x Height': '3,795 x 1,665 x 1,500 mm'
+      },
+      specs: {
+        'Price': '₱615,000 - 789,000', 'Engine': '1.0L 3-Cylinder (1KR-VE)', 'Displacement': '998 cc',
+        'Max Power': '66 hp @ 6,000 rpm', 'Max Torque': '89-90 Nm', 'Transmission': '5-speed MT or CVT',
+        'Fuel Tank': '—', 'Ground Clearance': '180 mm', 'Wheelbase': '2,525 mm', 'Tires': '—',
+        'Length x Width x Height': '3,760 x 1,665 x 1,515 mm'
+      }
+    },
+    {
+      brand: 'Honda',
+      name: 'Honda Brio RS CVT',
+      ownName: 'Mirage 1.2 CVT',
+      ownSpecs: {
+        'Price': '₱781,000', 'Engine': '1.2L 3-Cylinder DOHC MIVEC', 'Displacement': '1,193 cc',
+        'Max Power': '77 hp @ 6,000 rpm', 'Max Torque': '100 Nm @ 4,000 rpm', 'Transmission': 'CVT',
+        'Ground Clearance': '160 mm', 'Wheelbase': '2,450 mm', 'Tires': '175/55 R15',
+        'Length x Width x Height': '3,795 x 1,665 x 1,500 mm'
+      },
+      specs: {
+        'Price': '₱735,000 - 863,000', 'Engine': '1.2L 4-Cylinder SOHC i-VTEC', 'Displacement': '1,199 cc',
+        'Max Power': '89 hp', 'Max Torque': '—', 'Transmission': '5-speed MT or CVT',
+        'Ground Clearance': '137 mm', 'Wheelbase': '—', 'Tires': '—',
+        'Length x Width x Height': '3,800 x 1,682 x 1,487 mm'
+      }
+    },
+    {
+      brand: 'Kia',
+      name: 'Kia Picanto',
+      ownName: 'Mirage 1.2 CVT',
+      ownSpecs: {
+        'Price': '₱781,000', 'Engine': '1.2L 3-Cylinder DOHC MIVEC', 'Displacement': '1,193 cc',
+        'Max Power': '77 hp @ 6,000 rpm', 'Max Torque': '100 Nm @ 4,000 rpm', 'Transmission': 'CVT',
+        'Ground Clearance': '160 mm', 'Wheelbase': '2,450 mm', 'Tires': '175/55 R15',
+        'Length x Width x Height': '3,795 x 1,665 x 1,500 mm'
+      },
+      specs: {
+        'Price': '₱635,000 (approx.)', 'Engine': '1.0L 3-Cyl MT or 1.2L 4-Cyl AT', 'Displacement': '998-1,248 cc',
+        'Max Power': '—', 'Max Torque': '—', 'Transmission': '5-speed MT or 4-speed AT',
+        'Ground Clearance': '151 mm', 'Wheelbase': '2,400 mm', 'Tires': '—',
+        'Length x Width x Height': '3,595 x 1,595 x 1,495 mm'
+      }
+    }]
+  },
+  MIRAGE_G4: {
+    label: 'Mirage G4 (Sedan)',
     groups: {
       'Engine & Transmission': {
         'Engine': '1.2L 3-Cylinder MIVEC (3A92)',
@@ -2159,6 +2800,108 @@ const SPECS_DB = {
           'Ground Clearance': '134 mm', 'Wheelbase': '2,600 mm', 'Tires': '185/55 R16',
           'Length x Width x Height': '4,580-4,589 x 1,748 x 1,467-1,489 mm'
         }
+      },
+      {
+        brand: 'Nissan',
+        name: 'Nissan Almera VL Turbo CVT',
+        ownName: 'Mirage G4 GLS CVT',
+        ownSpecs: {
+          'Price': '₱937,000', 'Engine': '1.2L 3-Cylinder DOHC 12V MIVEC', 'Displacement': '1,193 cc',
+          'Max Power': '76.9 hp @ 6,000 rpm', 'Max Torque': '100 Nm @ 4,000 rpm', 'Transmission': 'CVT',
+          'Ground Clearance': '170 mm', 'Wheelbase': '2,550 mm', 'Tires': '185/55 R15',
+          'Length x Width x Height': '4,305 x 1,670 x 1,485 mm'
+        },
+        specs: {
+          'Price': '₱845,000 - 1,195,000', 'Engine': '1.0L 3-Cylinder Turbo', 'Displacement': '998 cc',
+          'Max Power': '99-100 hp @ 5,000 rpm', 'Max Torque': '152-160 Nm @ 2,400-4,000 rpm', 'Transmission': '5-speed MT or CVT',
+          'Ground Clearance': '135 mm', 'Wheelbase': '—', 'Tires': '—',
+          'Length x Width x Height': '— (490L trunk, largest in segment)'
+        }
+      },
+      {
+        brand: 'MG',
+        name: 'MG 5 1.5L CVT Style',
+        ownName: 'Mirage G4 GLS CVT',
+        ownSpecs: {
+          'Price': '₱937,000', 'Engine': '1.2L 3-Cylinder DOHC 12V MIVEC', 'Displacement': '1,193 cc',
+          'Max Power': '76.9 hp @ 6,000 rpm', 'Max Torque': '100 Nm @ 4,000 rpm', 'Transmission': 'CVT',
+          'Ground Clearance': '170 mm', 'Wheelbase': '2,550 mm', 'Tires': '185/55 R15',
+          'Length x Width x Height': '4,305 x 1,670 x 1,485 mm'
+        },
+        specs: {
+          'Price': '₱698,888', 'Engine': '1.5L 4-Cylinder Gasoline', 'Displacement': '1,498 cc',
+          'Max Power': '112 hp @ 6,000 rpm', 'Max Torque': '150 Nm @ 4,000 rpm', 'Transmission': 'CVT',
+          'Ground Clearance': '118 mm', 'Wheelbase': '—', 'Tires': '—',
+          'Length x Width x Height': '—'
+        }
+      },
+      {
+        brand: 'Suzuki',
+        name: 'Suzuki Dzire Hybrid GLX CVT',
+        ownName: 'Mirage G4 GLS CVT',
+        ownSpecs: {
+          'Price': '₱937,000', 'Engine': '1.2L 3-Cylinder DOHC 12V MIVEC', 'Displacement': '1,193 cc',
+          'Max Power': '76.9 hp @ 6,000 rpm', 'Max Torque': '100 Nm @ 4,000 rpm', 'Transmission': 'CVT',
+          'Ground Clearance': '170 mm', 'Wheelbase': '2,550 mm', 'Tires': '185/55 R15',
+          'Length x Width x Height': '4,305 x 1,670 x 1,485 mm'
+        },
+        specs: {
+          'Price': '₱920,000 - 998,000', 'Engine': '1.2L Dualjet Mild Hybrid', 'Displacement': '1,197 cc',
+          'Max Power': '80 hp', 'Max Torque': '113 Nm', 'Transmission': 'CVT',
+          'Ground Clearance': '145 mm', 'Wheelbase': '2,450 mm', 'Tires': '—',
+          'Length x Width x Height': '3,995 x 1,735 x 1,515 mm'
+        }
+      },
+      {
+        brand: 'Geely',
+        name: 'Geely Emgrand Premium 1.5 CVT',
+        ownName: 'Mirage G4 GLS CVT',
+        ownSpecs: {
+          'Price': '₱937,000', 'Engine': '1.2L 3-Cylinder DOHC 12V MIVEC', 'Displacement': '1,193 cc',
+          'Max Power': '76.9 hp @ 6,000 rpm', 'Max Torque': '100 Nm @ 4,000 rpm', 'Transmission': 'CVT',
+          'Ground Clearance': '170 mm', 'Wheelbase': '2,550 mm', 'Tires': '185/55 R15',
+          'Length x Width x Height': '4,305 x 1,670 x 1,485 mm'
+        },
+        specs: {
+          'Price': '₱949,000 - 999,000', 'Engine': '1.5L 4-Cylinder 16V', 'Displacement': '1,498 cc',
+          'Max Power': '100 hp @ 5,600 rpm', 'Max Torque': '142 Nm @ 4,400 rpm', 'Transmission': 'CVT (8-speed simulated)',
+          'Ground Clearance': '—', 'Wheelbase': '—', 'Tires': '—',
+          'Length x Width x Height': '—'
+        }
+      },
+      {
+        brand: 'Hyundai',
+        name: 'Hyundai Accent GLS X IVT (new; also common in used market)',
+        ownName: 'Mirage G4 GLS CVT',
+        ownSpecs: {
+          'Price': '₱937,000', 'Engine': '1.2L 3-Cylinder DOHC 12V MIVEC', 'Displacement': '1,193 cc',
+          'Max Power': '76.9 hp @ 6,000 rpm', 'Max Torque': '100 Nm @ 4,000 rpm', 'Transmission': 'CVT',
+          'Ground Clearance': '170 mm', 'Wheelbase': '2,550 mm', 'Tires': '185/55 R15',
+          'Length x Width x Height': '4,305 x 1,670 x 1,485 mm'
+        },
+        specs: {
+          'Price': '₱790,000 - 1,038,000 (new); ₱210,000-650,000 (used)', 'Engine': '1.5L Smartstream 4-Cylinder', 'Displacement': '1,497 cc',
+          'Max Power': '115 hp', 'Max Torque': '144 Nm', 'Transmission': 'IVT or 6-speed MT',
+          'Ground Clearance': '—', 'Wheelbase': '2,600 mm', 'Tires': '—',
+          'Length x Width x Height': '4,440 x 1,729 x 1,460 mm'
+        }
+      },
+      {
+        brand: 'Chery',
+        name: 'Chery Arrizo 5',
+        ownName: 'Mirage G4 GLS CVT',
+        ownSpecs: {
+          'Price': '₱937,000', 'Engine': '1.2L 3-Cylinder DOHC 12V MIVEC', 'Displacement': '1,193 cc',
+          'Max Power': '76.9 hp @ 6,000 rpm', 'Max Torque': '100 Nm @ 4,000 rpm', 'Transmission': 'CVT',
+          'Ground Clearance': '170 mm', 'Wheelbase': '2,550 mm', 'Tires': '185/55 R15',
+          'Length x Width x Height': '4,305 x 1,670 x 1,485 mm'
+        },
+        specs: {
+          'Price': 'Check current dealer price list', 'Engine': '1.5L Turbo 4-Cylinder DOHC', 'Displacement': '1,498 cc',
+          'Max Power': '118-120 PS @ 6,300 rpm', 'Max Torque': '148 Nm @ 4,900 rpm', 'Transmission': '5-speed MT or CVT',
+          'Ground Clearance': '—', 'Wheelbase': '—', 'Tires': '—',
+          'Length x Width x Height': '—'
+        }
       }
     ]
   },
@@ -2203,6 +2946,108 @@ const SPECS_DB = {
         'Fuel Tank': '43 L', 'Ground Clearance': '190 mm', 'Wheelbase': '2,750 mm', 'Tires': '—',
         'Length x Width x Height': '4,395 x 1,730 x 1,700 mm'
       }
+    },
+    {
+      brand: 'Suzuki',
+      name: 'Suzuki Ertiga GLX AT',
+      ownName: 'Xpander GLS AT',
+      ownSpecs: {
+        'Price': '₱1,259,000 (GLS AT)', 'Engine': '1.5L 4-Cylinder MIVEC', 'Displacement': '1,499 cc',
+        'Max Power': '105 PS @ 6,000 rpm', 'Max Torque': '141 Nm @ 4,000 rpm', 'Transmission': '4-speed AT',
+        'Ground Clearance': '225 mm', 'Wheelbase': '2,775 mm', 'Tires': '205/55 R17',
+        'Length x Width x Height': '4,595 x 1,750 x 1,750 mm'
+      },
+      specs: {
+        'Price': '₱954,000 - 1,178,000', 'Engine': '1.5L K15B DOHC 4-Cylinder', 'Displacement': '1,462 cc',
+        'Max Power': '103 hp @ 6,000 rpm', 'Max Torque': '138 Nm @ 4,400 rpm', 'Transmission': '5-speed MT or 4-speed AT',
+        'Ground Clearance': '180 mm', 'Wheelbase': '2,740 mm', 'Tires': '—',
+        'Length x Width x Height': '4,395 x 1,735 x 1,690 mm'
+      }
+    },
+    {
+      brand: 'Hyundai',
+      name: 'Hyundai Stargazer X GLS Premium IVT',
+      ownName: 'Xpander GLS AT',
+      ownSpecs: {
+        'Price': '₱1,259,000 (GLS AT)', 'Engine': '1.5L 4-Cylinder MIVEC', 'Displacement': '1,499 cc',
+        'Max Power': '105 PS @ 6,000 rpm', 'Max Torque': '141 Nm @ 4,000 rpm', 'Transmission': '4-speed AT',
+        'Ground Clearance': '225 mm', 'Wheelbase': '2,775 mm', 'Tires': '205/55 R17',
+        'Length x Width x Height': '4,595 x 1,750 x 1,750 mm'
+      },
+      specs: {
+        'Price': '₱1,118,000 - 1,378,000', 'Engine': '1.5L Smartstream 4-Cylinder NA', 'Displacement': '1,497 cc',
+        'Max Power': '113-115 hp', 'Max Torque': '144 Nm', 'Transmission': 'CVT/IVT',
+        'Ground Clearance': '185-190 mm', 'Wheelbase': '2,780 mm', 'Tires': '—',
+        'Length x Width x Height': '4,610 x 1,820 x 1,740 mm'
+      }
+    },
+    {
+      brand: 'Honda',
+      name: 'Honda BR-V VX CVT Honda Sensing',
+      ownName: 'Xpander GLS AT',
+      ownSpecs: {
+        'Price': '₱1,259,000 (GLS AT)', 'Engine': '1.5L 4-Cylinder MIVEC', 'Displacement': '1,499 cc',
+        'Max Power': '105 PS @ 6,000 rpm', 'Max Torque': '141 Nm @ 4,000 rpm', 'Transmission': '4-speed AT',
+        'Ground Clearance': '225 mm', 'Wheelbase': '2,775 mm', 'Tires': '205/55 R17',
+        'Length x Width x Height': '4,595 x 1,750 x 1,750 mm'
+      },
+      specs: {
+        'Price': '₱1,165,000 - 1,420,000', 'Engine': '1.5L i-VTEC 4-Cylinder NA', 'Displacement': '1,498 cc',
+        'Max Power': '118-121 PS', 'Max Torque': '145 Nm', 'Transmission': 'CVT or 6-speed MT',
+        'Ground Clearance': '207 mm', 'Wheelbase': '2,700 mm', 'Tires': '215/55 R17',
+        'Length x Width x Height': '4,490 x 1,780 x — mm'
+      }
+    },
+    {
+      brand: 'Toyota',
+      name: 'Toyota Veloz 1.5L V CVT',
+      ownName: 'Xpander GLS AT',
+      ownSpecs: {
+        'Price': '₱1,259,000 (GLS AT)', 'Engine': '1.5L 4-Cylinder MIVEC', 'Displacement': '1,499 cc',
+        'Max Power': '105 PS @ 6,000 rpm', 'Max Torque': '141 Nm @ 4,000 rpm', 'Transmission': '4-speed AT',
+        'Ground Clearance': '225 mm', 'Wheelbase': '2,775 mm', 'Tires': '205/55 R17',
+        'Length x Width x Height': '4,595 x 1,750 x 1,750 mm'
+      },
+      specs: {
+        'Price': '₱1,104,000 - 1,262,000', 'Engine': '1.5L 4-Cylinder NA', 'Displacement': '1,496-1,497 cc',
+        'Max Power': '105 hp', 'Max Torque': '138 Nm', 'Transmission': 'CVT',
+        'Ground Clearance': '190 mm', 'Wheelbase': '—', 'Tires': '—',
+        'Length x Width x Height': '4,475 x 1,775 x 1,700 mm'
+      }
+    },
+    {
+      brand: 'Suzuki',
+      name: 'Suzuki XL7 Hybrid',
+      ownName: 'Xpander GLS AT',
+      ownSpecs: {
+        'Price': '₱1,259,000 (GLS AT)', 'Engine': '1.5L 4-Cylinder MIVEC', 'Displacement': '1,499 cc',
+        'Max Power': '105 PS @ 6,000 rpm', 'Max Torque': '141 Nm @ 4,000 rpm', 'Transmission': '4-speed AT',
+        'Ground Clearance': '225 mm', 'Wheelbase': '2,775 mm', 'Tires': '205/55 R17',
+        'Length x Width x Height': '4,595 x 1,750 x 1,750 mm'
+      },
+      specs: {
+        'Price': '₱1,181,000 - 1,252,000', 'Engine': '1.5L Mild Hybrid 4-Cylinder', 'Displacement': '1,462 cc',
+        'Max Power': '105 hp', 'Max Torque': '138 Nm', 'Transmission': '4-speed AT',
+        'Ground Clearance': '200 mm', 'Wheelbase': '—', 'Tires': '—',
+        'Length x Width x Height': '—'
+      }
+    },
+    {
+      brand: 'Kia',
+      name: 'Kia Carens',
+      ownName: 'Xpander GLS AT',
+      ownSpecs: {
+        'Price': '₱1,259,000 (GLS AT)', 'Engine': '1.5L 4-Cylinder MIVEC', 'Displacement': '1,499 cc',
+        'Max Power': '105 PS @ 6,000 rpm', 'Max Torque': '141 Nm @ 4,000 rpm', 'Transmission': '4-speed AT',
+        'Ground Clearance': '225 mm', 'Wheelbase': '2,775 mm', 'Tires': '205/55 R17',
+        'Length x Width x Height': '4,595 x 1,750 x 1,750 mm'
+      },
+      specs: {
+        'Price': '₱1,570,000 (approx.)', 'Engine': '1.4L Turbo 4-Cylinder', 'Displacement': '1,398 cc',
+        'Max Power': '—', 'Max Torque': '—', 'Transmission': '—',
+        'Ground Clearance': '—', 'Wheelbase': '—', 'Tires': '—',
+        'Length x Width x Height': '—'
+      }
     }]
   },
   XFORCE: {
@@ -2232,6 +3077,142 @@ const SPECS_DB = {
         'Max Power': '104-105 hp @ 6,000 rpm', 'Max Torque': '138 Nm @ 4,200 rpm', 'Transmission': 'CVT',
         'Fuel Tank': '42 L', 'Ground Clearance': '212 mm', 'Wheelbase': '2,620 mm', 'Tires': '215/60 R17',
         'Length x Width x Height': '4,310 x 1,770 x 1,615 mm'
+      }
+    },
+    {
+      brand: 'Kia',
+      name: 'Kia Sonet 1.5 SX AT',
+      ownName: 'Xforce GT',
+      ownSpecs: {
+        'Price': '₱1,581,000 (GT)', 'Engine': '1.5L 4-Cylinder MIVEC', 'Displacement': '1,499 cc',
+        'Max Power': '105 PS @ 6,000 rpm', 'Max Torque': '141 Nm @ 4,000 rpm', 'Transmission': 'CVT',
+        'Ground Clearance': '193 mm', 'Wheelbase': '2,650 mm', 'Tires': '225/50 R18',
+        'Length x Width x Height': '4,390 x 1,810 x 1,660 mm'
+      },
+      specs: {
+        'Price': '₱778,000 - 1,178,000', 'Engine': '1.5L 4-Cylinder NA Gasoline', 'Displacement': '1,497 cc',
+        'Max Power': '113 hp @ 6,300 rpm', 'Max Torque': '144 Nm @ 4,500 rpm', 'Transmission': '6-speed MT or IVT',
+        'Ground Clearance': '205 mm', 'Wheelbase': '2,500 mm', 'Tires': '205/55 R16',
+        'Length x Width x Height': '4,110 x 1,790 x 1,642 mm'
+      }
+    },
+    {
+      brand: 'Geely',
+      name: 'Geely Coolray 1.5T Sport Limited',
+      ownName: 'Xforce GT',
+      ownSpecs: {
+        'Price': '₱1,581,000 (GT)', 'Engine': '1.5L 4-Cylinder MIVEC', 'Displacement': '1,499 cc',
+        'Max Power': '105 PS @ 6,000 rpm', 'Max Torque': '141 Nm @ 4,000 rpm', 'Transmission': 'CVT',
+        'Ground Clearance': '193 mm', 'Wheelbase': '2,650 mm', 'Tires': '225/50 R18',
+        'Length x Width x Height': '4,390 x 1,810 x 1,660 mm'
+      },
+      specs: {
+        'Price': '₱989,000 - 1,288,000', 'Engine': '1.5L 3-Cylinder Turbo', 'Displacement': '1,477 cc',
+        'Max Power': '175-177 hp @ 5,500 rpm', 'Max Torque': '255 Nm @ 1,500 rpm', 'Transmission': '7-speed Wet DCT',
+        'Ground Clearance': '—', 'Wheelbase': '—', 'Tires': '—',
+        'Length x Width x Height': '—'
+      }
+    },
+    {
+      brand: 'GAC',
+      name: 'GAC GS3 Emzoom R-Style',
+      ownName: 'Xforce GT',
+      ownSpecs: {
+        'Price': '₱1,581,000 (GT)', 'Engine': '1.5L 4-Cylinder MIVEC', 'Displacement': '1,499 cc',
+        'Max Power': '105 PS @ 6,000 rpm', 'Max Torque': '141 Nm @ 4,000 rpm', 'Transmission': 'CVT',
+        'Ground Clearance': '193 mm', 'Wheelbase': '2,650 mm', 'Tires': '225/50 R18',
+        'Length x Width x Height': '4,390 x 1,810 x 1,660 mm'
+      },
+      specs: {
+        'Price': '₱898,000 - 1,290,000', 'Engine': '1.5L Turbo 4-Cylinder', 'Displacement': '1,497 cc',
+        'Max Power': '171-174 hp', 'Max Torque': '240-270 Nm', 'Transmission': '7-speed Wet DCT',
+        'Ground Clearance': '190 mm', 'Wheelbase': '2,650 mm', 'Tires': '225/55 R18',
+        'Length x Width x Height': '4,410-4,446 x 1,850 x 1,600 mm'
+      }
+    },
+    {
+      brand: 'MG',
+      name: 'MG ZS 1.5L Style',
+      ownName: 'Xforce GT',
+      ownSpecs: {
+        'Price': '₱1,581,000 (GT)', 'Engine': '1.5L 4-Cylinder MIVEC', 'Displacement': '1,499 cc',
+        'Max Power': '105 PS @ 6,000 rpm', 'Max Torque': '141 Nm @ 4,000 rpm', 'Transmission': 'CVT',
+        'Ground Clearance': '193 mm', 'Wheelbase': '2,650 mm', 'Tires': '225/50 R18',
+        'Length x Width x Height': '4,390 x 1,810 x 1,660 mm'
+      },
+      specs: {
+        'Price': '₱948,888 - 1,329,000', 'Engine': '1.5L 4-Cylinder NA', 'Displacement': '1,495 cc',
+        'Max Power': '110-114 hp @ 6,000 rpm', 'Max Torque': '141-150 Nm @ 4,000 rpm', 'Transmission': 'CVT/AT',
+        'Ground Clearance': '140 mm', 'Wheelbase': '—', 'Tires': '—',
+        'Length x Width x Height': '—'
+      }
+    },
+    {
+      brand: 'Hyundai',
+      name: 'Hyundai Creta GL IVT',
+      ownName: 'Xforce GT',
+      ownSpecs: {
+        'Price': '₱1,581,000 (GT)', 'Engine': '1.5L 4-Cylinder MIVEC', 'Displacement': '1,499 cc',
+        'Max Power': '105 PS @ 6,000 rpm', 'Max Torque': '141 Nm @ 4,000 rpm', 'Transmission': 'CVT',
+        'Ground Clearance': '193 mm', 'Wheelbase': '2,650 mm', 'Tires': '225/50 R18',
+        'Length x Width x Height': '4,390 x 1,810 x 1,660 mm'
+      },
+      specs: {
+        'Price': '₱1,134,000 - 1,379,000', 'Engine': '1.5L NA (N-Line: 1.5L Turbo)', 'Displacement': '1,497 cc',
+        'Max Power': '113-115 hp (N-Line: 158 hp)', 'Max Torque': '144 Nm (N-Line: 253 Nm)', 'Transmission': 'IVT/6MT (N-Line: 7DCT)',
+        'Ground Clearance': '190 mm', 'Wheelbase': '—', 'Tires': '—',
+        'Length x Width x Height': '—'
+      }
+    },
+    {
+      brand: 'Kia',
+      name: 'Kia Seltos',
+      ownName: 'Xforce GT',
+      ownSpecs: {
+        'Price': '₱1,581,000 (GT)', 'Engine': '1.5L 4-Cylinder MIVEC', 'Displacement': '1,499 cc',
+        'Max Power': '105 PS @ 6,000 rpm', 'Max Torque': '141 Nm @ 4,000 rpm', 'Transmission': 'CVT',
+        'Ground Clearance': '193 mm', 'Wheelbase': '2,650 mm', 'Tires': '225/50 R18',
+        'Length x Width x Height': '4,390 x 1,810 x 1,660 mm'
+      },
+      specs: {
+        'Price': '₱1,098,000 - 1,198,000+', 'Engine': '1.5L 4-Cylinder NA', 'Displacement': '1,497 cc',
+        'Max Power': '113 hp', 'Max Torque': '144 Nm', 'Transmission': 'IVT',
+        'Ground Clearance': '190 mm', 'Wheelbase': '—', 'Tires': '—',
+        'Length x Width x Height': '—'
+      }
+    },
+    {
+      brand: 'Chery',
+      name: 'Chery Tiggo 5X Pro',
+      ownName: 'Xforce GT',
+      ownSpecs: {
+        'Price': '₱1,581,000 (GT)', 'Engine': '1.5L 4-Cylinder MIVEC', 'Displacement': '1,499 cc',
+        'Max Power': '105 PS @ 6,000 rpm', 'Max Torque': '141 Nm @ 4,000 rpm', 'Transmission': 'CVT',
+        'Ground Clearance': '193 mm', 'Wheelbase': '2,650 mm', 'Tires': '225/50 R18',
+        'Length x Width x Height': '4,390 x 1,810 x 1,660 mm'
+      },
+      specs: {
+        'Price': 'Check current dealer price list', 'Engine': 'Check current dealer spec sheet', 'Displacement': '—',
+        'Max Power': '—', 'Max Torque': '—', 'Transmission': '—',
+        'Ground Clearance': '—', 'Wheelbase': '—', 'Tires': '—',
+        'Length x Width x Height': '—'
+      }
+    },
+    {
+      brand: 'GAC',
+      name: 'GAC GS4',
+      ownName: 'Xforce GT',
+      ownSpecs: {
+        'Price': '₱1,581,000 (GT)', 'Engine': '1.5L 4-Cylinder MIVEC', 'Displacement': '1,499 cc',
+        'Max Power': '105 PS @ 6,000 rpm', 'Max Torque': '141 Nm @ 4,000 rpm', 'Transmission': 'CVT',
+        'Ground Clearance': '193 mm', 'Wheelbase': '2,650 mm', 'Tires': '225/50 R18',
+        'Length x Width x Height': '4,390 x 1,810 x 1,660 mm'
+      },
+      specs: {
+        'Price': 'Check current dealer price list', 'Engine': 'Check current dealer spec sheet', 'Displacement': '—',
+        'Max Power': '—', 'Max Torque': '—', 'Transmission': '—',
+        'Ground Clearance': '—', 'Wheelbase': '—', 'Tires': '—',
+        'Length x Width x Height': '—'
       }
     }]
   },
@@ -2263,6 +3244,159 @@ const SPECS_DB = {
         'Fuel Tank': '36 L', 'Ground Clearance': '161 mm', 'Wheelbase': '2,640 mm', 'Tires': '215/60 R17 - 225/50 R18',
         'Length x Width x Height': '4,460 x 1,825 x 1,620 mm'
       }
+    },
+    {
+      brand: 'Chery',
+      name: 'Chery Tiggo 7 Pro Premium CVT',
+      ownName: 'Destinator GT',
+      ownSpecs: {
+        'Price': '₱1,929,000 - 1,939,000', 'Engine': '1.5L Turbo 4-Cylinder MIVEC', 'Displacement': '1,499 cc',
+        'Max Power': 'up to 163 PS', 'Max Torque': '250 Nm', 'Transmission': 'CVT',
+        'Ground Clearance': '214 mm', 'Wheelbase': '2,815 mm', 'Tires': '225/55 R18',
+        'Length x Width x Height': '4,680 x 1,840 x 1,780 mm'
+      },
+      specs: {
+        'Price': '₱1,048,000 - 1,248,000', 'Engine': '1.5L Turbo 4-Cylinder', 'Displacement': '1,498 cc',
+        'Max Power': '143-145 hp @ 5,500 rpm', 'Max Torque': '210 Nm @ 4,400 rpm', 'Transmission': 'CVT',
+        'Ground Clearance': '—', 'Wheelbase': '—', 'Tires': '—',
+        'Length x Width x Height': '— (475L trunk)'
+      }
+    },
+    {
+      brand: 'Jetour',
+      name: 'Jetour Dashing',
+      ownName: 'Destinator GT',
+      ownSpecs: {
+        'Price': '₱1,929,000 - 1,939,000', 'Engine': '1.5L Turbo 4-Cylinder MIVEC', 'Displacement': '1,499 cc',
+        'Max Power': 'up to 163 PS', 'Max Torque': '250 Nm', 'Transmission': 'CVT',
+        'Ground Clearance': '214 mm', 'Wheelbase': '2,815 mm', 'Tires': '225/55 R18',
+        'Length x Width x Height': '4,680 x 1,840 x 1,780 mm'
+      },
+      specs: {
+        'Price': '₱1,373,000', 'Engine': '1.5L Turbo 4-Cylinder', 'Displacement': '1,498 cc',
+        'Max Power': '154-156 hp', 'Max Torque': '230 Nm', 'Transmission': 'CVT/DCT',
+        'Ground Clearance': '—', 'Wheelbase': '—', 'Tires': '—',
+        'Length x Width x Height': '—'
+      }
+    },
+    {
+      brand: 'BYD',
+      name: 'BYD Atto 3 Premium (Electric)',
+      ownName: 'Destinator GT',
+      ownSpecs: {
+        'Price': '₱1,929,000 - 1,939,000', 'Engine': '1.5L Turbo 4-Cylinder MIVEC', 'Displacement': '1,499 cc',
+        'Max Power': 'up to 163 PS', 'Max Torque': '250 Nm', 'Transmission': 'CVT',
+        'Ground Clearance': '214 mm', 'Wheelbase': '2,815 mm', 'Tires': '225/55 R18',
+        'Length x Width x Height': '4,680 x 1,840 x 1,780 mm'
+      },
+      specs: {
+        'Price': '₱1,498,000 - 1,798,000', 'Engine': 'Electric Motor (60.5 kWh battery, up to 480km range)', 'Displacement': '—',
+        'Max Power': '201-204 hp', 'Max Torque': '310 Nm', 'Transmission': 'Single-speed AT',
+        'Ground Clearance': '150 mm', 'Wheelbase': '—', 'Tires': '—',
+        'Length x Width x Height': '—'
+      }
+    },
+    {
+      brand: 'Toyota',
+      name: 'Toyota Innova Zenix 2.0 V CVT',
+      ownName: 'Destinator GT',
+      ownSpecs: {
+        'Price': '₱1,929,000 - 1,939,000', 'Engine': '1.5L Turbo 4-Cylinder MIVEC', 'Displacement': '1,499 cc',
+        'Max Power': 'up to 163 PS', 'Max Torque': '250 Nm', 'Transmission': 'CVT',
+        'Ground Clearance': '214 mm', 'Wheelbase': '2,815 mm', 'Tires': '225/55 R18',
+        'Length x Width x Height': '4,680 x 1,840 x 1,780 mm'
+      },
+      specs: {
+        'Price': '₱1,676,000 - 1,991,000', 'Engine': '2.0L NA (Q trim: Hybrid)', 'Displacement': '1,987 cc',
+        'Max Power': '174 hp (hybrid)', 'Max Torque': '205 Nm (hybrid)', 'Transmission': 'CVT',
+        'Ground Clearance': '185 mm', 'Wheelbase': '—', 'Tires': '—',
+        'Length x Width x Height': '—'
+      }
+    },
+    {
+      brand: 'Honda',
+      name: 'Honda CR-V V Turbo / RS eHEV',
+      ownName: 'Destinator GT',
+      ownSpecs: {
+        'Price': '₱1,929,000 - 1,939,000', 'Engine': '1.5L Turbo 4-Cylinder MIVEC', 'Displacement': '1,499 cc',
+        'Max Power': 'up to 163 PS', 'Max Torque': '250 Nm', 'Transmission': 'CVT',
+        'Ground Clearance': '214 mm', 'Wheelbase': '2,815 mm', 'Tires': '225/55 R18',
+        'Length x Width x Height': '4,680 x 1,840 x 1,780 mm'
+      },
+      specs: {
+        'Price': '₱2,358,000 - 2,838,000', 'Engine': '1.5L Turbo (gas) or 2.0L Hybrid', 'Displacement': '1,498-1,993 cc',
+        'Max Power': '146-187 hp', 'Max Torque': '183-240 Nm', 'Transmission': 'CVT or E-CVT',
+        'Ground Clearance': '—', 'Wheelbase': '—', 'Tires': '235/60 R18',
+        'Length x Width x Height': '—'
+      }
+    },
+    {
+      brand: 'Geely',
+      name: 'Geely Okavango Elite',
+      ownName: 'Destinator GT',
+      ownSpecs: {
+        'Price': '₱1,929,000 - 1,939,000', 'Engine': '1.5L Turbo 4-Cylinder MIVEC', 'Displacement': '1,499 cc',
+        'Max Power': 'up to 163 PS', 'Max Torque': '250 Nm', 'Transmission': 'CVT',
+        'Ground Clearance': '214 mm', 'Wheelbase': '2,815 mm', 'Tires': '225/55 R18',
+        'Length x Width x Height': '4,680 x 1,840 x 1,780 mm'
+      },
+      specs: {
+        'Price': '₱1,368,000 - 1,765,000', 'Engine': '1.5L Turbo w/ 48V Mild Hybrid', 'Displacement': '1,477 cc',
+        'Max Power': '187-190 hp', 'Max Torque': '300 Nm', 'Transmission': '7-speed DCT',
+        'Ground Clearance': '—', 'Wheelbase': '—', 'Tires': '—',
+        'Length x Width x Height': '—'
+      }
+    },
+    {
+      brand: 'Hyundai',
+      name: 'Hyundai Tucson',
+      ownName: 'Destinator GT',
+      ownSpecs: {
+        'Price': '₱1,929,000 - 1,939,000', 'Engine': '1.5L Turbo 4-Cylinder MIVEC', 'Displacement': '1,499 cc',
+        'Max Power': 'up to 163 PS', 'Max Torque': '250 Nm', 'Transmission': 'CVT',
+        'Ground Clearance': '214 mm', 'Wheelbase': '2,815 mm', 'Tires': '225/55 R18',
+        'Length x Width x Height': '4,680 x 1,840 x 1,780 mm'
+      },
+      specs: {
+        'Price': '₱1,680,000 - 2,290,000', 'Engine': 'Check current dealer spec sheet', 'Displacement': '—',
+        'Max Power': '—', 'Max Torque': '—', 'Transmission': '—',
+        'Ground Clearance': '—', 'Wheelbase': '—', 'Tires': '—',
+        'Length x Width x Height': '—'
+      }
+    },
+    {
+      brand: 'Kia',
+      name: 'Kia Sportage',
+      ownName: 'Destinator GT',
+      ownSpecs: {
+        'Price': '₱1,929,000 - 1,939,000', 'Engine': '1.5L Turbo 4-Cylinder MIVEC', 'Displacement': '1,499 cc',
+        'Max Power': 'up to 163 PS', 'Max Torque': '250 Nm', 'Transmission': 'CVT',
+        'Ground Clearance': '214 mm', 'Wheelbase': '2,815 mm', 'Tires': '225/55 R18',
+        'Length x Width x Height': '4,680 x 1,840 x 1,780 mm'
+      },
+      specs: {
+        'Price': 'Check current dealer price list', 'Engine': 'Check current dealer spec sheet', 'Displacement': '—',
+        'Max Power': '—', 'Max Torque': '—', 'Transmission': '—',
+        'Ground Clearance': '—', 'Wheelbase': '—', 'Tires': '—',
+        'Length x Width x Height': '—'
+      }
+    },
+    {
+      brand: 'Honda',
+      name: 'Honda HR-V',
+      ownName: 'Destinator GT',
+      ownSpecs: {
+        'Price': '₱1,929,000 - 1,939,000', 'Engine': '1.5L Turbo 4-Cylinder MIVEC', 'Displacement': '1,499 cc',
+        'Max Power': 'up to 163 PS', 'Max Torque': '250 Nm', 'Transmission': 'CVT',
+        'Ground Clearance': '214 mm', 'Wheelbase': '2,815 mm', 'Tires': '225/55 R18',
+        'Length x Width x Height': '4,680 x 1,840 x 1,780 mm'
+      },
+      specs: {
+        'Price': '₱1,450,000 - 1,799,000 (est.)', 'Engine': 'Check current dealer spec sheet', 'Displacement': '—',
+        'Max Power': '—', 'Max Torque': '—', 'Transmission': '—',
+        'Ground Clearance': '—', 'Wheelbase': '—', 'Tires': '—',
+        'Length x Width x Height': '—'
+      }
     }]
   },
   TRITON: {
@@ -2292,6 +3426,74 @@ const SPECS_DB = {
         'Max Power': '201-204 hp @ 3,000-3,400 rpm', 'Max Torque': '420-500 Nm', 'Transmission': '6-speed MT or 6-speed AT',
         'Wheelbase': '3,085 mm', 'Ground Clearance': '—', 'Tires': '—',
         'Length x Width x Height': '5,320 x 1,885 x 1,865 mm'
+      }
+    },
+    {
+      brand: 'Ford',
+      name: 'Ford Ranger 2.0L Bi-Turbo 4x4',
+      ownName: 'Triton GLS 4x4 AT',
+      ownSpecs: {
+        'Price': 'Check current dealer price list', 'Engine': '2.4L Turbodiesel', 'Displacement': '2,442 cc',
+        'Max Power': '181 PS', 'Max Torque': '430 Nm', 'Transmission': '6-speed AT, Super Select 4WD-II',
+        'Wheelbase': '3,130 mm', 'Ground Clearance': 'up to 228 mm', 'Tires': 'up to 265/60 R18',
+        'Length x Width x Height': '5,360 x 1,930 x — mm'
+      },
+      specs: {
+        'Price': '₱1,379,000 - 2,355,000', 'Engine': '2.0L Single/Bi-Turbo EcoBlue Diesel', 'Displacement': '1,996 cc',
+        'Max Power': '170-210 hp', 'Max Torque': '405-500 Nm', 'Transmission': '6MT/6AT/10AT',
+        'Wheelbase': '3,270 mm', 'Ground Clearance': '235 mm', 'Tires': '255/70 R16',
+        'Length x Width x Height': '5,370 x 1,918 x — mm'
+      }
+    },
+    {
+      brand: 'Nissan',
+      name: 'Nissan Navara VL 4x4',
+      ownName: 'Triton GLS 4x4 AT',
+      ownSpecs: {
+        'Price': 'Check current dealer price list', 'Engine': '2.4L Turbodiesel', 'Displacement': '2,442 cc',
+        'Max Power': '181 PS', 'Max Torque': '430 Nm', 'Transmission': '6-speed AT, Super Select 4WD-II',
+        'Wheelbase': '3,130 mm', 'Ground Clearance': 'up to 228 mm', 'Tires': 'up to 265/60 R18',
+        'Length x Width x Height': '5,360 x 1,930 x — mm'
+      },
+      specs: {
+        'Price': '₱1,240,000 (approx.)', 'Engine': '2.5L Turbodiesel', 'Displacement': '2,488 cc',
+        'Max Power': '161 hp', 'Max Torque': '403 Nm', 'Transmission': '7-speed AT',
+        'Wheelbase': '—', 'Ground Clearance': '245 mm', 'Tires': '—',
+        'Length x Width x Height': '—'
+      }
+    },
+    {
+      brand: 'Others',
+      name: 'Isuzu D-Max',
+      ownName: 'Triton GLS 4x4 AT',
+      ownSpecs: {
+        'Price': 'Check current dealer price list', 'Engine': '2.4L Turbodiesel', 'Displacement': '2,442 cc',
+        'Max Power': '181 PS', 'Max Torque': '430 Nm', 'Transmission': '6-speed AT, Super Select 4WD-II',
+        'Wheelbase': '3,130 mm', 'Ground Clearance': 'up to 228 mm', 'Tires': 'up to 265/60 R18',
+        'Length x Width x Height': '5,360 x 1,930 x — mm'
+      },
+      specs: {
+        'Price': '₱978,000 (starting)', 'Engine': '1.9L Turbodiesel', 'Displacement': '1,898 cc',
+        'Max Power': '148 hp', 'Max Torque': '350 Nm', 'Transmission': 'Manual/Automatic',
+        'Wheelbase': '—', 'Ground Clearance': '195 mm', 'Tires': '—',
+        'Length x Width x Height': '5,020 x 1,810 x 1,700 mm'
+      }
+    },
+    {
+      brand: 'Others',
+      name: 'Mazda BT-50',
+      ownName: 'Triton GLS 4x4 AT',
+      ownSpecs: {
+        'Price': 'Check current dealer price list', 'Engine': '2.4L Turbodiesel', 'Displacement': '2,442 cc',
+        'Max Power': '181 PS', 'Max Torque': '430 Nm', 'Transmission': '6-speed AT, Super Select 4WD-II',
+        'Wheelbase': '3,130 mm', 'Ground Clearance': 'up to 228 mm', 'Tires': 'up to 265/60 R18',
+        'Length x Width x Height': '5,360 x 1,930 x — mm'
+      },
+      specs: {
+        'Price': '₱1,600,000 - 1,950,000', 'Engine': '3.0L Turbodiesel', 'Displacement': '2,999 cc',
+        'Max Power': '187-190 hp', 'Max Torque': '450 Nm', 'Transmission': '6-speed MT or 6-speed AT',
+        'Wheelbase': '—', 'Ground Clearance': '235-240 mm', 'Tires': '265/60 R18',
+        'Length x Width x Height': '5,280 x 1,870 x 1,785-1,810 mm'
       }
     }]
   },
@@ -2323,6 +3525,74 @@ const SPECS_DB = {
         'Wheelbase': '—', 'Tires': '265/60 R18',
         'Length x Width x Height': '4,795 x 1,855 x 1,835 mm'
       }
+    },
+    {
+      brand: 'Ford',
+      name: 'Ford Everest 2.0L Bi-Turbo 4x4',
+      ownName: 'Montero Sport GLS',
+      ownSpecs: {
+        'Price': 'Check current dealer price list', 'Engine': '2.4L Turbodiesel w/ VG Turbo MIVEC', 'Displacement': '2,398 cc',
+        'Max Power': '179 hp', 'Max Torque': '430 Nm', 'Transmission': '8-speed AT or 6-speed MT',
+        'Wheelbase': '2,800 mm', 'Tires': '18-inch Alloy',
+        'Length x Width x Height': '4,825 x 1,815 x 1,835 mm'
+      },
+      specs: {
+        'Price': '₱1,849,000 - 2,640,000', 'Engine': '2.0L Single/Bi-Turbo EcoBlue Diesel', 'Displacement': '1,996 cc',
+        'Max Power': '170-210 hp', 'Max Torque': '405-500 Nm', 'Transmission': '6AT or 10AT',
+        'Wheelbase': '2,900 mm', 'Ground Clearance': '223 mm', 'Tires': '—',
+        'Length x Width x Height': '4,904 x 1,923 x 1,842 mm'
+      }
+    },
+    {
+      brand: 'Isuzu',
+      name: 'Isuzu mu-X (RZ4E / 3.0L)',
+      ownName: 'Montero Sport GLS',
+      ownSpecs: {
+        'Price': 'Check current dealer price list', 'Engine': '2.4L Turbodiesel w/ VG Turbo MIVEC', 'Displacement': '2,398 cc',
+        'Max Power': '179 hp', 'Max Torque': '430 Nm', 'Transmission': '8-speed AT or 6-speed MT',
+        'Wheelbase': '2,800 mm', 'Tires': '18-inch Alloy',
+        'Length x Width x Height': '4,825 x 1,815 x 1,835 mm'
+      },
+      specs: {
+        'Price': '₱1,725,000 - 2,670,000', 'Engine': '1.9L (base) or 3.0L (higher trims) Turbodiesel', 'Displacement': '1,898-2,999 cc',
+        'Max Power': '148-187 hp', 'Max Torque': '350-450 Nm', 'Transmission': '6-speed AT',
+        'Wheelbase': '—', 'Ground Clearance': '235 mm', 'Tires': '265/60 R18 or 265/50 R20',
+        'Length x Width x Height': '4,850 x 1,870 x 1,825 mm'
+      }
+    },
+    {
+      brand: 'Nissan',
+      name: 'Nissan Terra VL 4x2',
+      ownName: 'Montero Sport GLS',
+      ownSpecs: {
+        'Price': 'Check current dealer price list', 'Engine': '2.4L Turbodiesel w/ VG Turbo MIVEC', 'Displacement': '2,398 cc',
+        'Max Power': '179 hp', 'Max Torque': '430 Nm', 'Transmission': '8-speed AT or 6-speed MT',
+        'Wheelbase': '2,800 mm', 'Tires': '18-inch Alloy',
+        'Length x Width x Height': '4,825 x 1,815 x 1,835 mm'
+      },
+      specs: {
+        'Price': '₱1,969,000 - 2,469,000', 'Engine': '2.5L Turbodiesel', 'Displacement': '2,488 cc',
+        'Max Power': '187 hp', 'Max Torque': '450 Nm', 'Transmission': '7-speed AT',
+        'Wheelbase': '—', 'Ground Clearance': '—', 'Tires': '—',
+        'Length x Width x Height': '—'
+      }
+    },
+    {
+      brand: 'Others',
+      name: 'Chevrolet Trailblazer',
+      ownName: 'Montero Sport GLS',
+      ownSpecs: {
+        'Price': 'Check current dealer price list', 'Engine': '2.4L Turbodiesel w/ VG Turbo MIVEC', 'Displacement': '2,398 cc',
+        'Max Power': '179 hp', 'Max Torque': '430 Nm', 'Transmission': '8-speed AT or 6-speed MT',
+        'Wheelbase': '2,800 mm', 'Tires': '18-inch Alloy',
+        'Length x Width x Height': '4,825 x 1,815 x 1,835 mm'
+      },
+      specs: {
+        'Price': '₱1,519,000 - 1,702,000', 'Engine': 'Diesel (variant-dependent)', 'Displacement': '—',
+        'Max Power': '155 hp', 'Max Torque': '236-500 Nm (variant-dependent)', 'Transmission': 'Automatic',
+        'Wheelbase': '—', 'Ground Clearance': '178 mm', 'Tires': '—',
+        'Length x Width x Height': '—'
+      }
     }]
   },
   L300: {
@@ -2353,13 +3623,82 @@ const SPECS_DB = {
         'Fuel Tank': '65 L', 'Ground Clearance': '185 mm', 'Wheelbase': '2,430 mm', 'Tires': '195/70 R15',
         'Length x Width x Height': '4,850 x 1,740 x 1,965 mm'
       }
+    },
+    {
+      brand: 'Toyota',
+      name: 'Toyota Lite Ace 1.5 Cargo',
+      ownName: 'L300 Versa Van',
+      ownSpecs: {
+        'Price': 'Check current dealer price list', 'Engine': '2.2L Turbo-Intercooled Diesel', 'Displacement': '2,268 cc',
+        'Max Power': '98 hp @ 3,500 rpm', 'Max Torque': '200 Nm @ 3,500 rpm', 'Transmission': '5-speed Manual',
+        'Ground Clearance': '195 mm', 'Wheelbase': '2,350 mm', 'Tires': '185 R14C-8PR',
+        'Length x Width x Height': '4,440 x 1,695 x 1,915 mm'
+      },
+      specs: {
+        'Price': '₱651,000', 'Engine': '1.5L Gasoline', 'Displacement': '1,496 cc',
+        'Max Power': '97 hp', 'Max Torque': '134 Nm', 'Transmission': '5-speed Manual',
+        'Ground Clearance': '—', 'Wheelbase': '—', 'Tires': '—',
+        'Length x Width x Height': '4,195 x 1,675 x 1,920 mm'
+      }
+    },
+    {
+      brand: 'Isuzu',
+      name: 'Isuzu Traviz L Utility Van',
+      ownName: 'L300 Versa Van',
+      ownSpecs: {
+        'Price': 'Check current dealer price list', 'Engine': '2.2L Turbo-Intercooled Diesel', 'Displacement': '2,268 cc',
+        'Max Power': '98 hp @ 3,500 rpm', 'Max Torque': '200 Nm @ 3,500 rpm', 'Transmission': '5-speed Manual',
+        'Ground Clearance': '195 mm', 'Wheelbase': '2,350 mm', 'Tires': '185 R14C-8PR',
+        'Length x Width x Height': '4,440 x 1,695 x 1,915 mm'
+      },
+      specs: {
+        'Price': '₱1,070,000', 'Engine': '2.5L Diesel', 'Displacement': '2,499 cc',
+        'Max Power': '77 hp', 'Max Torque': '177 Nm', 'Transmission': 'Manual',
+        'Ground Clearance': '—', 'Wheelbase': '—', 'Tires': '—',
+        'Length x Width x Height': '4,450 x 1,695 x 1,955 mm'
+      }
+    },
+    {
+      brand: 'Suzuki',
+      name: 'Suzuki APV GLX',
+      ownName: 'L300 Versa Van',
+      ownSpecs: {
+        'Price': 'Check current dealer price list', 'Engine': '2.2L Turbo-Intercooled Diesel', 'Displacement': '2,268 cc',
+        'Max Power': '98 hp @ 3,500 rpm', 'Max Torque': '200 Nm @ 3,500 rpm', 'Transmission': '5-speed Manual',
+        'Ground Clearance': '195 mm', 'Wheelbase': '2,350 mm', 'Tires': '185 R14C-8PR',
+        'Length x Width x Height': '4,440 x 1,695 x 1,915 mm'
+      },
+      specs: {
+        'Price': '₱743,000 - 975,000', 'Engine': '1.6L Gasoline (G16A)', 'Displacement': '1,590 cc',
+        'Max Power': '91-92.5 hp', 'Max Torque': '127 Nm', 'Transmission': '5-speed Manual',
+        'Ground Clearance': '180 mm', 'Wheelbase': '2,625 mm', 'Tires': '—',
+        'Length x Width x Height': '4,320 x 1,865 x 1,865 mm'
+      }
+    },
+    {
+      brand: 'Kia',
+      name: 'Kia K2500',
+      ownName: 'L300 Versa Van',
+      ownSpecs: {
+        'Price': 'Check current dealer price list', 'Engine': '2.2L Turbo-Intercooled Diesel', 'Displacement': '2,268 cc',
+        'Max Power': '98 hp @ 3,500 rpm', 'Max Torque': '200 Nm @ 3,500 rpm', 'Transmission': '5-speed Manual',
+        'Ground Clearance': '195 mm', 'Wheelbase': '2,350 mm', 'Tires': '185 R14C-8PR',
+        'Length x Width x Height': '4,440 x 1,695 x 1,915 mm'
+      },
+      specs: {
+        'Price': '₱820,000 - 1,238,000', 'Engine': '2.5L CRDi Turbodiesel', 'Displacement': '2,497 cc',
+        'Max Power': '128-130 hp', 'Max Torque': '255 Nm', 'Transmission': '6-speed Manual',
+        'Ground Clearance': '200 mm', 'Wheelbase': '—', 'Tires': '—',
+        'Length x Width x Height': '4,825 x 1,740 x 2,105 mm'
+      }
     }]
   }
 };
 
 function getSpecsForUnit(unitName){
   const u = (unitName||'').toUpperCase();
-  if(u.includes('MIRAGE')) return SPECS_DB.MIRAGE;
+  if(u.includes('MIRAGE') && u.includes('G4')) return SPECS_DB.MIRAGE_G4;
+  if(u.includes('MIRAGE')) return SPECS_DB.MIRAGE_HATCH;
   if(u.includes('XPANDER')) return SPECS_DB.XPANDER;
   if(u.includes('XFORCE')) return SPECS_DB.XFORCE;
   if(u.includes('DESTINATOR')) return SPECS_DB.DESTINATOR;
@@ -2571,11 +3910,284 @@ function openVehicleDetailsForQuote(){
   }
 }
 
+// ---------------- Calendar / Appointments ----------------
+let calViewYear, calViewMonth, calSelectedDate = null;
+
+function getCalEvents(){ return lsGet('cl_calendar_events', {}); }
+function setCalEvents(obj){ lsSet('cl_calendar_events', obj); }
+function dateKey(y,m,d){ return `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`; }
+
+function initCalendar(){
+  const now = new Date();
+  calViewYear = now.getFullYear();
+  calViewMonth = now.getMonth();
+  calSelectedDate = dateKey(now.getFullYear(), now.getMonth(), now.getDate());
+  renderCalendar();
+}
+function calChangeMonth(delta){
+  calViewMonth += delta;
+  if(calViewMonth<0){ calViewMonth=11; calViewYear--; }
+  if(calViewMonth>11){ calViewMonth=0; calViewYear++; }
+  renderCalendar();
+}
+function renderCalendar(){
+  const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('calMonthLabel').textContent = `${monthNames[calViewMonth]} ${calViewYear}`;
+  const events = getCalEvents();
+  const grid = document.getElementById('calGrid');
+  grid.innerHTML = '';
+  ['S','M','T','W','T','F','S'].forEach(d=>{
+    const el = document.createElement('div'); el.className='cal-dow'; el.textContent=d; grid.appendChild(el);
+  });
+  const firstDay = new Date(calViewYear, calViewMonth, 1);
+  const startWeekday = firstDay.getDay();
+  const daysInMonth = new Date(calViewYear, calViewMonth+1, 0).getDate();
+  const daysInPrevMonth = new Date(calViewYear, calViewMonth, 0).getDate();
+  const today = new Date();
+  const todayKey = dateKey(today.getFullYear(), today.getMonth(), today.getDate());
+
+  for(let i=0;i<startWeekday;i++){
+    const el = document.createElement('div'); el.className='cal-day other-month';
+    el.textContent = daysInPrevMonth - startWeekday + 1 + i;
+    grid.appendChild(el);
+  }
+  for(let d=1; d<=daysInMonth; d++){
+    const key = dateKey(calViewYear, calViewMonth, d);
+    const el = document.createElement('div');
+    el.className = 'cal-day';
+    if(key===todayKey) el.classList.add('today');
+    if(key===calSelectedDate) el.classList.add('selected');
+    if(events[key] && events[key].length) el.classList.add('has-event');
+    el.textContent = d;
+    el.onclick = ()=>{ calSelectedDate = key; renderCalendar(); };
+    grid.appendChild(el);
+  }
+  renderSelectedDayPanel();
+  renderUpcomingAppointments();
+}
+function renderSelectedDayPanel(){
+  const panel = document.getElementById('calSelectedDayPanel');
+  if(!calSelectedDate){ panel.innerHTML=''; return; }
+  const events = getCalEvents();
+  const dayEvents = events[calSelectedDate] || [];
+  const [y,m,dd] = calSelectedDate.split('-');
+  let html = `<div style="font-size:11.5px; font-weight:700; margin-bottom:6px;">${escapeHtml(calSelectedDate)}</div>`;
+  if(dayEvents.length===0){
+    html += `<p style="color:#8a93a3; font-size:11.5px;">Walang schedule sa araw na ito.</p>`;
+  } else {
+    dayEvents.forEach((ev, idx)=>{
+      html += `<div class="cal-event-row"><span><b>${escapeHtml(ev.time||'')}</b> ${escapeHtml(ev.title)}</span><button onclick="deleteCalEvent('${calSelectedDate}', ${idx})">✕</button></div>`;
+    });
+  }
+  html += `
+    <div class="cal-add-form">
+      <input type="time" id="calNewTime">
+      <input type="text" id="calNewTitle" placeholder="Appointment / note...">
+      <button onclick="addCalEvent()">+ Add</button>
+    </div>`;
+  panel.innerHTML = html;
+}
+function addCalEvent(){
+  const time = document.getElementById('calNewTime').value;
+  const title = document.getElementById('calNewTitle').value.trim();
+  if(!title){ alert('Maglagay ng pangalan ng appointment/note.'); return; }
+  const events = getCalEvents();
+  if(!events[calSelectedDate]) events[calSelectedDate] = [];
+  events[calSelectedDate].push({ time, title });
+  events[calSelectedDate].sort((a,b)=> (a.time||'').localeCompare(b.time||''));
+  setCalEvents(events);
+  renderCalendar();
+}
+function deleteCalEvent(key, idx){
+  const events = getCalEvents();
+  if(!events[key]) return;
+  events[key].splice(idx,1);
+  if(events[key].length===0) delete events[key];
+  setCalEvents(events);
+  renderCalendar();
+}
+function renderUpcomingAppointments(){
+  const events = getCalEvents();
+  const today = new Date(); today.setHours(0,0,0,0);
+  const list = [];
+  Object.keys(events).forEach(key=>{
+    const d = new Date(key);
+    if(d >= today){
+      events[key].forEach(ev=> list.push({ key, ...ev }));
+    }
+  });
+  list.sort((a,b)=> a.key.localeCompare(b.key) || (a.time||'').localeCompare(b.time||''));
+  const holder = document.getElementById('upcomingAppointments');
+  if(list.length===0){ holder.innerHTML = '<p style="color:#8a93a3; font-size:12px;">Wala pang naka-schedule.</p>'; return; }
+  holder.innerHTML = list.slice(0,8).map(ev=>`
+    <div class="activity-row">
+      <span class="a-name">${escapeHtml(ev.time||'')} ${escapeHtml(ev.title)}</span>
+      <span class="a-meta">${escapeHtml(ev.key)}</span>
+    </div>`).join('');
+}
+
+// ---------------- Notepad ----------------
+function loadNotepad(){
+  document.getElementById('dashNotepad').value = lsGet('cl_notepad', '');
+}
+function saveNotepad(){
+  lsSet('cl_notepad', document.getElementById('dashNotepad').value);
+}
+
+// ---------------- Document Merger (CamScanner-style: images/PDFs -> one merged PDF) ----------------
+let dmFiles = []; // {file, name, type}
+function dmAddFiles(evt){
+  const newFiles = Array.from(evt.target.files || []);
+  newFiles.forEach(f => dmFiles.push({ file:f, name:f.name, type:f.type }));
+  evt.target.value = '';
+  dmRenderList();
+}
+function dmRenderList(){
+  const holder = document.getElementById('dmFileList');
+  if(dmFiles.length===0){ holder.innerHTML = '<p style="color:#8a93a3; font-size:11.5px;">Wala pang na-add na file.</p>'; return; }
+  holder.innerHTML = dmFiles.map((f,i)=>`
+    <div style="display:flex; align-items:center; gap:8px; background:#f7f8fa; border-radius:6px; padding:6px 10px; font-size:11.5px;">
+      <span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${f.type==='application/pdf'?'📄':'🖼️'} ${escapeHtml(f.name)}</span>
+      <button class="cal-nav-btn" style="width:22px;height:22px;" onclick="dmMove(${i},-1)" ${i===0?'disabled':''}>↑</button>
+      <button class="cal-nav-btn" style="width:22px;height:22px;" onclick="dmMove(${i},1)" ${i===dmFiles.length-1?'disabled':''}>↓</button>
+      <button class="del-btn" onclick="dmRemove(${i})">✕</button>
+    </div>`).join('');
+}
+function dmMove(i, dir){
+  const j = i + dir;
+  if(j<0 || j>=dmFiles.length) return;
+  [dmFiles[i], dmFiles[j]] = [dmFiles[j], dmFiles[i]];
+  dmRenderList();
+}
+function dmRemove(i){ dmFiles.splice(i,1); dmRenderList(); }
+function dmClearFiles(){ dmFiles = []; dmRenderList(); document.getElementById('dmStatus').textContent = ''; }
+
+async function dmMergeAndDownload(){
+  const status = document.getElementById('dmStatus');
+  if(dmFiles.length===0){ alert('Mag-add muna ng litrato o PDF file.'); return; }
+  if(!window.PDFLib){ alert('Hindi pa naka-load ang PDF library. Siguraduhing may internet connection at subukan ulit.'); return; }
+  status.textContent = 'Nagmi-merge...';
+  try{
+    const { PDFDocument } = window.PDFLib;
+    const mergedPdf = await PDFDocument.create();
+    for(const item of dmFiles){
+      const bytes = await item.file.arrayBuffer();
+      if(item.type === 'application/pdf'){
+        const srcPdf = await PDFDocument.load(bytes);
+        const pages = await mergedPdf.copyPages(srcPdf, srcPdf.getPageIndices());
+        pages.forEach(p => mergedPdf.addPage(p));
+      } else {
+        // image: embed as a full page, fit within A4 keeping aspect ratio
+        let img;
+        try{ img = await mergedPdf.embedJpg(bytes); }
+        catch(e){ img = await mergedPdf.embedPng(bytes); }
+        const pageW = 595.28, pageH = 841.89; // A4 in points
+        const margin = 24;
+        const maxW = pageW - margin*2, maxH = pageH - margin*2;
+        const scale = Math.min(maxW / img.width, maxH / img.height);
+        const w = img.width * scale, h = img.height * scale;
+        const page = mergedPdf.addPage([pageW, pageH]);
+        page.drawImage(img, { x:(pageW-w)/2, y:(pageH-h)/2, width:w, height:h });
+      }
+    }
+    const outBytes = await mergedPdf.save();
+    const blob = new Blob([outBytes], {type:'application/pdf'});
+    const reader = new FileReader();
+    reader.onload = () => {
+      saveDataUrlAsFile(reader.result, 'citimotors_merged_documents_' + Date.now() + '.pdf', 'application/pdf');
+      status.textContent = '✅ Na-merge at na-download na ang ' + dmFiles.length + ' file(s).';
+    };
+    reader.readAsDataURL(blob);
+  }catch(e){
+    status.textContent = '❌ May error sa pag-merge: ' + (e.message || String(e));
+  }
+}
+dmRenderList();
+
+// ---------------- ID Card Print Layout (auto-size front/back to CR80 card size for printing) ----------------
+let idFrontDataUrl = null, idBackDataUrl = null;
+function idPreview(evt, imgId){
+  const file = evt.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    const img = document.getElementById(imgId);
+    img.src = reader.result;
+    img.style.display = 'block';
+    if(imgId==='idFrontPreview') idFrontDataUrl = reader.result;
+    else idBackDataUrl = reader.result;
+  };
+  reader.readAsDataURL(file);
+}
+// draws a cover-fit crop of a data-url image onto an offscreen canvas at the target pixel size, returns a JPEG data URL
+function idCoverFitCanvas(dataUrl, targetW, targetH){
+  return new Promise((resolve, reject)=>{
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = targetW; canvas.height = targetH;
+      const ctx = canvas.getContext('2d');
+      const scale = Math.max(targetW / img.width, targetH / img.height);
+      const w = img.width * scale, h = img.height * scale;
+      const x = (targetW - w) / 2, y = (targetH - h) / 2;
+      ctx.fillStyle = '#fff'; ctx.fillRect(0,0,targetW,targetH);
+      ctx.drawImage(img, x, y, w, h);
+      resolve(canvas.toDataURL('image/jpeg', 0.92));
+    };
+    img.onerror = reject;
+    img.src = dataUrl;
+  });
+}
+async function idGeneratePrintPdf(){
+  const status = document.getElementById('idPrintStatus');
+  if(!idFrontDataUrl || !idBackDataUrl){ alert('Mag-upload muna ng Front at Back ng ID.'); return; }
+  if(!window.jspdf){ alert('Hindi pa naka-load ang PDF library. Siguraduhing may internet connection at subukan ulit.'); return; }
+  status.textContent = 'Ginagawa ang layout...';
+  try{
+    const CARD_W_MM = 85.6, CARD_H_MM = 53.98; // standard CR80 ID card size, actual size
+    const PX_PER_MM = 12; // render resolution for the cover-fit crop
+    const targetW = Math.round(CARD_W_MM * PX_PER_MM), targetH = Math.round(CARD_H_MM * PX_PER_MM);
+    const frontCrop = await idCoverFitCanvas(idFrontDataUrl, targetW, targetH);
+    const backCrop = await idCoverFitCanvas(idBackDataUrl, targetW, targetH);
+
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({ orientation:'portrait', unit:'mm', format:'letter' });
+    const pageW = pdf.internal.pageSize.getWidth();
+    const marginX = (pageW - CARD_W_MM) / 2;
+    const yFront = 40, yBack = 40 + CARD_H_MM + 20;
+
+    pdf.setFontSize(9); pdf.setTextColor(120);
+    pdf.text('CT Citimotors — ID Card Print Layout (actual size, 85.6mm x 54mm — print at 100% scale, no "fit to page")', marginX, 20);
+
+    pdf.text('FRONT', marginX, yFront - 3);
+    pdf.addImage(frontCrop, 'JPEG', marginX, yFront, CARD_W_MM, CARD_H_MM);
+    pdf.setDrawColor(180); pdf.setLineDashPattern([1,1], 0);
+    pdf.rect(marginX, yFront, CARD_W_MM, CARD_H_MM);
+
+    pdf.text('BACK', marginX, yBack - 3);
+    pdf.addImage(backCrop, 'JPEG', marginX, yBack, CARD_W_MM, CARD_H_MM);
+    pdf.rect(marginX, yBack, CARD_W_MM, CARD_H_MM);
+
+    pdf.save('citimotors_id_print_' + Date.now() + '.pdf');
+    status.textContent = '✅ Na-generate na ang ID print layout PDF. I-print sa 100% scale (huwag "fit to page") para tama ang laki.';
+  }catch(e){
+    status.textContent = '❌ May error: ' + (e.message || String(e));
+  }
+}
+
 loadBulletin();
 initQuoteTab();
+initCalendar();
+loadNotepad();
 if(lsGet('cl_sidebar_hidden', false)) document.body.classList.add('sidebar-hidden');
-switchTab('dashboard');
+updateAccountUI();
+if(isLoggedIn()){
+  githubLoad(true).finally(()=>{ updateAccountUI(); switchTab('dashboard'); });
+} else {
+  switchTab('dashboard');
+}
 </script>
 
 </body>
 </html>
+
