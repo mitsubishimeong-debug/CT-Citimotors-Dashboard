@@ -1,4 +1,5 @@
 {
+  "account": "mitsubishimeong@gmail.com",
   "applications": {
     "app_1785600515733": {
       "id": "app_1785600515733",
@@ -318,5 +319,17 @@
       "warrantyBooklet": ""
     }
   ],
-  "savedAt": "2026-08-02T18:05:42.390Z"
+  "bankCreditDirectory": [
+    {
+      "id": "bcd_1785904505093",
+      "name": "RAMON JAVAR",
+      "contact": "",
+      "email": "rbjavarjr@bpi.com.ph",
+      "dept": "",
+      "company": "BPI"
+    }
+  ],
+  "calendarEvents": {},
+  "notepad": "",
+  "savedAt": "2026-08-05T05:14:05.726Z"
 }
