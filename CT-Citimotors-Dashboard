@@ -365,9 +365,16 @@
       "email": "rbjavarjr@bpi.com.ph",
       "dept": "",
       "company": "BPI"
+    },
+    {
+      "id": "bcd_1785997331349",
+      "name": "KRISTINE MANGOHIG",
+      "contact": "09063101570",
+      "email": "ksmangohig@securitybank.com.ph",
+      "company": "Security Bank"
     }
   ],
   "calendarEvents": {},
   "notepad": "",
-  "savedAt": "2026-08-06T06:19:02.282Z"
+  "savedAt": "2026-08-06T06:22:14.522Z"
 }
