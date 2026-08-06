@@ -152,9 +152,9 @@
       "unit": "2026 L300 EXCEED FB BODY DUAL AC",
       "srp": 1039000,
       "discount": 112000,
-      "c20": 5000,
+      "c20": 58000,
       "c25": 25000,
-      "c30": 88000,
+      "c30": 48000,
       "promo": "FREE FUEL SUBSIDY (₱10,000 VALUE)"
     },
     {
@@ -194,13 +194,13 @@
       "promo": "FREE FUEL SUBSIDY (₱10,000 VALUE)"
     },
     {
-      "unit": "2026 XFORCE GLS",
-      "srp": 1367000,
-      "discount": 230000,
-      "c20": 20000,
-      "c25": 21000,
-      "c30": 38000,
-      "promo": "FREE FUEL SUBSIDY (₱40,000 VALUE)"
+      "unit": "2027 XFORCE GLS CVT MONOTONE",
+      "srp": 1299000,
+      "discount": 100000,
+      "c20": 28000,
+      "c25": 88000,
+      "c30": 168000,
+      "promo": "FREE FUEL SUBSIDY (₱10,000 VALUE)"
     },
     {
       "unit": "2026 XPANDER CROSS TWOTONE AT",
@@ -333,5 +333,5 @@
   ],
   "calendarEvents": {},
   "notepad": "",
-  "savedAt": "2026-08-06T05:34:26.367Z"
+  "savedAt": "2026-08-06T05:37:33.462Z"
 }
