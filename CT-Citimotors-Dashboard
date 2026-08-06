@@ -239,12 +239,12 @@
       "promo": ""
     },
     {
-      "unit": "2026 XFORCE GT",
-      "srp": 1581000,
-      "discount": 230000,
-      "c20": 0,
-      "c25": 25000,
-      "c30": 88000,
+      "unit": "2027 XFORCE GT CVT",
+      "srp": 1661000,
+      "discount": 70000,
+      "c20": 58000,
+      "c25": 158000,
+      "c30": 258000,
       "promo": "FREE FUEL SUBSIDY (₱10,000 VALUE)"
     },
     {
@@ -300,6 +300,15 @@
       "c25": 148000,
       "c30": 248000,
       "promo": ""
+    },
+    {
+      "unit": "2027 XFORCE GLS CVT TWOTONE",
+      "srp": 1309000,
+      "discount": 100000,
+      "c20": 8000,
+      "c25": 88000,
+      "c30": 158000,
+      "promo": ""
     }
   ],
   "monitoring": [
@@ -333,5 +342,5 @@
   ],
   "calendarEvents": {},
   "notepad": "",
-  "savedAt": "2026-08-06T05:37:33.462Z"
+  "savedAt": "2026-08-06T05:39:35.119Z"
 }
