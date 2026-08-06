@@ -308,6 +308,15 @@
       "c20": 8000,
       "c25": 88000,
       "c30": 158000,
+      "promo": "FREE FUEL SUBSIDY (₱10,000 VALUE)"
+    },
+    {
+      "unit": "2027 XFORCE GLX CVT",
+      "srp": 1119000,
+      "discount": 70000,
+      "c20": 28000,
+      "c25": 98000,
+      "c30": 168000,
       "promo": ""
     }
   ],
@@ -342,5 +351,5 @@
   ],
   "calendarEvents": {},
   "notepad": "",
-  "savedAt": "2026-08-06T05:39:35.119Z"
+  "savedAt": "2026-08-06T05:41:37.853Z"
 }
