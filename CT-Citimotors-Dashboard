@@ -414,9 +414,16 @@
       "contact": "09989635862",
       "email": "JBTejada@eastwestbanker.com",
       "company": "EastWest"
+    },
+    {
+      "id": "bcd_1785998231354",
+      "name": "CTLP",
+      "contact": "",
+      "email": "ctlp.credit@gmail.com",
+      "company": "Credit Department"
     }
   ],
   "calendarEvents": {},
   "notepad": "",
-  "savedAt": "2026-08-06T06:32:40.663Z"
+  "savedAt": "2026-08-06T06:37:14.635Z"
 }
