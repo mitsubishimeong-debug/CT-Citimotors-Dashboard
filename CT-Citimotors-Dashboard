@@ -400,9 +400,16 @@
       "contact": "09564750485",
       "email": "fmbaron@bankcom.com.ph",
       "company": "BOC"
+    },
+    {
+      "id": "bcd_1785997809550",
+      "name": "JP ODITA",
+      "contact": "09176335868",
+      "email": "oditajp@pnb.com.ph",
+      "company": "PNB"
     }
   ],
   "calendarEvents": {},
   "notepad": "",
-  "savedAt": "2026-08-06T06:29:20.672Z"
+  "savedAt": "2026-08-06T06:30:12.742Z"
 }
