@@ -2660,6 +2660,7 @@ function renderDashboard(){
   const ongoing = monitoring.filter(r=>r.status==='ONGOING').length;
   const approved = monitoring.filter(r=>r.status==='APPROVED').length;
   const declined = monitoring.filter(r=>r.status==='DECLINED').length;
+  const releasedMonitoring = monitoring.filter(r=>(r.dateRelease||'').trim()!=='').length;
 
   const leads = dsCache.leads || [];
   const activeAI = leads.filter(l => (l.aiStatus||'').toLowerCase()!=='paused' && (l.humanTakeover||'').toLowerCase()!=='true' && (l.humanTakeover||'')!==true).length;
@@ -2679,7 +2680,8 @@ function renderDashboard(){
     {label:'Qualified Leads', value: qualifiedLeads, sub:'sa pipeline', accent:'gold', goto:'pipeline', icon:'🎯'},
     {label:'Applications', value: applicationsCount, sub:'nag-apply na', accent:'navy', goto:'pipeline', icon:'📝'},
     {label:'Approved (Pipeline)', value: approvedLeads, sub:'financing approved', accent:'green', goto:'pipeline', icon:'✅'},
-    {label:'Released', value: releasedLeads, sub:'na-release na ang unit', accent:'green', goto:'pipeline', icon:'🚗'},
+    {label:'Released', value: releasedMonitoring, sub:'na-release na ang unit (Monitoring)', accent:'green', goto:'monitoring', icon:'🚗'},
+    {label:'Released (Pipeline)', value: releasedLeads, sub:'na-release na ang unit (AI Pipeline)', accent:'green', goto:'pipeline', icon:'🚗'},
   ];
   document.getElementById('kpiGrid').innerHTML = kpis.map(k=>`
     <div class="kpi-card accent-${k.accent}" style="cursor:pointer;" onclick="switchTab('${k.goto}')">
