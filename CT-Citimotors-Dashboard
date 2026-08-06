@@ -372,9 +372,16 @@
       "contact": "09063101570",
       "email": "ksmangohig@securitybank.com.ph",
       "company": "Security Bank"
+    },
+    {
+      "id": "bcd_1785997417553",
+      "name": "EZRA CORDERO",
+      "contact": "09171191216",
+      "email": "ezracordero.bdo@gmail.com",
+      "company": "BDO"
     }
   ],
   "calendarEvents": {},
   "notepad": "",
-  "savedAt": "2026-08-06T06:22:14.522Z"
+  "savedAt": "2026-08-06T06:23:40.745Z"
 }
