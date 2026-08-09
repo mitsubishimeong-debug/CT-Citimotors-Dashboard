@@ -1,4 +1,5 @@
 {
+  "account": "mitsubishimeong@gmail.com",
   "applications": {},
   "bulletin": [
     {
@@ -183,5 +184,8 @@
     }
   ],
   "monitoring": [],
-  "savedAt": "2026-08-01T16:34:24.026Z"
+  "bankCreditDirectory": [],
+  "calendarEvents": {},
+  "notepad": "",
+  "savedAt": "2026-08-09T13:28:10.065Z"
 }
