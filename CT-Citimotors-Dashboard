@@ -266,7 +266,7 @@
           }
         }
       },
-      "pipelineStage": "Application",
+      "pipelineStage": "Waiting for Requirements",
       "originSource": "Manual",
       "lostReason": ""
     }
@@ -621,5 +621,5 @@
   ],
   "calendarEvents": {},
   "notepad": "",
-  "savedAt": "2026-08-10T07:39:31.449Z"
+  "savedAt": "2026-08-10T07:39:36.058Z"
 }
