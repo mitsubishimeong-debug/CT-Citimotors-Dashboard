@@ -73,6 +73,24 @@
   textarea.addr-field.normal-case{font-weight:600;}
   .chk-row{display:flex; align-items:center; gap:4px; font-size:11px; margin-bottom:3px;}
   .chk-row input{width:auto;}
+  /* Custom-drawn checkbox (instead of relying on the native OS checkbox) so the checked
+     state renders in brand orange reliably — native checkboxes are not captured correctly
+     by the screenshot-based PDF/print export, which was making them look plain/uncolored. */
+  #sheet input[type="checkbox"]{
+    -webkit-appearance:none; appearance:none;
+    width:13px; height:13px; min-width:13px;
+    border:1.5px solid #555; border-radius:2px;
+    background:#fff; position:relative; cursor:pointer; margin:0;
+  }
+  #sheet input[type="checkbox"]:checked{
+    background:var(--orange); border-color:var(--orange);
+  }
+  #sheet input[type="checkbox"]:checked::after{
+    content:""; position:absolute; left:3px; top:0px;
+    width:4px; height:8px;
+    border:solid #fff; border-width:0 2px 2px 0;
+    transform:rotate(45deg);
+  }
   .center{text-align:center;}
   .bold{font-weight:bold;}
   .small-note{font-size:9px; line-height:1.3; color:#222;}
@@ -88,8 +106,8 @@
   .sig-add-btn{background:var(--navy); color:#fff; border:none; border-radius:4px; padding:3px 9px; font-size:10px; cursor:pointer; margin-bottom:4px;}
   @media print{ .sig-img-holder{border:none !important;} .sig-resize-handle{display:none !important;} }
   body.pdf-mode .sig-resize-handle{display:none !important;}
-  .sig-line input[type="text"]{text-align:center;}
-  .sig-line input[type="text"]{font-size:9.5px !important; letter-spacing:0; white-space:normal; overflow:visible; text-overflow:clip; height:auto; padding:2px 0;}
+  .sig-line textarea{text-align:center;}
+  .sig-line textarea{font-size:9.5px !important; letter-spacing:0; white-space:normal; overflow:visible; text-overflow:clip; height:auto; padding:2px 0;}
   .sig-img-holder{height:42px; display:flex; align-items:center; justify-content:center;}
   .addrow-btn{background:#eee; border:1px dashed #999; padding:3px 8px; font-size:10px; cursor:pointer; margin-top:3px;}
   .del-btn{background:#a12626; color:#fff; border:none; border-radius:3px; padding:2px 7px; cursor:pointer; font-size:11px;}
@@ -462,7 +480,7 @@
   body.pdf-mode input{border-bottom:none !important;}
   body.pdf-mode textarea{border-bottom:none !important;}
   body.pdf-mode .sheet{font-size:9.5px; border:none !important;}
-  body.pdf-mode .sig-line input[type="text"]{display:none;}
+  body.pdf-mode .sig-line textarea{display:none;}
   body.pdf-mode .sig-print-only{display:block !important;}
   body.pdf-mode .sig-img-holder:empty::before{content:"" !important;}
 </style>
@@ -2615,7 +2633,11 @@ function autoGrow(el){
 // content height, capture the page, then restore the original textareas untouched.
 function swapAddrFieldsForCapture(){
   const swaps = [];
+  // .sig-line textareas are excluded here — they already have a dedicated "sig-print-only"
+  // span that pdf-mode shows instead (see CSS), so cloning them too would print the
+  // borrower/exec/manager name TWICE under the signature line.
   document.querySelectorAll('#sheet textarea.addr-field').forEach(ta=>{
+    if(ta.closest('.sig-line')) return;
     const cs = getComputedStyle(ta);
     const div = document.createElement('div');
     div.setAttribute('data-addr-clone-for', ta.id);
@@ -2667,7 +2689,7 @@ async function downloadPDF(){
     const { jsPDF } = window.jspdf;
     const pdf = new jsPDF({ orientation:'portrait', unit:'mm', format:[wmm,hmm] });
 
-    const margin = 10;
+    const margin = 7;
     const maxW = wmm - margin*2;
     const maxH = hmm - margin*2;
     const ratio = canvas.height / canvas.width;
@@ -2715,7 +2737,7 @@ async function printApplication(){
     const canvas = await html2canvas(sheet, {scale:2, backgroundColor:'#ffffff', useCORS:true});
     const imgData = canvas.toDataURL('image/png');
 
-    const margin = 10;
+    const margin = 7;
     const maxW = wmm - margin*2;
     const maxH = hmm - margin*2;
     const ratio = canvas.height / canvas.width;
