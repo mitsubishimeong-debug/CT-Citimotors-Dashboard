@@ -670,7 +670,6 @@
   <button onclick="saveApplication()">💾 Save Application</button>
   <button class="navy" onclick="toggleDesignMode()" id="designModeBtn">🎨 Design Mode</button>
 </div>
-<div id="printImgFrame"></div>
 <div class="toolbar no-print" id="designToolbar" style="display:none; background:#2c2005; border-radius:6px; padding:8px 12px;">
   <span style="color:#ecdfc4; font-size:12px; font-weight:bold;">Design Mode:</span>
   <button class="secondary" onclick="adjustFontSize(-1)">A-</button>
@@ -1385,6 +1384,7 @@
 
   </main>
 </div>
+<div id="printImgFrame"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -2227,6 +2227,31 @@ function applyFormData(data){
   sigData = data._signature || { borrower:null, exec:null, manager:null };
   ['borrower','exec','manager'].forEach(renderSignatureImage);
 }
+// ---------------- Autosave current draft (separate from named "Save Application") ----------------
+// This continuously mirrors whatever is currently typed on the Application Form into
+// localStorage as you type (debounced), so a refresh or accidental tab-close never loses
+// unsaved edits. It is separate from the "💾 Save Application" button, which still creates
+// its own named, permanent record in cl_applications and is unaffected by this.
+// IMPORTANT LIMITATION: localStorage is scoped by the browser to this exact HTML file's
+// location. If you download a NEW copy of this file (even with identical content, e.g. a
+// fresh "index_13_1.html" / "index_13_1 (1).html" from a new edit), the browser treats it
+// as a different storage bucket and won't show drafts/saved applications from the old file.
+// Always keep re-using the SAME saved file/bookmark, and use "⬇️ Export Backup (.json)"
+// before replacing the file, then "⬆️ Import Backup" on the new copy to carry your data over.
+let _autosaveTimer = null;
+function scheduleAutosave(){
+  clearTimeout(_autosaveTimer);
+  _autosaveTimer = setTimeout(()=>{
+    try{ lsSet('cl_current_draft', gatherFormData()); }catch(e){}
+  }, 500);
+}
+function restoreAutosavedDraft(){
+  const draft = lsGet('cl_current_draft', null);
+  if(draft && Object.keys(draft).length) applyFormData(draft);
+}
+document.addEventListener('input', (e)=>{ if(e.target.closest && e.target.closest('#sheet')) scheduleAutosave(); });
+document.addEventListener('change', (e)=>{ if(e.target.closest && e.target.closest('#sheet')) scheduleAutosave(); });
+
 function saveApplication(){
   const data = gatherFormData();
   const borrower = data.b_name || 'Unnamed Borrower';
@@ -2322,6 +2347,7 @@ function loadApplication(id){
   if(!rec) return;
   switchTab('form');
   applyFormData(rec.data);
+  lsSet('cl_current_draft', rec.data);
 }
 function deleteApplication(id){
   if(!confirm('Delete this saved application?')) return;
@@ -2571,6 +2597,7 @@ function clearAll(){
   document.getElementById('sigExec').value = 'ROMEO CUYACOT (MEONG)';
   sigData = { borrower:null, exec:null, manager:null };
   ['borrower','exec','manager'].forEach(renderSignatureImage);
+  lsSet('cl_current_draft', {});
 }
 
 function autoGrow(el){
@@ -5248,6 +5275,7 @@ initQuoteTab();
 loadAgentSettings();
 initCalendar();
 loadNotepad();
+restoreAutosavedDraft();
 if(lsGet('cl_sidebar_hidden', false)) document.body.classList.add('sidebar-hidden');
 updateAccountUI();
 renderCrmStatsOnDashboard();
