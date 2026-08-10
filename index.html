@@ -439,6 +439,8 @@
     .small-note{font-size:6.5px; line-height:1.1;}
     .label{font-size:8px;}
     .sig-row td{padding-top:2px;}
+    .no-print{display:none !important;}
+    .sig-img-holder:empty::before{content:"" !important;}
     * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }
   }
 
@@ -448,6 +450,7 @@
   body.pdf-mode .sheet{font-size:9.5px; border:none !important;}
   body.pdf-mode .sig-line input[type="text"]{display:none;}
   body.pdf-mode .sig-print-only{display:block !important;}
+  body.pdf-mode .sig-img-holder:empty::before{content:"" !important;}
 </style>
 </head>
 <body>
@@ -516,14 +519,17 @@
     <h1>Dashboard</h1>
     <p id="dashDateLabel">—</p>
   </div>
-  <div class="kpi-grid" id="kpiGrid"></div>
-
   <div class="dash-panel" style="max-width:1200px; margin:0 auto 16px auto;">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-      <h3 style="margin:0;">🤖 AI Sales Pipeline Overview</h3>
-      <button class="quick-action-btn" style="min-width:auto; padding:6px 12px; flex-direction:row; gap:6px;" onclick="switchTab('inbox')">💬 Open Inbox</button>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:8px;">
+      <h3 style="margin:0;">📊 Sales Pipeline Overview</h3>
+      <div style="display:flex; gap:8px;">
+        <button class="quick-action-btn" style="min-width:auto; padding:6px 12px; flex-direction:row; gap:6px;" onclick="switchTab('inbox')">💬 Open Inbox</button>
+        <button class="quick-action-btn" style="min-width:auto; padding:6px 12px; flex-direction:row; gap:6px;" onclick="switchTab('pipeline')">📋 Open Pipeline</button>
+      </div>
     </div>
     <div class="kpi-grid" id="crmStatsPanel"></div>
+    <h4 style="font-size:11px; color:#8a93a3; text-transform:uppercase; letter-spacing:0.04em; margin:16px 0 8px 0;">Source Breakdown</h4>
+    <div class="kpi-grid" id="sourceBreakdownPanel"></div>
   </div>
 
   <div class="quick-actions">
@@ -639,6 +645,7 @@
     <h1>Sales Pipeline</h1>
     <p>I-drag ang cards papunta sa susunod na stage. Awtomatikong nase-save ang bagong stage.</p>
   </div>
+  <div id="pipelineSourceFilterBar" style="display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin:0 0 12px 0;"></div>
   <div class="kanban-board" id="kanbanBoard"></div>
 </div>
 
@@ -911,6 +918,16 @@
       <td style="width:25%;"><span class="label">Contact Number:</span><input type="text" id="majorContactNum"></td>
       <td style="width:25%;"><span class="label">Major Supplier:</span><input type="text" id="majorSupplier"></td>
       <td style="width:25%;"><span class="label">Contact Number:</span><input type="text" id="majorSupplierNum"></td>
+    </tr>
+  </table>
+
+  <div class="section-title">ADDITIONAL INFORMATION FOR PREVIOUS WORK</div>
+  <table>
+    <tr>
+      <td style="width:25%;"><span class="label">Company Name:</span><input type="text" id="prevCompanyName"></td>
+      <td style="width:25%;"><span class="label">Position:</span><input type="text" id="prevPosition"></td>
+      <td style="width:25%;"><span class="label">Contact Number / Email Address:</span><input type="text" id="prevContact"></td>
+      <td style="width:25%;"><span class="label">Length of Stay:</span><input type="text" id="prevLengthOfStay"></td>
     </tr>
   </table>
 
@@ -1203,6 +1220,18 @@
       <video id="qrScanVideo" autoplay playsinline muted style="display:none;"></video>
       <canvas id="qrScanCanvas" style="display:none;"></canvas>
       <div class="sync-progress" id="scanProgress"></div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay no-print" id="lostReasonModal">
+  <div class="modal-box">
+    <h3>Mark as Lost</h3>
+    <p style="font-size:12px; color:#666; margin:0 0 8px 0;">Pumili ng dahilan bakit hindi na-proceed ang client/application na ito.</p>
+    <select id="lostReasonSelect" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:5px; font-size:12px;"></select>
+    <div class="modal-actions">
+      <button style="background:#555; color:#fff;" onclick="closeLostReasonModal()">Cancel</button>
+      <button style="background:var(--orange); color:#fff;" onclick="confirmLostReason()">Confirm Lost</button>
     </div>
   </div>
 </div>
@@ -2083,8 +2112,11 @@ function saveApplication(){
   const borrower = data.b_name || 'Unnamed Borrower';
   const vehicle = data.vehicle || 'No vehicle';
   const apps = lsGet('cl_applications', {});
-  const id = 'app_' + Date.now();
-  apps[id] = { id, title: `${borrower} — ${vehicle}`, savedAt: new Date().toISOString(), data };
+  // Unique ID per save (timestamp + random suffix) so rapid consecutive saves never
+  // collide, and this NEVER overwrites another application — each save adds a new key
+  // to the cl_applications object, existing entries are always left untouched.
+  const id = 'app_' + Date.now() + '_' + Math.random().toString(36).slice(2,8);
+  apps[id] = { id, title: `${borrower} — ${vehicle}`, savedAt: new Date().toISOString(), data, pipelineStage: 'Application', originSource: 'Manual', lostReason: '' };
   const ok = lsSet('cl_applications', apps);
   addOrUpdateMonitoringFromForm(data);
   alert(ok ? 'Application saved sa gadget/browser na ito, at nadagdag din sa Monitoring.' : 'Could not save. Baka puno na ang browser storage.');
@@ -2098,11 +2130,71 @@ function refreshSavedList(){
   records.forEach(rec=>{
     const div = document.createElement('div');
     div.className = 'saved-item';
+    const stage = normalizeStage(rec.pipelineStage || 'Application');
+    const sourceBadge = (rec.originSource||'Manual')==='AI' ? '🤖 AI Sales' : '🧑‍💼 Manual Sales';
+    const lostNote = stage==='Lost' && rec.lostReason ? ` · Lost reason: ${escapeHtml(rec.lostReason)}` : '';
     div.innerHTML = `
-      <div><div><b>${escapeHtml(rec.title)}</b></div><div class="meta">Saved: ${new Date(rec.savedAt).toLocaleString()}</div></div>
-      <div><button class="load-btn" onclick="loadApplication('${rec.id}')">Load</button><button class="del-btn2" onclick="deleteApplication('${rec.id}')">Delete</button></div>`;
+      <div><div><b>${escapeHtml(rec.title)}</b></div><div class="meta">Saved: ${new Date(rec.savedAt).toLocaleString()} · Stage: ${escapeHtml(stage)} · ${sourceBadge}${lostNote}</div></div>
+      <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
+        <select class="load-btn" style="cursor:pointer;" title="Manual Conversion — move to another pipeline stage" onchange="handleSavedAppStageChange('${rec.id}', this.value)">
+          ${PIPELINE_STAGES.map(s=>`<option value="${s}" ${s===stage?'selected':''}>${escapeHtml(s)}</option>`).join('')}
+        </select>
+        <button class="load-btn" onclick="loadApplication('${rec.id}')">Load</button><button class="del-btn2" onclick="deleteApplication('${rec.id}')">Delete</button>
+      </div>`;
     container.appendChild(div);
   });
+}
+/** Manual Conversion: moves an existing Saved Application to another pipeline stage
+ *  in-place (same record — never creates a duplicate, never touches other applications).
+ *  Used both by the dropdown in the Saved Applications list and by dragging its card on
+ *  the Pipeline board. lostReason is only stored when stage === 'Lost'. */
+function setSavedApplicationStage(id, stage, lostReason){
+  const apps = lsGet('cl_applications', {});
+  if(!apps[id]) return;
+  apps[id].pipelineStage = stage;
+  apps[id].lostReason = stage==='Lost' ? (lostReason || apps[id].lostReason || '') : '';
+  lsSet('cl_applications', apps);
+  refreshSavedList();
+  if(currentActiveTab === 'pipeline') renderPipelineTab();
+  if(currentActiveTab === 'dashboard') renderPipelineOverviewOnDashboard();
+}
+// Dropdown handler for the Saved Applications list — routes through the Lost Reason
+// modal when the target stage is Lost, otherwise applies the stage change immediately.
+function handleSavedAppStageChange(id, stage){
+  if(stage==='Lost'){ openLostReasonModal('savedapp', id); return; }
+  setSavedApplicationStage(id, stage);
+}
+
+// ---- Lost Reason modal — shared by Saved Applications and AI/Manual pipeline leads ----
+// Whenever any record (regardless of source) is moved to the "Lost" stage, this modal
+// captures WHY before the move is committed. Nothing changes until Confirm is pressed.
+let _lostReasonTarget = null; // { kind: 'savedapp'|'lead', id }
+function openLostReasonModal(kind, id){
+  _lostReasonTarget = { kind, id };
+  const sel = document.getElementById('lostReasonSelect');
+  sel.innerHTML = LOST_REASONS.map(r=>`<option value="${escapeHtml(r)}">${escapeHtml(r)}</option>`).join('');
+  document.getElementById('lostReasonModal').classList.add('open');
+}
+function closeLostReasonModal(){
+  _lostReasonTarget = null;
+  document.getElementById('lostReasonModal').classList.remove('open');
+}
+async function confirmLostReason(){
+  if(!_lostReasonTarget) return;
+  const reason = document.getElementById('lostReasonSelect').value;
+  const { kind, id } = _lostReasonTarget;
+  if(kind==='savedapp'){
+    setSavedApplicationStage(id, 'Lost', reason);
+  } else if(kind==='lead'){
+    const lead = currentInboxLeads && currentInboxLeads.find(l=>l.id===id);
+    if(lead){ lead.pipelineStage = 'Lost'; lead.lostReason = reason; }
+    await DataService.updateLead(id, { 'Pipeline Stage': 'Lost', 'Lost Reason': reason });
+    if(currentActiveTab === 'pipeline') renderPipelineTab();
+    if(currentActiveTab === 'dashboard') renderPipelineOverviewOnDashboard();
+    if(typeof openLeadConversation === 'function' && document.getElementById('inboxDetail')) openLeadConversation(id);
+  }
+  document.getElementById('lostReasonModal').classList.remove('open');
+  _lostReasonTarget = null;
 }
 function loadApplication(id){
   const apps = lsGet('cl_applications', {});
@@ -2367,6 +2459,46 @@ function autoGrow(el){
 }
 
 // ---------------- PDF export (guaranteed single page + full color) ----------------
+// NOTE: html2canvas does not reliably rasterize <textarea> content/height (it can clip
+// wrapped lines even after the box has been auto-grown), which is what was truncating
+// long Residence/Company/Office addresses in the downloaded PDF. To guarantee the FULL
+// text is captured, we temporarily swap every .addr-field textarea for a plain block
+// element containing the exact same text (same font/weight/case/line-height), sized to its full
+// content height, capture the page, then restore the original textareas untouched.
+function swapAddrFieldsForCapture(){
+  const swaps = [];
+  document.querySelectorAll('#sheet textarea.addr-field').forEach(ta=>{
+    const cs = getComputedStyle(ta);
+    const div = document.createElement('div');
+    div.setAttribute('data-addr-clone-for', ta.id);
+    div.textContent = ta.value || '';
+    div.style.width = '100%';
+    div.style.minHeight = cs.lineHeight;
+    div.style.font = cs.font;
+    div.style.fontSize = cs.fontSize;
+    div.style.fontWeight = cs.fontWeight;
+    div.style.fontFamily = cs.fontFamily;
+    div.style.textTransform = cs.textTransform;
+    div.style.lineHeight = cs.lineHeight;
+    div.style.padding = cs.padding;
+    div.style.whiteSpace = 'pre-wrap';
+    div.style.wordWrap = 'break-word';
+    div.style.overflowWrap = 'break-word';
+    div.style.background = 'transparent';
+    div.style.borderBottom = 'none';
+    ta.style.display = 'none';
+    ta.insertAdjacentElement('afterend', div);
+    swaps.push({ ta, div });
+  });
+  return swaps;
+}
+function restoreAddrFieldsAfterCapture(swaps){
+  swaps.forEach(({ta, div})=>{
+    div.remove();
+    ta.style.display = '';
+  });
+}
+
 async function downloadPDF(){
   const paperSizesMM = { letter:[215.9,279.4], A4:[210,297], legal:[215.9,355.6] };
   const paper = document.getElementById('paperSize').value;
@@ -2378,6 +2510,7 @@ async function downloadPDF(){
   document.getElementById('sigExecPrint').textContent = document.getElementById('sigExec').value || 'SALES EXECUTIVE NAME';
   document.getElementById('sigManagerPrint').textContent = document.getElementById('sigManager').value || 'SALES MANAGER NAME';
   document.body.classList.add('pdf-mode');
+  const addrSwaps = swapAddrFieldsForCapture();
   await new Promise(r=>setTimeout(r,50));
 
   try{
@@ -2395,6 +2528,8 @@ async function downloadPDF(){
     if(renderH > maxH){ renderH = maxH; renderW = renderH / ratio; }
     const x = (wmm - renderW)/2;
     const y = margin;
+    // renderW/renderH are always clamped to fit within one page (maxW x maxH), so the
+    // output is guaranteed to stay exactly 1 page no matter how tall the address text is.
     pdf.addImage(imgData, 'PNG', x, y, renderW, renderH);
 
     const borrower = (document.getElementById('b_name').value || 'application').trim().replace(/[^a-z0-9]+/gi,'_');
@@ -2402,6 +2537,7 @@ async function downloadPDF(){
   } catch(e){
     alert('Hindi na-generate ang PDF. Subukan muli, o gamitin ang "Print (browser dialog)" bilang backup.');
   } finally {
+    restoreAddrFieldsAfterCapture(addrSwaps);
     document.body.classList.remove('pdf-mode');
   }
 }
@@ -2711,22 +2847,12 @@ function renderDashboard(){
   const approved = monitoring.filter(r=>r.status==='APPROVED').length;
   const declined = monitoring.filter(r=>r.status==='DECLINED').length;
 
-  const kpis = [
-    {label:'Total Clients', value: monitoring.length, sub:'sa Monitoring', accent:'navy', goto:'monitoring', icon:'👥'},
-    {label:'Ongoing', value: ongoing, sub:'currently processing', accent:'gold', goto:'monitoring', icon:'⏳'},
-    {label:'Approved', value: approved, sub:'completed deals', accent:'green', goto:'monitoring', icon:'✅'},
-    {label:'Declined', value: declined, sub:'did not push through', accent:'red', goto:'monitoring', icon:'⛔'},
-    {label:'Saved Applications', value: appsList.length, sub:'application forms filed', accent:'navy', goto:'saved', icon:'💾'},
-  ];
-  document.getElementById('kpiGrid').innerHTML = kpis.map(k=>`
-    <div class="kpi-card accent-${k.accent}" style="cursor:pointer;" onclick="switchTab('${k.goto}')">
-      <div class="kpi-icon">${k.icon}</div>
-      <div>
-        <div class="kpi-label">${escapeHtml(k.label)}</div>
-        <div class="kpi-value">${typeof k.value==='number' ? k.value.toLocaleString('en-US') : k.value}</div>
-        <div class="kpi-sub">${escapeHtml(k.sub)}</div>
-      </div>
-    </div>`).join('');
+  // The old Total Clients/Ongoing/Approved/Declined/Saved Applications cards were
+  // redundant with the Monitoring table and the Pipeline board — replaced by the
+  // single unified "Sales Pipeline Overview" widget instead (see
+  // renderPipelineOverviewOnDashboard()). AI/Manual are shown as a source breakdown,
+  // never as separate pipelines.
+  renderPipelineOverviewOnDashboard();
   tnUpdateNotifBadge();
   renderBankCreditDirectory();
   // Reminders (same alert logic used in the Messages tab: holidays, 3-day follow-up, birthdays)
@@ -4440,7 +4566,24 @@ const DS_CONFIG_KEY = 'cl_datasource_config';
 function getDsConfig(){ return lsGet(DS_CONFIG_KEY, {type:'mock', url:''}); }
 function setDsConfig(cfg){ lsSet(DS_CONFIG_KEY, cfg); }
 
-const PIPELINE_STAGES = ['New Lead','Contacted','Qualified','Quotation Sent','Application','Approved','Released','Lost'];
+// ONE unified Sales Pipeline. AI Sales and Manual Sales are only the SOURCE/ORIGIN of a
+// client — they are never separate pipelines. Every lead/application (regardless of
+// origin) moves through these same stages, with "Lost" as a terminal outcome (with a
+// Lost Reason) rather than "Declined" being a stage of its own.
+const PIPELINE_STAGES = ['Lead','Qualified','Application','Waiting for Requirements','Waiting for Bank Approval','Approved','Released','Lost'];
+// Reasons a record can land in the "Lost" stage — captured via the Lost Reason modal
+// whenever a card (AI or Manual) is moved/converted to Lost. "Bank Declined" lives here
+// as a reason, not as its own pipeline status.
+const LOST_REASONS = ['Bank Declined','Customer Cancelled','Customer Unresponsive','Bought Another Brand','Bought From Another Dealer','Requirements Not Completed','Financial Issue','Changed Mind','Other'];
+// Maps legacy/older stage labels (from data saved by earlier versions of this file) onto
+// the current unified PIPELINE_STAGES list, so existing records keep working without any
+// destructive migration of the underlying stored data.
+const STAGE_ALIASES = { 'Save Application':'Application', 'New Lead':'Lead', 'Contacted':'Lead', 'Quotation Sent':'Qualified', 'Declined':'Lost' };
+function normalizeStage(stage){
+  if(PIPELINE_STAGES.includes(stage)) return stage;
+  if(STAGE_ALIASES[stage]) return STAGE_ALIASES[stage];
+  return 'Lead';
+}
 
 // No demo/testing records — when the Data Source is not yet connected (or a fetch fails),
 // these stay empty so the CRM never shows fake sample clients mixed in with real ones.
@@ -4463,7 +4606,10 @@ function normalizeLead(raw){
     source: g('Source','source'),
     assignedTo: g('Assigned To','assignedTo') || 'AI',
     aiStatus: g('AI Status','aiStatus') || 'Active',
-    pipelineStage: g('Pipeline Stage','pipelineStage') || 'New Lead',
+    pipelineStage: normalizeStage(g('Pipeline Stage','pipelineStage') || 'Lead'),
+    lostReason: g('Lost Reason','lostReason'),
+    // These leads come from the AI/n8n data source — origin for the Source filter.
+    originSource: 'AI',
     lastAiReply: g('Last AI Reply','lastAiReply'),
     lastCustomerReply: g('Last Customer Reply','lastCustomerReply'),
     lastActivity: g('Last Activity','lastActivity'),
@@ -4574,7 +4720,7 @@ async function saveDataSourceConfig(){
   document.getElementById('dsStatus').innerHTML = '<div class="gh-status ok">✅ Na-save ang settings. Nire-reload ang data...</div>';
   await renderInboxTab();
   await renderPipelineTab();
-  await renderCrmStatsOnDashboard();
+  await renderPipelineOverviewOnDashboard();
   if(currentActiveTab === 'inbox') startAutoRefresh('inbox');
   else if(currentActiveTab === 'pipeline') startAutoRefresh('pipeline');
   else stopAutoRefresh();
@@ -4644,7 +4790,7 @@ function renderInboxList(leads){
           <div class="inbox-lastmsg">${escapeHtml(l.lastCustomerReply || l.lastAiReply || 'Walang mensahe pa')}</div>
           <div class="inbox-badges">
             <span class="chip ${l.humanTakeover?'chip-human':'chip-ai'}">${l.humanTakeover?'Human':'AI'}</span>
-            <span class="chip stage-chip">${escapeHtml(l.pipelineStage||'New Lead')}</span>
+            <span class="chip stage-chip">${escapeHtml(normalizeStage(l.pipelineStage)||'Lead')}</span>
           </div>
         </div>
       </div>`;
@@ -4672,7 +4818,7 @@ async function openLeadConversation(leadId){
   const convo = await DataService.getConversations(leadId);
   let html = `
     <div class="chat-panel-header">
-      <div><h3>${escapeHtml(lead.name)}</h3><div style="font-size:11px; color:#8a93a3;">${escapeHtml(lead.preferredUnit||'—')} · ${escapeHtml(lead.pipelineStage||'New Lead')}</div></div>
+      <div><h3>${escapeHtml(lead.name)}</h3><div style="font-size:11px; color:#8a93a3;">${escapeHtml(lead.preferredUnit||'—')} · ${escapeHtml(normalizeStage(lead.pipelineStage)||'Lead')}</div></div>
       <div class="takeover-toggle-row" style="margin:0;">
         <span class="takeover-label">${lead.humanTakeover?'🧑 Human Takeover':'🤖 AI Active'}</span>
         <div class="takeover-switch ${lead.humanTakeover?'human':''}" onclick="toggleHumanTakeover('${escapeHtml(leadId)}')"><div class="knob"></div></div>
@@ -4739,6 +4885,7 @@ async function toggleHumanTakeover(leadId){
   openLeadConversation(leadId);
 }
 async function changeLeadStage(leadId, newStage){
+  if(newStage==='Lost'){ openLostReasonModal('lead', leadId); return; }
   const lead = currentInboxLeads.find(l=>l.id===leadId);
   if(lead) lead.pipelineStage = newStage;
   await DataService.updateLead(leadId, { 'Pipeline Stage': newStage });
@@ -4760,9 +4907,11 @@ function getMonitoringPseudoLeads(){
     inquiry: '',
     status: r.status,
     source: 'Monitoring (manual)',
+    originSource: 'Manual',
     assignedTo: 'Agent',
     aiStatus: 'Paused',
     pipelineStage: r.dateRelease ? 'Released' : 'Approved',
+    lostReason: r.lostReason || '',
     lastAiReply: '',
     lastCustomerReply: '',
     lastActivity: r.dateRelease || '',
@@ -4772,6 +4921,40 @@ function getMonitoringPseudoLeads(){
     _fromMonitoring: true
   }));
 }
+// Manually-saved Application Form records (localStorage 'cl_applications') shown as
+// pipeline cards. Draggable, and dragging/converting one updates rec.pipelineStage
+// in-place on the SAME record — it's never duplicated or removed from cl_applications.
+function getSavedApplicationPseudoLeads(){
+  const apps = lsGet('cl_applications', {});
+  return Object.values(apps).map(rec=>{
+    const data = rec.data || {};
+    return {
+      id: 'SAVEDAPP-' + rec.id,
+      _appId: rec.id,
+      name: data.b_name || rec.title || 'Unnamed Borrower',
+      contact: data.b_mobile || data.b_tel || '',
+      facebookId: '',
+      preferredUnit: data.vehicle || '',
+      employmentStatus: '',
+      location: data.b_addr || '',
+      inquiry: '',
+      status: normalizeStage(rec.pipelineStage || 'Application'),
+      source: 'Manual (Saved Application)',
+      originSource: rec.originSource || 'Manual',
+      assignedTo: 'Agent',
+      aiStatus: 'Paused',
+      pipelineStage: normalizeStage(rec.pipelineStage || 'Application'),
+      lostReason: rec.lostReason || '',
+      lastAiReply: '',
+      lastCustomerReply: '',
+      lastActivity: rec.savedAt || '',
+      conversationCount: 0,
+      humanTakeover: true,
+      aiSummary: '',
+      _fromSavedApp: true
+    };
+  });
+}
 function mergeLeadsWithMonitoring(sheetLeads){
   const merged = sheetLeads.slice();
   getMonitoringPseudoLeads().forEach(p=>{
@@ -4779,6 +4962,20 @@ function mergeLeadsWithMonitoring(sheetLeads){
     const existingIdx = nameKey ? merged.findIndex(l=>(l.name||'').trim().toLowerCase()===nameKey) : -1;
     if(existingIdx>=0){
       merged[existingIdx] = { ...merged[existingIdx], pipelineStage: p.pipelineStage, humanTakeover: true };
+    } else {
+      merged.push(p);
+    }
+  });
+  // Saved Applications ARE deduped by borrower name against whatever's already on the
+  // board (AI lead or Monitoring card) — same client should only ever show as ONE card.
+  // The Saved Application version wins when there's a match, since it carries the
+  // actual submitted form data and its own draggable/Manual-Conversion controls; it
+  // simply replaces the older card in place rather than adding a second one.
+  getSavedApplicationPseudoLeads().forEach(p=>{
+    const nameKey = (p.name||'').trim().toLowerCase();
+    const existingIdx = nameKey ? merged.findIndex(l=>(l.name||'').trim().toLowerCase()===nameKey) : -1;
+    if(existingIdx>=0){
+      merged[existingIdx] = p;
     } else {
       merged.push(p);
     }
@@ -4797,72 +4994,141 @@ function goToPipelineStage(stage){
     }
   }, 150);
 }
+// Source filter for the unified pipeline board — "AI Sales", "Manual Sales", or "All".
+// This ONLY filters which cards are shown within the SAME set of columns; it never
+// switches to a different pipeline structure (there is only one).
+let currentPipelineSourceFilter = 'All';
+function setPipelineSourceFilter(val){
+  currentPipelineSourceFilter = val;
+  renderPipelineTab();
+}
+let _lastPipelineLeads = [];
 async function renderPipelineTab(){
   const board = document.getElementById('kanbanBoard');
   board.innerHTML = '<p style="color:#8a93a3; padding:20px;">Naglo-load...</p>';
   const leads = mergeLeadsWithMonitoring(await DataService.getLeads());
+  _lastPipelineLeads = leads;
   renderKanbanBoard(leads);
   startAutoRefresh('pipeline');
 }
 function renderKanbanBoard(leads){
+  // ISO timestamps (e.g. Saved Application's savedAt) don't have a space to split on
+  // like Sheet dates do — this handles both formats and always shows just the date part.
+  function formatKanbanDate(val){
+    if(!val) return '';
+    const datePart = String(val).split('T')[0].split(' ')[0];
+    return datePart;
+  }
   const board = document.getElementById('kanbanBoard');
+  const filtered = currentPipelineSourceFilter==='All' ? leads
+    : leads.filter(l=>(l.originSource||'Manual')===currentPipelineSourceFilter);
+  const aiCount = leads.filter(l=>(l.originSource||'Manual')==='AI').length;
+  const manualCount = leads.filter(l=>(l.originSource||'Manual')==='Manual').length;
+  const filterBar = document.getElementById('pipelineSourceFilterBar');
+  if(filterBar){
+    filterBar.innerHTML = `
+      <label style="font-size:12px; display:flex; align-items:center; gap:6px;">Source:
+        <select onchange="setPipelineSourceFilter(this.value)" style="padding:4px 8px; border-radius:5px; border:1px solid #ccc; font-size:12px;">
+          <option value="All" ${currentPipelineSourceFilter==='All'?'selected':''}>All</option>
+          <option value="AI" ${currentPipelineSourceFilter==='AI'?'selected':''}>AI Sales</option>
+          <option value="Manual" ${currentPipelineSourceFilter==='Manual'?'selected':''}>Manual Sales</option>
+        </select>
+      </label>
+      <span style="font-size:11px; color:#8a93a3;">🤖 AI Sales: ${aiCount} · 🧑‍💼 Manual Sales: ${manualCount}</span>`;
+  }
   board.innerHTML = PIPELINE_STAGES.map(stage=>{
-    const cards = leads.filter(l=>(l.pipelineStage||'New Lead')===stage);
+    const cards = filtered.filter(l=>normalizeStage(l.pipelineStage||'Lead')===stage);
     return `
     <div class="kanban-col">
       <div class="kanban-col-header"><span>${escapeHtml(stage)}</span><span>${cards.length}</span></div>
       <div class="kanban-col-body" data-stage="${escapeHtml(stage)}" ondragover="event.preventDefault(); this.classList.add('drag-over');" ondragleave="this.classList.remove('drag-over');" ondrop="onKanbanDrop(event, '${escapeHtml(stage)}')">
-        ${cards.map(l=>`
-          <div class="kanban-card" draggable="${l._fromMonitoring?'false':'true'}" ${l._fromMonitoring?'':`ondragstart="event.dataTransfer.setData('text/plain','${escapeHtml(l.id)}')"`} onclick="${l._fromMonitoring?`switchTab('monitoring')`:`switchTab('inbox'); setTimeout(()=>openLeadConversation('${escapeHtml(l.id)}'), 50);`}">
+        ${cards.map(l=>{
+          const draggable = !l._fromMonitoring; // monitoring rows are edited in the Monitoring tab, not dragged here
+          const clickAction = l._fromSavedApp ? `loadApplication('${escapeHtml(l._appId)}')`
+                             : l._fromMonitoring ? `switchTab('monitoring')`
+                             : `switchTab('inbox'); setTimeout(()=>openLeadConversation('${escapeHtml(l.id)}'), 50);`;
+          const dragStart = draggable ? `ondragstart="event.dataTransfer.setData('text/plain','${escapeHtml(l.id)}')"` : '';
+          const sourceBadgeTxt = (l.originSource||'Manual')==='AI' ? '🤖 AI Sales' : '🧑‍💼 Manual Sales';
+          const badge = `<div class="kc-manual-badge">${sourceBadgeTxt}${l._fromSavedApp ? ' · 💾 Saved Application' : ''}</div>`;
+          const lostNote = stage==='Lost' && l.lostReason ? `<div class="kc-manual-badge" style="color:#c0392b;">Reason: ${escapeHtml(l.lostReason)}</div>` : '';
+          const manualConvert = l._fromSavedApp ? `
+            <select class="kc-manual-convert no-print" onclick="event.stopPropagation();" onchange="event.stopPropagation(); handleSavedAppStageChange('${escapeHtml(l._appId)}', this.value);" title="Manual Conversion" style="margin-top:6px; width:100%; font-size:9.5px; padding:2px;">
+              ${PIPELINE_STAGES.map(s=>`<option value="${s}" ${s===normalizeStage(l.pipelineStage)?'selected':''}>${escapeHtml(s)}</option>`).join('')}
+            </select>` : '';
+          return `
+          <div class="kanban-card" draggable="${draggable}" ${dragStart} onclick="${clickAction}">
             <div class="kc-name">${escapeHtml(l.name)}</div>
             <div class="kc-veh">${escapeHtml(l.preferredUnit||'—')}</div>
-            <div class="kc-meta"><span>${l.humanTakeover?'🧑 Human':'🤖 AI'}</span><span>${escapeHtml((l.lastActivity||'').split(' ')[0]||'')}</span></div>
-            ${l._fromMonitoring?'<div class="kc-manual-badge">📋 Manual / Monitoring</div>':''}
-          </div>`).join('')}
+            <div class="kc-meta"><span>${l.humanTakeover?'🧑 Human':'🤖 AI'}</span><span>${escapeHtml(formatKanbanDate(l.lastActivity))}</span></div>
+            ${badge}${lostNote}${manualConvert}
+          </div>`;
+        }).join('')}
       </div>
     </div>`;
   }).join('');
 }
 async function refreshPipelineSilently(){
   const leads = mergeLeadsWithMonitoring(await DataService.getLeads());
+  _lastPipelineLeads = leads;
   renderKanbanBoard(leads);
 }
 async function onKanbanDrop(evt, newStage){
   evt.preventDefault();
   evt.currentTarget.classList.remove('drag-over');
-  const leadId = evt.dataTransfer.getData('text/plain');
+  const cardId = evt.dataTransfer.getData('text/plain');
+  if(!cardId) return;
+  if(cardId.startsWith('SAVEDAPP-')){
+    // Saved Application card: update the SAME cl_applications record's stage — no
+    // duplicate is created and no other application data is touched.
+    const appId = cardId.slice('SAVEDAPP-'.length);
+    if(newStage==='Lost'){ openLostReasonModal('savedapp', appId); return; }
+    setSavedApplicationStage(appId, newStage);
+    return;
+  }
+  if(cardId.startsWith('MON-')) return; // monitoring cards aren't draggable; nothing to do
+  if(newStage==='Lost'){ openLostReasonModal('lead', cardId); return; }
   const leads = await DataService.getLeads();
-  const lead = leads.find(l=>l.id===leadId);
+  const lead = leads.find(l=>l.id===cardId);
   if(lead) lead.pipelineStage = newStage;
-  await DataService.updateLead(leadId, { 'Pipeline Stage': newStage });
+  await DataService.updateLead(cardId, { 'Pipeline Stage': newStage });
   renderPipelineTab();
 }
 
-// ---- Dashboard: AI Sales stats panel ----
-async function renderCrmStatsOnDashboard(){
+// ---- Dashboard: ONE unified Sales Pipeline Overview ----
+// AI Sales and Manual Sales are only the SOURCE of a client, never separate pipelines —
+// so this combines AI leads + Monitoring + Saved Applications into a single set of
+// counts per unified PIPELINE_STAGES, plus a small source breakdown underneath.
+async function renderPipelineOverviewOnDashboard(){
   const holder = document.getElementById('crmStatsPanel');
+  const sourceHolder = document.getElementById('sourceBreakdownPanel');
   if(!holder) return;
-  const leads = mergeLeadsWithMonitoring(await DataService.getLeads());
-  const total = leads.length;
-  const activeAi = leads.filter(l=>!l.humanTakeover).length;
-  const qualified = leads.filter(l=>l.pipelineStage==='Qualified').length;
-  const applications = leads.filter(l=>l.pipelineStage==='Application').length;
-  const approved = leads.filter(l=>l.pipelineStage==='Approved').length;
-  const released = leads.filter(l=>l.pipelineStage==='Released').length;
-  const stats = [
-    {label:'Total Leads', value: total, action:"switchTab('pipeline')"},
-    {label:'Active AI Conversations', value: activeAi, action:"switchTab('inbox')"},
-    {label:'Qualified Leads', value: qualified, action:"goToPipelineStage('Qualified')"},
-    {label:'Applications', value: applications, action:"goToPipelineStage('Application')"},
-    {label:'Approved', value: approved, action:"goToPipelineStage('Approved')"},
-    {label:'Released', value: released, action:"goToPipelineStage('Released')"}
-  ];
+  const aiLeads = await DataService.getLeads();
+  const allLeads = mergeLeadsWithMonitoring(aiLeads);
+  const stats = PIPELINE_STAGES.map(stage=>({
+    label: stage,
+    value: allLeads.filter(l=>normalizeStage(l.pipelineStage||'Lead')===stage).length,
+    action: `goToPipelineStage('${stage}')`
+  }));
   holder.innerHTML = stats.map(s=>`
     <div class="kpi-card accent-navy" style="cursor:pointer;" onclick="${s.action}">
       <div class="kpi-label">${escapeHtml(s.label)}</div>
       <div class="kpi-value">${s.value}</div>
     </div>`).join('');
+  if(sourceHolder){
+    const aiCount = allLeads.filter(l=>(l.originSource||'Manual')==='AI').length;
+    const manualCount = allLeads.filter(l=>(l.originSource||'Manual')==='Manual').length;
+    sourceHolder.innerHTML = `
+      <div class="kpi-card accent-gold" style="cursor:pointer;" onclick="switchTab('pipeline'); setTimeout(()=>setPipelineSourceFilter('AI'),150);">
+        <div class="kpi-label">🤖 AI Sales</div><div class="kpi-value">${aiCount}</div>
+      </div>
+      <div class="kpi-card accent-gold" style="cursor:pointer;" onclick="switchTab('pipeline'); setTimeout(()=>setPipelineSourceFilter('Manual'),150);">
+        <div class="kpi-label">🧑‍💼 Manual Sales</div><div class="kpi-value">${manualCount}</div>
+      </div>`;
+  }
 }
+// Backwards-compatible alias — kept in case anything else in the file still calls the
+// old function name on startup.
+async function renderCrmStatsOnDashboard(){ return renderPipelineOverviewOnDashboard(); }
 
 const _cameFromLoginLink = applyLoginFromHash();
 if(_cameFromLoginLink || (isLoggedIn() && !location.hash.startsWith('#login='))){
