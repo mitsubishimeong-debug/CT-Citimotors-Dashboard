@@ -1353,7 +1353,9 @@ function toggleSidebar(){
   lsSet('cl_sidebar_hidden', document.body.classList.contains('sidebar-hidden'));
 }
 
+let currentActiveTab = 'dashboard';
 function switchTab(name){
+  currentActiveTab = name;
   ['dashboard','form','quote','bulletin','details','saved','monitoring','messages','sync','inbox','pipeline'].forEach(n=>{
     document.getElementById('tab-'+n).style.display = (n===name)?'block':'none';
     document.getElementById('btn-tab-'+n).classList.toggle('active', n===name);
@@ -1370,6 +1372,7 @@ function switchTab(name){
   if(name==='dashboard') renderDashboard();
   if(name==='inbox') renderInboxTab();
   if(name==='pipeline') renderPipelineTab();
+  if(name!=='inbox' && name!=='pipeline') stopAutoRefresh();
   const bcLabels = {dashboard:'Dashboard', form:'Application Form', quote:'Quotation', bulletin:'Vehicle Bulletin', details:'Vehicle Details', saved:'Saved Applications', monitoring:'Monitoring', messages:'Messages', sync:'Sync (QR)', inbox:'AI Conversations', pipeline:'Pipeline'};
   const bcEl = document.getElementById('tnBreadcrumb');
   if(bcEl) bcEl.textContent = bcLabels[name] || name;
@@ -4576,7 +4579,33 @@ async function saveDataSourceConfig(){
   await renderInboxTab();
   await renderPipelineTab();
   await renderCrmStatsOnDashboard();
+  if(currentActiveTab === 'inbox') startAutoRefresh('inbox');
+  else if(currentActiveTab === 'pipeline') startAutoRefresh('pipeline');
+  else stopAutoRefresh();
   setTimeout(closeDataSourceModal, 900);
+}
+
+// ---- Auto-refresh for live-ish data (AI Conversations / Pipeline) ----
+// Polls the connected Google Sheet / REST source every 20s while those tabs are open,
+// so new leads/messages that land in the Sheet show up without a manual reload.
+// Pauses automatically when the browser tab isn't visible, to avoid needless calls.
+let _autoRefreshTimer = null;
+let _autoRefreshTab = null;
+const AUTO_REFRESH_MS = 20000;
+function startAutoRefresh(tabName){
+  stopAutoRefresh();
+  const cfg = getDsConfig();
+  if(cfg.type !== 'appsscript' && cfg.type !== 'rest') return; // nothing to poll in demo mode
+  _autoRefreshTab = tabName;
+  _autoRefreshTimer = setInterval(()=>{
+    if(document.hidden) return;
+    if(tabName === 'inbox') refreshInboxSilently();
+    if(tabName === 'pipeline') refreshPipelineSilently();
+  }, AUTO_REFRESH_MS);
+}
+function stopAutoRefresh(){
+  if(_autoRefreshTimer){ clearInterval(_autoRefreshTimer); _autoRefreshTimer = null; }
+  _autoRefreshTab = null;
 }
 
 // ---- AI Conversations inbox ----
@@ -4588,6 +4617,19 @@ async function renderInboxTab(){
   listEl.innerHTML = '<div class="inbox-empty">Naglo-load...</div>';
   currentInboxLeads = await DataService.getLeads();
   renderInboxList(currentInboxLeads);
+  startAutoRefresh('inbox');
+}
+// Silent refresh: no loading flash, keeps whatever search text / open conversation the agent has.
+async function refreshInboxSilently(){
+  const searchInput = document.getElementById('inboxSearchInput');
+  const q = searchInput ? searchInput.value : '';
+  const freshLeads = await DataService.getLeads();
+  currentInboxLeads = freshLeads;
+  if(q) filterInboxList(q); else renderInboxList(currentInboxLeads);
+  if(currentOpenLeadId){
+    const stillExists = currentInboxLeads.find(l=>l.id===currentOpenLeadId);
+    if(stillExists) openLeadConversation(currentOpenLeadId);
+  }
 }
 function renderInboxList(leads){
   const listEl = document.getElementById('inboxList');
@@ -4711,6 +4753,11 @@ async function renderPipelineTab(){
   const board = document.getElementById('kanbanBoard');
   board.innerHTML = '<p style="color:#8a93a3; padding:20px;">Naglo-load...</p>';
   const leads = await DataService.getLeads();
+  renderKanbanBoard(leads);
+  startAutoRefresh('pipeline');
+}
+function renderKanbanBoard(leads){
+  const board = document.getElementById('kanbanBoard');
   board.innerHTML = PIPELINE_STAGES.map(stage=>{
     const cards = leads.filter(l=>(l.pipelineStage||'New Lead')===stage);
     return `
@@ -4726,6 +4773,10 @@ async function renderPipelineTab(){
       </div>
     </div>`;
   }).join('');
+}
+async function refreshPipelineSilently(){
+  const leads = await DataService.getLeads();
+  renderKanbanBoard(leads);
 }
 async function onKanbanDrop(evt, newStage){
   evt.preventDefault();
