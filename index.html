@@ -5,7 +5,7 @@
 <title>Auto Loan Application - CT Citimotors Las Piñas Corp</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" crossorigin="anonymous">
 <style>
   :root{ --orange:#c0521a; --line:#333; --yellow:#fff8b0; --navy:#1e3a5f; --sidebar-bg:#152238; --sidebar-bg2:#1c3350; --sidebar-active:#c3a26b;
     /* ---- Enterprise design system (dashboard/shell layer only — form/quote print sheets keep their brand look) ---- */
@@ -2707,7 +2707,8 @@ async function downloadPDF(){
     const borrower = (document.getElementById('b_name').value || 'application').trim().replace(/[^a-z0-9]+/gi,'_');
     saveDataUrlAsFile(pdf.output('datauristring'), 'Auto_Loan_' + borrower + '.pdf', 'application/pdf');
   } catch(e){
-    alert('Hindi na-generate ang PDF. Subukan muli, o gamitin ang "Print (browser dialog)" bilang backup.');
+    console.error('downloadPDF failed:', e);
+    alert('Hindi na-generate ang PDF. Subukan muli, o gamitin ang "Print (browser dialog)" bilang backup.\n\nTechnical details: ' + (e && (e.message || e.name || String(e))));
   } finally {
     restoreAddrFieldsAfterCapture(addrSwaps);
     document.body.classList.remove('pdf-mode');
@@ -2757,7 +2758,8 @@ async function printApplication(){
     await new Promise(r=>setTimeout(r,50));
     window.print();
   } catch(e){
-    alert('Hindi ma-print. Subukan muli, o gamitin ang "Download PDF" bilang backup.');
+    console.error('printApplication failed:', e);
+    alert('Hindi ma-print. Subukan muli, o gamitin ang "Download PDF" bilang backup.\n\nTechnical details: ' + (e && (e.message || e.name || String(e))));
   } finally {
     document.body.classList.remove('print-img-mode');
     frame.innerHTML = '';
