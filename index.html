@@ -170,11 +170,11 @@
   .chat-panel-header{padding:14px 16px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;}
   .chat-panel-header h3{margin:0; font-size:14px;}
   .chat-thread{flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:10px;}
-  .chat-bubble{max-width:70%; padding:9px 12px; border-radius:12px; font-size:12.5px; line-height:1.4;}
+  .chat-bubble{max-width:78%; padding:10px 13px; border-radius:12px; font-size:15px; line-height:1.5;}
   .chat-bubble.customer{align-self:flex-start; background:#f1f2f4; border-bottom-left-radius:3px;}
   .chat-bubble.ai{align-self:flex-end; background:var(--navy); color:#fff; border-bottom-right-radius:3px;}
   .chat-bubble.agent{align-self:flex-end; background:var(--orange); color:#fff; border-bottom-right-radius:3px;}
-  .chat-bubble .cb-meta{font-size:9px; opacity:0.75; margin-top:4px;}
+  .chat-bubble .cb-meta{font-size:10.5px; opacity:0.75; margin-top:5px;}
   .chat-empty{flex:1; display:flex; align-items:center; justify-content:center; color:#8a93a3; font-size:12.5px;}
 
   /* Customer Profile panel */
@@ -197,10 +197,12 @@
 
   /* Pipeline Kanban */
   .kanban-board{display:flex; gap:12px; overflow-x:auto; padding-bottom:10px; max-width:1300px; margin:0 auto;}
-  .kanban-col{background:#f4f5f7; border-radius:10px; min-width:220px; max-width:240px; flex-shrink:0; display:flex; flex-direction:column; max-height:76vh;}
+  .kanban-col{background:#f4f5f7; border-radius:10px; min-width:220px; max-width:240px; flex-shrink:0; display:flex; flex-direction:column; max-height:76vh; transition: box-shadow 0.25s ease;}
+  .kanban-col-highlight{box-shadow:0 0 0 3px var(--orange); }
   .kanban-col-header{padding:10px 12px; font-size:11.5px; font-weight:800; text-transform:uppercase; letter-spacing:0.03em; color:#445; display:flex; justify-content:space-between; border-bottom:2px solid #e2e5ea;}
   .kanban-col-body{padding:8px; overflow-y:auto; flex:1; min-height:60px;}
   .kanban-col-body.drag-over{background:#eef1f5;}
+  .kanban-card .kc-manual-badge{display:inline-block; font-size:9px; font-weight:700; color:#8a5a1c; background:#fbe8c8; border-radius:4px; padding:1px 5px; margin-top:4px;}
   .kanban-card{background:#fff; border:1px solid #e2e5ea; border-radius:8px; padding:10px; margin-bottom:8px; cursor:grab; box-shadow:0 1px 2px rgba(0,0,0,0.04); font-size:11.5px;}
   .kanban-card:active{cursor:grabbing;}
   .kanban-card .kc-name{font-weight:700; margin-bottom:3px;}
@@ -1527,7 +1529,8 @@ async function loginAccount(){
   updateAccountUI();
   await githubLoad(true);
   await githubSave(true);
-  ghShowStatus('✅ Naka-login bilang ' + email + '. I-kopya ang Login Link sa ibaba para hindi ka na hihingan ulit ng login.', true);
+  syncLoginHashToUrl();
+  ghShowStatus('✅ Naka-login bilang ' + email + '. Hindi ka na hihingan ng login kahit mag-refresh o mag-restart ng browser.', true);
   showLoginLinkBox();
 }
 function logoutAccount(){
@@ -1535,6 +1538,7 @@ function logoutAccount(){
   _suppressAutoSync = true;
   localStorage.removeItem('cl_login_session');
   _suppressAutoSync = false;
+  if(history.replaceState) history.replaceState(null, '', location.pathname + location.search);
   updateAccountUI();
   closeGithubModal();
 }
@@ -1543,6 +1547,8 @@ function logoutAccount(){
 // Encodes { email, token, repo, path } into the URL's #login= fragment so a bookmarked /
 // "Add to Home Screen" link logs a device back in automatically, even if localStorage
 // gets wiped (common on mobile in-app browsers like Messenger's, or Safari private mode).
+// This hash is kept in the address bar (not stripped) after every successful login, so
+// even a plain browser refresh — not just the bookmarked link — re-authenticates on load.
 function buildLoginLink(){
   const session = getLoginSession();
   const cfg = lsGet('cl_github_config', {});
@@ -1551,6 +1557,12 @@ function buildLoginLink(){
   const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
   const base = location.origin + location.pathname;
   return base + '#login=' + encoded;
+}
+function syncLoginHashToUrl(){
+  const link = buildLoginLink();
+  if(!link || !history.replaceState) return;
+  const hashPart = link.split('#')[1];
+  history.replaceState(null, '', location.pathname + location.search + '#' + hashPart);
 }
 function showLoginLinkBox(){
   const link = buildLoginLink();
@@ -1588,6 +1600,7 @@ function applyQuickLoginLink(){
   if(!applyLoginPayload(payload)){ ghShowStatus('Kulang ang impormasyon sa link na ito.', false); return; }
   updateAccountUI();
   ghShowStatus('Naglo-login...', true);
+  syncLoginHashToUrl();
   githubLoad(true).then(()=>{
     ghShowStatus('✅ Naka-login bilang ' + payload.email + '.', true);
     showLoginLinkBox();
@@ -4429,27 +4442,10 @@ function setDsConfig(cfg){ lsSet(DS_CONFIG_KEY, cfg); }
 
 const PIPELINE_STAGES = ['New Lead','Contacted','Qualified','Quotation Sent','Application','Approved','Released','Lost'];
 
-const MOCK_LEADS = [
-  { id:'L-1001', date:'2026-08-01', name:'Juan Dela Cruz', contact:'09171234567', facebookId:'fb_1001', preferredUnit:'2026 XPANDER GLS', employmentStatus:'Employed', location:'Las Piñas City', inquiry:'Ask about monthly DP', status:'New', source:'Facebook Messenger', assignedTo:'AI', aiStatus:'Active', pipelineStage:'New Lead', lastAiReply:'Pwede po mag-DP ng 20-40%, ilan po ang gusto niyo?', lastCustomerReply:'Magkano po monthly sa 20% DP?', lastActivity:'2026-08-08 10:15', conversationCount:6, humanTakeover:false, aiSummary:'Interesado sa Xpander GLS, tinatanong ang DP options, walang budget pa na nasabi.' },
-  { id:'L-1002', date:'2026-07-28', name:'Maria Santos', contact:'09189876543', facebookId:'fb_1002', preferredUnit:'2026 MONTERO GLS', employmentStatus:'Self-Employed', location:'Parañaque City', inquiry:'Requesting quotation', status:'Qualified', source:'Facebook Messenger', assignedTo:'Agent', aiStatus:'Paused', pipelineStage:'Quotation Sent', lastAiReply:'Ito po ang quotation para sa Montero GLS.', lastCustomerReply:'Salamat, babasahin ko po.', lastActivity:'2026-08-07 15:40', conversationCount:14, humanTakeover:true, aiSummary:'Interesado sa Montero GLS, ₱200,000 downpayment budget, self-employed, hinihintay ang quotation review.' },
-  { id:'L-1003', date:'2026-07-20', name:'Pedro Reyes', contact:'09201112233', facebookId:'fb_1003', preferredUnit:'2026 MIRAGE G4 GLS CVT', employmentStatus:'Employed', location:'Muntinlupa City', inquiry:'Application submitted', status:'In Process', source:'Facebook Messenger', assignedTo:'Agent', aiStatus:'Paused', pipelineStage:'Application', lastAiReply:'—', lastCustomerReply:'Nasubmit ko na po yung requirements.', lastActivity:'2026-08-06 09:05', conversationCount:22, humanTakeover:true, aiSummary:'Na-submit na ang application para sa Mirage G4, hinihintay ang bank approval.' },
-  { id:'L-1004', date:'2026-07-10', name:'Ana Lim', contact:'09221234567', facebookId:'fb_1004', preferredUnit:'2026 TRITON GLS AT', employmentStatus:'Employed', location:'Las Piñas City', inquiry:'Loan approved, waiting for release', status:'Approved', source:'Facebook Messenger', assignedTo:'Agent', aiStatus:'Paused', pipelineStage:'Approved', lastAiReply:'—', lastCustomerReply:'Kailan po pwede i-release?', lastActivity:'2026-08-05 14:00', conversationCount:30, humanTakeover:true, aiSummary:'Approved na ang Triton GLS loan, hinihintay ang release date.' },
-  { id:'L-1005', date:'2026-06-15', name:'Carlos Tan', contact:'09231234567', facebookId:'fb_1005', preferredUnit:'2026 XFORCE GT', employmentStatus:'OFW', location:'Las Piñas City', inquiry:'Not qualified, income insufficient', status:'Lost', source:'Facebook Messenger', assignedTo:'AI', aiStatus:'Active', pipelineStage:'Lost', lastAiReply:'Pasensya na po, hindi po sapat ang income requirement.', lastCustomerReply:'Sayang naman, salamat po.', lastActivity:'2026-07-01 11:20', conversationCount:9, humanTakeover:false, aiSummary:'Interesado sa Xforce GT pero hindi naabot ang income requirement bilang OFW applicant.' }
-];
-const MOCK_CONVERSATIONS = {
-  'L-1001': [
-    { ts:'2026-08-08 09:50', sender:'customer', message:'Hi, magkano po yung Xpander GLS?', intent:'pricing_inquiry' },
-    { ts:'2026-08-08 09:51', sender:'ai', message:'Magandang araw po! Ang Xpander GLS ay nasa ₱1,259,000. Gusto niyo po ba ng sample computation?', intent:'pricing_reply' },
-    { ts:'2026-08-08 10:14', sender:'customer', message:'Opo, magkano po monthly sa 20% DP?', intent:'financing_inquiry' },
-    { ts:'2026-08-08 10:15', sender:'ai', message:'Pwede po mag-DP ng 20-40%, ilan po ang gusto niyo?', intent:'financing_reply' }
-  ],
-  'L-1002': [
-    { ts:'2026-08-07 15:10', sender:'customer', message:'Pa-quotation po ng Montero GLS.', intent:'quotation_request' },
-    { ts:'2026-08-07 15:12', sender:'ai', message:'Sige po, iproprocess ko na ang quotation niyo.', intent:'quotation_ack' },
-    { ts:'2026-08-07 15:38', sender:'agent', message:'Hi Ma\'am Maria, ito po yung quotation namin — [PDF attached].', intent:'human_reply' },
-    { ts:'2026-08-07 15:40', sender:'customer', message:'Salamat, babasahin ko po.', intent:'acknowledgement' }
-  ]
-};
+// No demo/testing records — when the Data Source is not yet connected (or a fetch fails),
+// these stay empty so the CRM never shows fake sample clients mixed in with real ones.
+const MOCK_LEADS = [];
+const MOCK_CONVERSATIONS = {};
 
 function normalizeLead(raw){
   const g = (a,b)=> raw[a] ?? raw[b] ?? '';
@@ -4749,10 +4745,62 @@ async function changeLeadStage(leadId, newStage){
 }
 
 // ---- Sales Pipeline (Kanban) ----
+// Merges in manually-tracked Monitoring records (Approved/Released clients entered by hand,
+// not through the AI/Messenger flow) so they show up on the Pipeline board too. If a Sheet
+// lead with the same name already exists, its stage is updated instead of adding a duplicate card.
+function getMonitoringPseudoLeads(){
+  return getMonitoring().filter(r=>r.status==='APPROVED').map(r=>({
+    id: 'MON-' + r.id,
+    name: r.name,
+    contact: r.contact,
+    facebookId: '',
+    preferredUnit: r.vehicle,
+    employmentStatus: '',
+    location: r.address,
+    inquiry: '',
+    status: r.status,
+    source: 'Monitoring (manual)',
+    assignedTo: 'Agent',
+    aiStatus: 'Paused',
+    pipelineStage: r.dateRelease ? 'Released' : 'Approved',
+    lastAiReply: '',
+    lastCustomerReply: '',
+    lastActivity: r.dateRelease || '',
+    conversationCount: 0,
+    humanTakeover: true,
+    aiSummary: r.remarks || '',
+    _fromMonitoring: true
+  }));
+}
+function mergeLeadsWithMonitoring(sheetLeads){
+  const merged = sheetLeads.slice();
+  getMonitoringPseudoLeads().forEach(p=>{
+    const nameKey = (p.name||'').trim().toLowerCase();
+    const existingIdx = nameKey ? merged.findIndex(l=>(l.name||'').trim().toLowerCase()===nameKey) : -1;
+    if(existingIdx>=0){
+      merged[existingIdx] = { ...merged[existingIdx], pipelineStage: p.pipelineStage, humanTakeover: true };
+    } else {
+      merged.push(p);
+    }
+  });
+  return merged;
+}
+function goToPipelineStage(stage){
+  switchTab('pipeline');
+  setTimeout(()=>{
+    const body = document.querySelector(`.kanban-col-body[data-stage="${CSS.escape(stage)}"]`);
+    const col = body ? body.closest('.kanban-col') : null;
+    if(col){
+      col.scrollIntoView({behavior:'smooth', inline:'center', block:'nearest'});
+      col.classList.add('kanban-col-highlight');
+      setTimeout(()=>col.classList.remove('kanban-col-highlight'), 1500);
+    }
+  }, 150);
+}
 async function renderPipelineTab(){
   const board = document.getElementById('kanbanBoard');
   board.innerHTML = '<p style="color:#8a93a3; padding:20px;">Naglo-load...</p>';
-  const leads = await DataService.getLeads();
+  const leads = mergeLeadsWithMonitoring(await DataService.getLeads());
   renderKanbanBoard(leads);
   startAutoRefresh('pipeline');
 }
@@ -4765,17 +4813,18 @@ function renderKanbanBoard(leads){
       <div class="kanban-col-header"><span>${escapeHtml(stage)}</span><span>${cards.length}</span></div>
       <div class="kanban-col-body" data-stage="${escapeHtml(stage)}" ondragover="event.preventDefault(); this.classList.add('drag-over');" ondragleave="this.classList.remove('drag-over');" ondrop="onKanbanDrop(event, '${escapeHtml(stage)}')">
         ${cards.map(l=>`
-          <div class="kanban-card" draggable="true" ondragstart="event.dataTransfer.setData('text/plain','${escapeHtml(l.id)}')" onclick="switchTab('inbox'); setTimeout(()=>openLeadConversation('${escapeHtml(l.id)}'), 50);">
+          <div class="kanban-card" draggable="${l._fromMonitoring?'false':'true'}" ${l._fromMonitoring?'':`ondragstart="event.dataTransfer.setData('text/plain','${escapeHtml(l.id)}')"`} onclick="${l._fromMonitoring?`switchTab('monitoring')`:`switchTab('inbox'); setTimeout(()=>openLeadConversation('${escapeHtml(l.id)}'), 50);`}">
             <div class="kc-name">${escapeHtml(l.name)}</div>
             <div class="kc-veh">${escapeHtml(l.preferredUnit||'—')}</div>
             <div class="kc-meta"><span>${l.humanTakeover?'🧑 Human':'🤖 AI'}</span><span>${escapeHtml((l.lastActivity||'').split(' ')[0]||'')}</span></div>
+            ${l._fromMonitoring?'<div class="kc-manual-badge">📋 Manual / Monitoring</div>':''}
           </div>`).join('')}
       </div>
     </div>`;
   }).join('');
 }
 async function refreshPipelineSilently(){
-  const leads = await DataService.getLeads();
+  const leads = mergeLeadsWithMonitoring(await DataService.getLeads());
   renderKanbanBoard(leads);
 }
 async function onKanbanDrop(evt, newStage){
@@ -4793,7 +4842,7 @@ async function onKanbanDrop(evt, newStage){
 async function renderCrmStatsOnDashboard(){
   const holder = document.getElementById('crmStatsPanel');
   if(!holder) return;
-  const leads = await DataService.getLeads();
+  const leads = mergeLeadsWithMonitoring(await DataService.getLeads());
   const total = leads.length;
   const activeAi = leads.filter(l=>!l.humanTakeover).length;
   const qualified = leads.filter(l=>l.pipelineStage==='Qualified').length;
@@ -4801,21 +4850,26 @@ async function renderCrmStatsOnDashboard(){
   const approved = leads.filter(l=>l.pipelineStage==='Approved').length;
   const released = leads.filter(l=>l.pipelineStage==='Released').length;
   const stats = [
-    {label:'Total Leads', value: total}, {label:'Active AI Conversations', value: activeAi},
-    {label:'Qualified Leads', value: qualified}, {label:'Applications', value: applications},
-    {label:'Approved', value: approved}, {label:'Released', value: released}
+    {label:'Total Leads', value: total, action:"switchTab('pipeline')"},
+    {label:'Active AI Conversations', value: activeAi, action:"switchTab('inbox')"},
+    {label:'Qualified Leads', value: qualified, action:"goToPipelineStage('Qualified')"},
+    {label:'Applications', value: applications, action:"goToPipelineStage('Application')"},
+    {label:'Approved', value: approved, action:"goToPipelineStage('Approved')"},
+    {label:'Released', value: released, action:"goToPipelineStage('Released')"}
   ];
   holder.innerHTML = stats.map(s=>`
-    <div class="kpi-card accent-navy">
+    <div class="kpi-card accent-navy" style="cursor:pointer;" onclick="${s.action}">
       <div class="kpi-label">${escapeHtml(s.label)}</div>
       <div class="kpi-value">${s.value}</div>
     </div>`).join('');
 }
 
 const _cameFromLoginLink = applyLoginFromHash();
-if(_cameFromLoginLink && history.replaceState){
-  // tidy the address bar, but the bookmarked/home-screen URL itself keeps the #login= part
-  history.replaceState(null, '', location.pathname + location.search);
+if(_cameFromLoginLink || (isLoggedIn() && !location.hash.startsWith('#login='))){
+  // Keep the #login= hash in the address bar (don't strip it) so that even a plain
+  // browser refresh — not just re-opening a bookmarked link — re-authenticates on load.
+  // Also backfills the hash for accounts that logged in before this version.
+  syncLoginHashToUrl();
 }
 
 loadBulletin();
