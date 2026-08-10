@@ -65,11 +65,12 @@
   .label{font-size:12px; font-weight:600; color:#333; margin-bottom:2px; display:block;}
   input[type="text"], input[type="email"]{width:100%; border:none; border-bottom:1px solid #aaa; font-family:inherit; font-size:12px; padding:2px 1px; background:transparent;}
   input[type="text"]:focus, input[type="email"]:focus{outline:none; border-bottom:1px solid var(--orange); background:#fffdf5;}
-  textarea.addr-field{width:100%; border:none; border-bottom:1px solid #aaa; font-family:inherit; font-size:12px; font-weight:700; text-transform:uppercase; padding:2px 1px; background:transparent; resize:none; overflow:hidden; white-space:pre-wrap; word-wrap:break-word; line-height:1.3;}
+  textarea.addr-field{width:100%; border:none; border-bottom:1px solid #aaa; font-family:inherit; font-size:12px; font-weight:700; padding:2px 1px; background:transparent; resize:none; overflow:hidden; white-space:pre-wrap; word-wrap:break-word; line-height:1.3;}
   textarea.addr-field:focus{outline:none; border-bottom:1px solid var(--orange); background:#fffdf5;}
-  /* Used for fields that should allow normal mixed-case typing instead of forced ALL CAPS
-     (e.g. the "Additional Information for Previous Work" row: position, email, etc.) */
-  textarea.addr-field.normal-case{text-transform:none; font-weight:600;}
+  /* Kept for backward-compat with fields already tagged normal-case; no longer needed since
+     ALL .addr-field textareas across the whole form now allow normal typed casing by default
+     (previously only "uppercase" was forced, which mangled office emails, position titles, etc.) */
+  textarea.addr-field.normal-case{font-weight:600;}
   .chk-row{display:flex; align-items:center; gap:4px; font-size:11px; margin-bottom:3px;}
   .chk-row input{width:auto;}
   .center{text-align:center;}
@@ -346,7 +347,7 @@
   #tab-form, #tab-bulletin, #tab-details, #tab-saved, #tab-quote, #tab-monitoring, #tab-messages, #tab-sync, #tab-inbox, #tab-pipeline{display:none;}
 
   /* bold + all-caps as the borrower/co-borrower details are typed, so the bank checker reads them fast */
-  #sheet input[type="text"]{font-weight:700; letter-spacing:0.2px; text-transform:uppercase;}
+  #sheet input[type="text"]{font-weight:700; letter-spacing:0.2px;}
   #sheet [id$="_email"], #sheet #prevContact{text-transform:none; font-weight:600;}
 
   /* ---- Quotation tab (full computation sheet) ---- */
