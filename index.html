@@ -73,23 +73,19 @@
   textarea.addr-field.normal-case{font-weight:600;}
   .chk-row{display:flex; align-items:center; gap:4px; font-size:11px; margin-bottom:3px;}
   .chk-row input{width:auto;}
-  /* Custom-drawn checkbox (instead of relying on the native OS checkbox) so the checked
-     state renders in brand orange reliably — native checkboxes are not captured correctly
-     by the screenshot-based PDF/print export, which was making them look plain/uncolored. */
+  /* Colored checkbox via background-image (no ::after / content pseudo-element this time —
+     that combo is what broke the html2canvas PDF/print export earlier), so the checked
+     state renders in brand orange reliably in the screenshot-based PDF/print export. */
   #sheet input[type="checkbox"]{
     -webkit-appearance:none; appearance:none;
     width:13px; height:13px; min-width:13px;
     border:1.5px solid #555; border-radius:2px;
-    background:#fff; position:relative; cursor:pointer; margin:0;
+    background-color:#fff; background-repeat:no-repeat; background-position:center;
+    background-size:9px 9px; position:relative; cursor:pointer; margin:0;
   }
   #sheet input[type="checkbox"]:checked{
-    background:var(--orange); border-color:var(--orange);
-  }
-  #sheet input[type="checkbox"]:checked::after{
-    content:" "; position:absolute; left:3px; top:0px;
-    width:4px; height:8px;
-    border:solid #fff; border-width:0 2px 2px 0;
-    transform:rotate(45deg);
+    background-color:var(--orange); border-color:var(--orange);
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='none' stroke='white' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round' d='M3 8.5l3.2 3.2L13 5'/></svg>");
   }
   .center{text-align:center;}
   .bold{font-weight:bold;}
@@ -2668,6 +2664,55 @@ function restoreAddrFieldsAfterCapture(swaps){
   });
 }
 
+// Native checkboxes can't be reliably styled/colored inside the screenshot-based PDF/print
+// export (html2canvas draws its own generic fallback for real <input type="checkbox">
+// elements and ignores appearance/background CSS on them) — so, same trick as the address
+// textareas above: swap each real checkbox for a plain styled <div> right before capture,
+// then restore it after.
+function swapCheckboxesForCapture(){
+  const swaps = [];
+  document.querySelectorAll('#sheet input[type="checkbox"]').forEach(cb=>{
+    const box = document.createElement('div');
+    box.setAttribute('data-chk-clone-for', cb.id || '');
+    box.style.display = 'inline-block';
+    box.style.position = 'relative';
+    box.style.width = '13px';
+    box.style.height = '13px';
+    box.style.minWidth = '13px';
+    box.style.boxSizing = 'border-box';
+    box.style.border = '1.5px solid ' + (cb.checked ? '#c0521a' : '#555');
+    box.style.borderRadius = '2px';
+    box.style.verticalAlign = 'middle';
+    box.style.backgroundColor = cb.checked ? '#c0521a' : '#fff';
+    if(cb.checked){
+      // Real DOM child element for the checkmark (plain bordered div, rotated) instead of
+      // an image or a ::after{content:...} pseudo-element — both of those failed to render
+      // inside the html2canvas screenshot capture. Divs/borders render fine everywhere else
+      // in this document, so use the same technique here.
+      const tick = document.createElement('div');
+      tick.style.position = 'absolute';
+      tick.style.left = '3px';
+      tick.style.top = '1px';
+      tick.style.width = '4px';
+      tick.style.height = '7px';
+      tick.style.border = 'solid #fff';
+      tick.style.borderWidth = '0 2px 2px 0';
+      tick.style.transform = 'rotate(45deg)';
+      box.appendChild(tick);
+    }
+    cb.style.display = 'none';
+    cb.insertAdjacentElement('afterend', box);
+    swaps.push({ cb, box });
+  });
+  return swaps;
+}
+function restoreCheckboxesAfterCapture(swaps){
+  swaps.forEach(({cb, box})=>{
+    box.remove();
+    cb.style.display = '';
+  });
+}
+
 async function downloadPDF(){
   const paperSizesMM = { letter:[215.9,279.4], A4:[210,297], legal:[215.9,355.6] };
   const paper = document.getElementById('paperSize').value;
@@ -2680,6 +2725,7 @@ async function downloadPDF(){
   document.getElementById('sigManagerPrint').textContent = document.getElementById('sigManager').value || 'SALES MANAGER NAME';
   document.body.classList.add('pdf-mode');
   const addrSwaps = swapAddrFieldsForCapture();
+  const chkSwaps = swapCheckboxesForCapture();
   await new Promise(r=>setTimeout(r,50));
 
   try{
@@ -2710,6 +2756,7 @@ async function downloadPDF(){
     alert('Hindi na-generate ang PDF. Subukan muli, o gamitin ang "Print (browser dialog)" bilang backup.\n\nTechnical details: ' + (e && (e.message || e.name || String(e))));
   } finally {
     restoreAddrFieldsAfterCapture(addrSwaps);
+    restoreCheckboxesAfterCapture(chkSwaps);
     document.body.classList.remove('pdf-mode');
   }
 }
@@ -2731,6 +2778,7 @@ async function printApplication(){
   document.getElementById('sigManagerPrint').textContent = document.getElementById('sigManager').value || 'SALES MANAGER NAME';
   document.body.classList.add('pdf-mode');
   const addrSwaps = swapAddrFieldsForCapture();
+  const chkSwaps = swapCheckboxesForCapture();
   await new Promise(r=>setTimeout(r,50));
 
   try{
@@ -2763,6 +2811,7 @@ async function printApplication(){
     document.body.classList.remove('print-img-mode');
     frame.innerHTML = '';
     restoreAddrFieldsAfterCapture(addrSwaps);
+    restoreCheckboxesAfterCapture(chkSwaps);
     document.body.classList.remove('pdf-mode');
   }
 }
