@@ -2267,19 +2267,41 @@ function restoreAutosavedDraft(){
 document.addEventListener('input', (e)=>{ if(e.target.closest && e.target.closest('#sheet')) scheduleAutosave(); });
 document.addEventListener('change', (e)=>{ if(e.target.closest && e.target.closest('#sheet')) scheduleAutosave(); });
 
+// Tracks which saved application (if any) is currently loaded in the form, so that
+// saving after a Load updates that same record instead of creating a duplicate.
+// Set by loadApplication(), cleared by clearAll() (New blank application).
+let currentEditAppId = null;
 function saveApplication(){
   const data = gatherFormData();
   const borrower = data.b_name || 'Unnamed Borrower';
   const vehicle = data.vehicle || 'No vehicle';
   const apps = lsGet('cl_applications', {});
-  // Unique ID per save (timestamp + random suffix) so rapid consecutive saves never
-  // collide, and this NEVER overwrites another application — each save adds a new key
-  // to the cl_applications object, existing entries are always left untouched.
-  const id = 'app_' + Date.now() + '_' + Math.random().toString(36).slice(2,8);
-  apps[id] = { id, title: `${borrower} — ${vehicle}`, savedAt: new Date().toISOString(), data, pipelineStage: 'Application', originSource: 'Manual', lostReason: '' };
+  // If we're editing a previously-loaded application (currentEditAppId is set and
+  // still exists), update that same record in place. Otherwise this is a fresh
+  // application, so create a new record with a unique ID.
+  let id;
+  let isUpdate = false;
+  if(currentEditAppId && apps[currentEditAppId]){
+    id = currentEditAppId;
+    isUpdate = true;
+  } else {
+    id = 'app_' + Date.now() + '_' + Math.random().toString(36).slice(2,8);
+  }
+  const existing = apps[id];
+  apps[id] = {
+    id,
+    title: `${borrower} — ${vehicle}`,
+    savedAt: new Date().toISOString(),
+    data,
+    pipelineStage: existing ? existing.pipelineStage : 'Application',
+    originSource: existing ? existing.originSource : 'Manual',
+    lostReason: existing ? existing.lostReason : ''
+  };
   const ok = lsSet('cl_applications', apps);
+  currentEditAppId = id; // subsequent saves in this session keep updating the same record
   addOrUpdateMonitoringFromForm(data);
-  alert(ok ? 'Application saved sa gadget/browser na ito, at nadagdag din sa Monitoring.' : 'Could not save. Baka puno na ang browser storage.');
+  const savedMsg = isUpdate ? 'Application updated (existing record) sa gadget/browser na ito, at na-update din sa Monitoring.' : 'Application saved sa gadget/browser na ito, at nadagdag din sa Monitoring.';
+  alert(ok ? savedMsg : 'Could not save. Baka puno na ang browser storage.');
 }
 function refreshSavedList(){
   const container = document.getElementById('savedList');
@@ -2363,12 +2385,14 @@ function loadApplication(id){
   switchTab('form');
   applyFormData(rec.data);
   lsSet('cl_current_draft', rec.data);
+  currentEditAppId = id; // remember which record this is, so Save updates it instead of duplicating
 }
 function deleteApplication(id){
   if(!confirm('Delete this saved application?')) return;
   const apps = lsGet('cl_applications', {});
   delete apps[id];
   lsSet('cl_applications', apps);
+  if(currentEditAppId === id) currentEditAppId = null; // don't keep pointing at a deleted record
   refreshSavedList();
 }
 
@@ -2613,6 +2637,7 @@ function clearAll(){
   sigData = { borrower:null, exec:null, manager:null };
   ['borrower','exec','manager'].forEach(renderSignatureImage);
   lsSet('cl_current_draft', {});
+  currentEditAppId = null; // new blank application — next Save creates a fresh record
 }
 
 function autoGrow(el){
