@@ -344,7 +344,7 @@
 
   /* bold + all-caps as the borrower/co-borrower details are typed, so the bank checker reads them fast */
   #sheet input[type="text"]{font-weight:700; letter-spacing:0.2px; text-transform:uppercase;}
-  #sheet input[id$="_email"]{text-transform:none; font-weight:600;}
+  #sheet [id$="_email"], #sheet #prevContact{text-transform:none; font-weight:600;}
 
   /* ---- Quotation tab (full computation sheet) ---- */
   :root{ --qnavy:#1c3350; --qnavy2:#254264; --qcharcoal:#23262e; --qgold:#c3a26b; --qgoldl:#ecdfc4; --qmaroon:#7d3038; --qmaroon2:#5f242a; --qamberl:#f1e9d8; }
@@ -442,6 +442,16 @@
     .no-print{display:none !important;}
     .sig-img-holder:empty::before{content:"" !important;}
     * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }
+  }
+
+  /* ---- Guaranteed single-page print (used by printApplication(): renders the exact same
+     clamped, single-page image as "Download PDF" instead of relying on browser reflow/zoom,
+     which was overflowing to a 2nd page for Legal/A4 and long content on Letter). ---- */
+  #printImgFrame{ display:none; }
+  #printImgFrame img{ display:block; margin:0 auto; }
+  @media print{
+    body.print-img-mode > *:not(#printImgFrame){ display:none !important; }
+    body.print-img-mode #printImgFrame{ display:block !important; }
   }
 
   body.pdf-mode .no-print{display:none !important;}
@@ -651,12 +661,13 @@
 
 <div class="toolbar no-print" id="formToolbar">
   <button onclick="downloadPDF()">⬇️ Download PDF (1-page, colored)</button>
-  <button class="secondary" onclick="window.print()">🖨️ Print (browser dialog)</button>
+  <button class="secondary" onclick="printApplication()">🖨️ Print (browser dialog)</button>
   <select id="paperSize"><option value="letter">Letter</option><option value="A4">A4</option><option value="legal">Legal</option></select>
   <button class="secondary" onclick="clearAll()">New / Clear</button>
   <button onclick="saveApplication()">💾 Save Application</button>
   <button class="navy" onclick="toggleDesignMode()" id="designModeBtn">🎨 Design Mode</button>
 </div>
+<div id="printImgFrame"></div>
 <div class="toolbar no-print" id="designToolbar" style="display:none; background:#2c2005; border-radius:6px; padding:8px 12px;">
   <span style="color:#ecdfc4; font-size:12px; font-weight:bold;">Design Mode:</span>
   <button class="secondary" onclick="adjustFontSize(-1)">A-</button>
@@ -684,7 +695,7 @@
     </div>
     <div class="ah-calltime">
       <div class="ah-calltime-label">BEST TIME TO CALL:</div>
-      <input type="text" id="bestTime" placeholder="e.g. ANYTIME" style="text-align:center;font-weight:bold;">
+      <textarea class="addr-field" id="bestTime" rows="1" oninput="autoGrow(this)" placeholder="e.g. ANYTIME" style="text-align:center;font-weight:bold;"></textarea>
     </div>
     <div class="ah-banner">
       <div class="banner">Auto Loan Application</div>
@@ -702,7 +713,7 @@
         <input type="text" id="vehicle" list="vehicleDatalist" oninput="onVehicleChange()">
         <datalist id="vehicleDatalist"></datalist>
       </td>
-      <td style="width:25%;"><span class="label">Selling Price:</span><input type="text" id="sellingPrice"></td>
+      <td style="width:25%;"><span class="label">Selling Price:</span><textarea class="addr-field" id="sellingPrice" rows="1" oninput="autoGrow(this)"></textarea></td>
       <td style="width:25%;">
         <span class="label">Down Payment:</span>
         <input type="text" id="downPayment" list="dpDatalist" oninput="onDownPaymentChange()">
@@ -710,8 +721,8 @@
       </td>
     </tr>
     <tr>
-      <td><span class="label">Sales Executive:</span><input type="text" id="salesExec"></td>
-      <td><span class="label">Amount for Financing:</span><input type="text" id="amountFinancing"></td>
+      <td><span class="label">Sales Executive:</span><textarea class="addr-field" id="salesExec" rows="1" oninput="autoGrow(this)"></textarea></td>
+      <td><span class="label">Amount for Financing:</span><textarea class="addr-field" id="amountFinancing" rows="1" oninput="autoGrow(this)"></textarea></td>
       <td>
         <span class="label">Terms:</span>
         <input type="text" id="terms" list="termsDatalist">
@@ -722,16 +733,16 @@
 
   <table>
     <tr>
-      <td style="width:50%;"><span class="label">Last Name/ First Name / Middle Name:</span><input type="text" id="b_name"></td>
-      <td style="width:50%;"><span class="label">Last Name/ First Name / Middle Name (Co-Borrower):</span><input type="text" id="c_name"></td>
+      <td style="width:50%;"><span class="label">Last Name/ First Name / Middle Name:</span><textarea class="addr-field" id="b_name" rows="1" oninput="autoGrow(this)"></textarea></td>
+      <td style="width:50%;"><span class="label">Last Name/ First Name / Middle Name (Co-Borrower):</span><textarea class="addr-field" id="c_name" rows="1" oninput="autoGrow(this)"></textarea></td>
     </tr>
     <tr>
-      <td><span class="label">Place of Birth:</span><input type="text" id="b_rel"></td>
-      <td><span class="label">Place of Birth:</span><input type="text" id="c_rel"></td>
+      <td><span class="label">Place of Birth:</span><textarea class="addr-field" id="b_rel" rows="1" oninput="autoGrow(this)"></textarea></td>
+      <td><span class="label">Place of Birth:</span><textarea class="addr-field" id="c_rel" rows="1" oninput="autoGrow(this)"></textarea></td>
     </tr>
     <tr>
-      <td style="width:50%;"><span class="label">Birthdate:</span><input type="text" id="b_bday" placeholder="e.g. July 13, 1989"></td>
-      <td style="width:50%;"><span class="label">Birthdate:</span><input type="text" id="c_bday" placeholder="e.g. July 13, 1989"></td>
+      <td style="width:50%;"><span class="label">Birthdate:</span><textarea class="addr-field" id="b_bday" rows="1" oninput="autoGrow(this)" placeholder="e.g. July 13, 1989"></textarea></td>
+      <td style="width:50%;"><span class="label">Birthdate:</span><textarea class="addr-field" id="c_bday" rows="1" oninput="autoGrow(this)" placeholder="e.g. July 13, 1989"></textarea></td>
     </tr>
     <tr>
       <td><span class="label">Residence Address:</span><textarea class="addr-field" id="b_addr" rows="1" oninput="autoGrow(this)"></textarea></td>
@@ -748,7 +759,7 @@
             <div class="chk-row"><input type="checkbox" id="b_family">Living with family</div>
             <div class="chk-row"><input type="checkbox" id="b_rented">Rented</div>
           </td>
-          <td style="border:none; width:20%; padding:2px;"><span class="label">Length of Stay:</span><input type="text" id="b_stay"></td>
+          <td style="border:none; width:20%; padding:2px;"><span class="label">Length of Stay:</span><textarea class="addr-field" id="b_stay" rows="1" oninput="autoGrow(this)"></textarea></td>
         </tr></table>
       </td>
       <td>
@@ -761,27 +772,27 @@
             <div class="chk-row"><input type="checkbox" id="c_family">Living with family</div>
             <div class="chk-row"><input type="checkbox" id="c_rented">Rented</div>
           </td>
-          <td style="border:none; width:20%; padding:2px;"><span class="label">Length of Stay:</span><input type="text" id="c_stay"></td>
+          <td style="border:none; width:20%; padding:2px;"><span class="label">Length of Stay:</span><textarea class="addr-field" id="c_stay" rows="1" oninput="autoGrow(this)"></textarea></td>
         </tr></table>
       </td>
     </tr>
     <tr>
       <td>
         <table style="border:none;"><tr>
-          <td style="border:none; width:50%; padding:2px;"><span class="label">Residence Telephone Number:</span><input type="text" id="b_tel"></td>
-          <td style="border:none; width:50%; padding:2px;"><span class="label">Mobile Number:</span><input type="text" id="b_mobile"></td>
+          <td style="border:none; width:50%; padding:2px;"><span class="label">Residence Telephone Number:</span><textarea class="addr-field" id="b_tel" rows="1" oninput="autoGrow(this)"></textarea></td>
+          <td style="border:none; width:50%; padding:2px;"><span class="label">Mobile Number:</span><textarea class="addr-field" id="b_mobile" rows="1" oninput="autoGrow(this)"></textarea></td>
         </tr></table>
       </td>
       <td>
         <table style="border:none;"><tr>
-          <td style="border:none; width:50%; padding:2px;"><span class="label">Residence Telephone Number:</span><input type="text" id="c_tel"></td>
-          <td style="border:none; width:50%; padding:2px;"><span class="label">Mobile Number:</span><input type="text" id="c_mobile"></td>
+          <td style="border:none; width:50%; padding:2px;"><span class="label">Residence Telephone Number:</span><textarea class="addr-field" id="c_tel" rows="1" oninput="autoGrow(this)"></textarea></td>
+          <td style="border:none; width:50%; padding:2px;"><span class="label">Mobile Number:</span><textarea class="addr-field" id="c_mobile" rows="1" oninput="autoGrow(this)"></textarea></td>
         </tr></table>
       </td>
     </tr>
     <tr>
-      <td><span class="label">Email Address:</span><input type="text" id="b_email"></td>
-      <td><span class="label">Email Address:</span><input type="text" id="c_email"></td>
+      <td><span class="label">Email Address:</span><textarea class="addr-field" id="b_email" rows="1" oninput="autoGrow(this)"></textarea></td>
+      <td><span class="label">Email Address:</span><textarea class="addr-field" id="c_email" rows="1" oninput="autoGrow(this)"></textarea></td>
     </tr>
     <tr>
       <td>
@@ -822,30 +833,30 @@
     <tr>
       <td>
         <table style="border:none;"><tr>
-          <td style="border:none; width:33%; padding:2px;"><span class="label">Citizenship:</span><input type="text" id="b_citizenship" value="FILIPINO"></td>
-          <td style="border:none; width:33%; padding:2px;"><span class="label">No. Of Dependents:</span><input type="text" id="b_dependents"></td>
-          <td style="border:none; width:34%; padding:2px;"><span class="label">Tin Number:</span><input type="text" id="b_tin"></td>
+          <td style="border:none; width:33%; padding:2px;"><span class="label">Citizenship:</span><textarea class="addr-field" id="b_citizenship" rows="1" oninput="autoGrow(this)">FILIPINO</textarea></td>
+          <td style="border:none; width:33%; padding:2px;"><span class="label">No. Of Dependents:</span><textarea class="addr-field" id="b_dependents" rows="1" oninput="autoGrow(this)"></textarea></td>
+          <td style="border:none; width:34%; padding:2px;"><span class="label">Tin Number:</span><textarea class="addr-field" id="b_tin" rows="1" oninput="autoGrow(this)"></textarea></td>
         </tr></table>
       </td>
       <td>
         <table style="border:none;"><tr>
-          <td style="border:none; width:33%; padding:2px;"><span class="label">Citizenship:</span><input type="text" id="c_citizenship" value="FILIPINO"></td>
-          <td style="border:none; width:33%; padding:2px;"><span class="label">No. Of Dependents:</span><input type="text" id="c_dependents"></td>
-          <td style="border:none; width:34%; padding:2px;"><span class="label">Tin Number:</span><input type="text" id="c_tin"></td>
+          <td style="border:none; width:33%; padding:2px;"><span class="label">Citizenship:</span><textarea class="addr-field" id="c_citizenship" rows="1" oninput="autoGrow(this)">FILIPINO</textarea></td>
+          <td style="border:none; width:33%; padding:2px;"><span class="label">No. Of Dependents:</span><textarea class="addr-field" id="c_dependents" rows="1" oninput="autoGrow(this)"></textarea></td>
+          <td style="border:none; width:34%; padding:2px;"><span class="label">Tin Number:</span><textarea class="addr-field" id="c_tin" rows="1" oninput="autoGrow(this)"></textarea></td>
         </tr></table>
       </td>
     </tr>
     <tr>
       <td>
         <table style="border:none;"><tr>
-          <td style="border:none; width:65%; padding:2px;"><span class="label">Employer / Business name:</span><input type="text" id="b_employer"></td>
-          <td style="border:none; width:35%; padding:2px;"><span class="label">Length of Stay:</span><input type="text" id="b_emplen"></td>
+          <td style="border:none; width:65%; padding:2px;"><span class="label">Employer / Business name:</span><textarea class="addr-field" id="b_employer" rows="1" oninput="autoGrow(this)"></textarea></td>
+          <td style="border:none; width:35%; padding:2px;"><span class="label">Length of Stay:</span><textarea class="addr-field" id="b_emplen" rows="1" oninput="autoGrow(this)"></textarea></td>
         </tr></table>
       </td>
       <td>
         <table style="border:none;"><tr>
-          <td style="border:none; width:65%; padding:2px;"><span class="label">Employer / Business name:</span><input type="text" id="c_employer"></td>
-          <td style="border:none; width:35%; padding:2px;"><span class="label">Length of Stay:</span><input type="text" id="c_emplen"></td>
+          <td style="border:none; width:65%; padding:2px;"><span class="label">Employer / Business name:</span><textarea class="addr-field" id="c_employer" rows="1" oninput="autoGrow(this)"></textarea></td>
+          <td style="border:none; width:35%; padding:2px;"><span class="label">Length of Stay:</span><textarea class="addr-field" id="c_emplen" rows="1" oninput="autoGrow(this)"></textarea></td>
         </tr></table>
       </td>
     </tr>
@@ -856,22 +867,22 @@
     <tr>
       <td>
         <table style="border:none;"><tr>
-          <td style="border:none; width:40%; padding:2px;"><span class="label">Nature of business:</span><input type="text" id="b_natbiz"></td>
-          <td style="border:none; width:30%; padding:2px;"><span class="label">Office Telephone number:</span><input type="text" id="b_officetel"></td>
-          <td style="border:none; width:30%; padding:2px;"><span class="label">Office mobile number:</span><input type="text" id="b_officemobile"></td>
+          <td style="border:none; width:40%; padding:2px;"><span class="label">Nature of business:</span><textarea class="addr-field" id="b_natbiz" rows="1" oninput="autoGrow(this)"></textarea></td>
+          <td style="border:none; width:30%; padding:2px;"><span class="label">Office Telephone number:</span><textarea class="addr-field" id="b_officetel" rows="1" oninput="autoGrow(this)"></textarea></td>
+          <td style="border:none; width:30%; padding:2px;"><span class="label">Office mobile number:</span><textarea class="addr-field" id="b_officemobile" rows="1" oninput="autoGrow(this)"></textarea></td>
         </tr></table>
       </td>
       <td>
         <table style="border:none;"><tr>
-          <td style="border:none; width:40%; padding:2px;"><span class="label">Nature of business:</span><input type="text" id="c_natbiz"></td>
-          <td style="border:none; width:30%; padding:2px;"><span class="label">Office Telephone number:</span><input type="text" id="c_officetel"></td>
-          <td style="border:none; width:30%; padding:2px;"><span class="label">Office mobile number:</span><input type="text" id="c_officemobile"></td>
+          <td style="border:none; width:40%; padding:2px;"><span class="label">Nature of business:</span><textarea class="addr-field" id="c_natbiz" rows="1" oninput="autoGrow(this)"></textarea></td>
+          <td style="border:none; width:30%; padding:2px;"><span class="label">Office Telephone number:</span><textarea class="addr-field" id="c_officetel" rows="1" oninput="autoGrow(this)"></textarea></td>
+          <td style="border:none; width:30%; padding:2px;"><span class="label">Office mobile number:</span><textarea class="addr-field" id="c_officemobile" rows="1" oninput="autoGrow(this)"></textarea></td>
         </tr></table>
       </td>
     </tr>
     <tr>
-      <td><span class="label">Monthly Income:</span><input type="text" id="b_income"></td>
-      <td><span class="label">Monthly Income:</span><input type="text" id="c_income"></td>
+      <td><span class="label">Monthly Income:</span><textarea class="addr-field" id="b_income" rows="1" oninput="autoGrow(this)"></textarea></td>
+      <td><span class="label">Monthly Income:</span><textarea class="addr-field" id="c_income" rows="1" oninput="autoGrow(this)"></textarea></td>
     </tr>
     <tr>
       <td>
@@ -892,20 +903,20 @@
       </td>
     </tr>
     <tr>
-      <td><span class="label">Position:</span><input type="text" id="b_position"></td>
-      <td><span class="label">Position:</span><input type="text" id="c_position"></td>
+      <td><span class="label">Position:</span><textarea class="addr-field" id="b_position" rows="1" oninput="autoGrow(this)"></textarea></td>
+      <td><span class="label">Position:</span><textarea class="addr-field" id="c_position" rows="1" oninput="autoGrow(this)"></textarea></td>
     </tr>
     <tr>
       <td>
         <table style="border:none;"><tr>
-          <td style="border:none; width:65%; padding:2px;"><span class="label">Nature of Business:</span><input type="text" id="b_natbiz2"></td>
-          <td style="border:none; width:35%; padding:2px;"><span class="label">Years and Months:</span><input type="text" id="b_years"></td>
+          <td style="border:none; width:65%; padding:2px;"><span class="label">Nature of Business:</span><textarea class="addr-field" id="b_natbiz2" rows="1" oninput="autoGrow(this)"></textarea></td>
+          <td style="border:none; width:35%; padding:2px;"><span class="label">Years and Months:</span><textarea class="addr-field" id="b_years" rows="1" oninput="autoGrow(this)"></textarea></td>
         </tr></table>
       </td>
       <td>
         <table style="border:none;"><tr>
-          <td style="border:none; width:65%; padding:2px;"><span class="label">Nature of Business:</span><input type="text" id="c_natbiz2"></td>
-          <td style="border:none; width:35%; padding:2px;"><span class="label">Years and Months:</span><input type="text" id="c_years"></td>
+          <td style="border:none; width:65%; padding:2px;"><span class="label">Nature of Business:</span><textarea class="addr-field" id="c_natbiz2" rows="1" oninput="autoGrow(this)"></textarea></td>
+          <td style="border:none; width:35%; padding:2px;"><span class="label">Years and Months:</span><textarea class="addr-field" id="c_years" rows="1" oninput="autoGrow(this)"></textarea></td>
         </tr></table>
       </td>
     </tr>
@@ -914,20 +925,20 @@
   <div class="section-title">ADDITIONAL INFORMATION FOR SELF-EMPLOYED</div>
   <table>
     <tr>
-      <td style="width:25%;"><span class="label">Major Contact:</span><input type="text" id="majorContact"></td>
-      <td style="width:25%;"><span class="label">Contact Number:</span><input type="text" id="majorContactNum"></td>
-      <td style="width:25%;"><span class="label">Major Supplier:</span><input type="text" id="majorSupplier"></td>
-      <td style="width:25%;"><span class="label">Contact Number:</span><input type="text" id="majorSupplierNum"></td>
+      <td style="width:25%;"><span class="label">Major Contact:</span><textarea class="addr-field" id="majorContact" rows="1" oninput="autoGrow(this)"></textarea></td>
+      <td style="width:25%;"><span class="label">Contact Number:</span><textarea class="addr-field" id="majorContactNum" rows="1" oninput="autoGrow(this)"></textarea></td>
+      <td style="width:25%;"><span class="label">Major Supplier:</span><textarea class="addr-field" id="majorSupplier" rows="1" oninput="autoGrow(this)"></textarea></td>
+      <td style="width:25%;"><span class="label">Contact Number:</span><textarea class="addr-field" id="majorSupplierNum" rows="1" oninput="autoGrow(this)"></textarea></td>
     </tr>
   </table>
 
   <div class="section-title">ADDITIONAL INFORMATION FOR PREVIOUS WORK</div>
   <table>
     <tr>
-      <td style="width:25%;"><span class="label">Company Name:</span><input type="text" id="prevCompanyName"></td>
-      <td style="width:25%;"><span class="label">Position:</span><input type="text" id="prevPosition"></td>
-      <td style="width:25%;"><span class="label">Contact Number / Email Address:</span><input type="text" id="prevContact"></td>
-      <td style="width:25%;"><span class="label">Length of Stay:</span><input type="text" id="prevLengthOfStay"></td>
+      <td style="width:25%;"><span class="label">Company Name:</span><textarea class="addr-field" id="prevCompanyName" rows="1" oninput="autoGrow(this)"></textarea></td>
+      <td style="width:25%;"><span class="label">Position:</span><textarea class="addr-field" id="prevPosition" rows="1" oninput="autoGrow(this)"></textarea></td>
+      <td style="width:25%;"><span class="label">Contact Number / Email Address:</span><textarea class="addr-field" id="prevContact" rows="1" oninput="autoGrow(this)"></textarea></td>
+      <td style="width:25%;"><span class="label">Length of Stay:</span><textarea class="addr-field" id="prevLengthOfStay" rows="1" oninput="autoGrow(this)"></textarea></td>
     </tr>
   </table>
 
@@ -941,9 +952,9 @@
       <td style="width:16%;">CARD COMPANY</td><td style="width:16%;">CREDIT LIMIT</td><td style="width:18%;">EXPIRY DATE</td>
     </tr>
     <tbody id="bankRows">
-      <tr><td><input type="text" class="bank-branch"></td><td><input type="text" class="bank-type"></td><td><input type="text" class="bank-acct"></td><td><input type="text" class="cc-company"></td><td><input type="text" class="cc-limit"></td><td><input type="text" class="cc-expiry"></td></tr>
-      <tr><td><input type="text" class="bank-branch"></td><td><input type="text" class="bank-type"></td><td><input type="text" class="bank-acct"></td><td><input type="text" class="cc-company"></td><td><input type="text" class="cc-limit"></td><td><input type="text" class="cc-expiry"></td></tr>
-      <tr><td><input type="text" class="bank-branch"></td><td><input type="text" class="bank-type"></td><td><input type="text" class="bank-acct"></td><td><input type="text" class="cc-company"></td><td><input type="text" class="cc-limit"></td><td><input type="text" class="cc-expiry"></td></tr>
+      <tr><td><textarea class="bank-branch addr-field" rows="1" oninput="autoGrow(this)"></textarea></td><td><textarea class="bank-type addr-field" rows="1" oninput="autoGrow(this)"></textarea></td><td><textarea class="bank-acct addr-field" rows="1" oninput="autoGrow(this)"></textarea></td><td><textarea class="cc-company addr-field" rows="1" oninput="autoGrow(this)"></textarea></td><td><textarea class="cc-limit addr-field" rows="1" oninput="autoGrow(this)"></textarea></td><td><textarea class="cc-expiry addr-field" rows="1" oninput="autoGrow(this)"></textarea></td></tr>
+      <tr><td><textarea class="bank-branch addr-field" rows="1" oninput="autoGrow(this)"></textarea></td><td><textarea class="bank-type addr-field" rows="1" oninput="autoGrow(this)"></textarea></td><td><textarea class="bank-acct addr-field" rows="1" oninput="autoGrow(this)"></textarea></td><td><textarea class="cc-company addr-field" rows="1" oninput="autoGrow(this)"></textarea></td><td><textarea class="cc-limit addr-field" rows="1" oninput="autoGrow(this)"></textarea></td><td><textarea class="cc-expiry addr-field" rows="1" oninput="autoGrow(this)"></textarea></td></tr>
+      <tr><td><textarea class="bank-branch addr-field" rows="1" oninput="autoGrow(this)"></textarea></td><td><textarea class="bank-type addr-field" rows="1" oninput="autoGrow(this)"></textarea></td><td><textarea class="bank-acct addr-field" rows="1" oninput="autoGrow(this)"></textarea></td><td><textarea class="cc-company addr-field" rows="1" oninput="autoGrow(this)"></textarea></td><td><textarea class="cc-limit addr-field" rows="1" oninput="autoGrow(this)"></textarea></td><td><textarea class="cc-expiry addr-field" rows="1" oninput="autoGrow(this)"></textarea></td></tr>
     </tbody>
   </table>
   <button class="addrow-btn no-print" onclick="addBankRow()">+ Add row</button>
@@ -971,7 +982,7 @@
           <div class="sig-line-inner">
           <div class="sig-img-holder" id="sigImgHolderBorrower"></div>
           <button class="sig-add-btn no-print" onclick="openSigModal('borrower')">✍️ Signature</button>
-          <input type="text" id="sigBorrower" style="text-align:center;" placeholder="Borrower Name">
+          <textarea class="addr-field" id="sigBorrower" rows="1" oninput="autoGrow(this)" style="text-align:center;" placeholder="Borrower Name"></textarea>
           <span class="sig-print-only" id="sigBorrowerPrint" style="display:none; text-align:center; font-weight:700; text-transform:uppercase; font-size:9.5px;"></span>
           <div class="sig-underline"></div>
           <div>Borrower's Signature Over Printed Name</div>
@@ -983,7 +994,7 @@
           <div class="sig-line-inner">
           <div class="sig-img-holder" id="sigImgHolderExec"></div>
           <button class="sig-add-btn no-print" onclick="openSigModal('exec')">✍️ Signature</button>
-          <input type="text" id="sigExec" style="text-align:center;" value="ROMEO CUYACOT (MEONG)">
+          <textarea class="addr-field" id="sigExec" rows="1" oninput="autoGrow(this)" style="text-align:center;">ROMEO CUYACOT (MEONG)</textarea>
           <span class="sig-print-only" id="sigExecPrint" style="display:none; text-align:center; font-weight:700; text-transform:uppercase; font-size:9.5px;"></span>
           <div class="sig-underline"></div>
           <div>Sales Executives (SRC Group)</div>
@@ -995,7 +1006,7 @@
           <div class="sig-line-inner">
           <div class="sig-img-holder" id="sigImgHolderManager"></div>
           <button class="sig-add-btn no-print" onclick="openSigModal('manager')">✍️ Signature</button>
-          <input type="text" id="sigManager" style="text-align:center;" placeholder="Sales Manager Name">
+          <textarea class="addr-field" id="sigManager" rows="1" oninput="autoGrow(this)" style="text-align:center;" placeholder="Sales Manager Name"></textarea>
           <span class="sig-print-only" id="sigManagerPrint" style="display:none; text-align:center; font-weight:700; text-transform:uppercase; font-size:9.5px;"></span>
           <div class="sig-underline"></div>
           <div>Sales Manager</div>
@@ -1028,6 +1039,35 @@
       </div>
     </div>
 
+    <div class="quote-select-box" id="agentSettingsBox" style="margin-top:10px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; cursor:pointer;" onclick="toggleAgentSettings()">
+        <label style="margin:0; cursor:pointer;">⚙️ Agent Info &amp; Bank Rates <span style="font-weight:400; color:#888; font-size:11px;">(click to expand/edit)</span></label>
+        <span id="agentSettingsChevron" style="font-size:11px; color:#888;">▼</span>
+      </div>
+      <div id="agentSettingsPanel" style="display:none; margin-top:12px;">
+        <div class="custom-fields" style="display:grid; grid-template-columns:repeat(2,1fr); gap:10px;">
+          <div><label>Agent Name</label><input type="text" id="setAgentName"></div>
+          <div><label>Position / Role</label><input type="text" id="setAgentRole"></div>
+          <div><label>Dealer / Branch Name</label><input type="text" id="setDealerName"></div>
+          <div><label>Email</label><input type="text" id="setDealerEmail"></div>
+          <div style="grid-column:1/-1;"><label>Phone Number(s)</label><input type="text" id="setDealerPhones"></div>
+        </div>
+        <div style="margin-top:14px; font-weight:600; font-size:12px; color:#444;">Bank Financing Factor Rates (editable per bank)</div>
+        <div class="custom-fields" style="display:grid; grid-template-columns:repeat(5,1fr); gap:10px; margin-top:6px;">
+          <div><label>RCBC</label><input type="number" step="0.0001" id="rateRCBC"></div>
+          <div><label>BPI</label><input type="number" step="0.0001" id="rateBPI"></div>
+          <div><label>BDO</label><input type="number" step="0.0001" id="rateBDO"></div>
+          <div><label>EastWest</label><input type="number" step="0.0001" id="rateEastWest"></div>
+          <div><label>Security Bank</label><input type="number" step="0.0001" id="rateSecurity"></div>
+        </div>
+        <div style="margin-top:14px;">
+          <button class="btn-navy" onclick="saveAgentSettings()">💾 Save Settings</button>
+          <button class="btn-orange" style="margin-left:8px;" onclick="resetAgentSettings()">↺ Reset to Default</button>
+          <span id="agentSettingsSaved" style="display:none; color:#3a7a54; font-size:12px; margin-left:10px; font-weight:600;">✓ Saved</span>
+        </div>
+      </div>
+    </div>
+
     <div class="quote-action-bar" id="quoteActionBar">
       <button class="btn-navy" onclick="downloadQuotePDF()">⬇️ Download PDF</button>
       <button class="btn-gold" onclick="downloadQuoteImage()">📷 Download Image</button>
@@ -1039,12 +1079,12 @@
       <div class="agent-bar">
         <div>
           <div class="qname" id="quoteAgentName">ROMEO CUYACOT</div>
-          <div class="qrole">SALES EXECUTIVE</div>
+          <div class="qrole" id="quoteAgentRole">SALES EXECUTIVE</div>
         </div>
         <div class="dealer-info">
-          CT CITIMOTORS LAS PIÑAS<br>
-          MITSUBISHIMEONG@GMAIL.COM<br>
-          0991-679-5402 · 0934-590-9530
+          <span id="dealerName">CT CITIMOTORS LAS PIÑAS</span><br>
+          <span id="dealerEmail">MITSUBISHIMEONG@GMAIL.COM</span><br>
+          <span id="dealerPhones">0991-679-5402 · 0934-590-9530</span>
         </div>
       </div>
       <div class="date-line">Date Prepared: <span id="todayLabel"></span></div>
@@ -1733,8 +1773,85 @@ function onDownPaymentChange(){
 
 // ---------------- Quotation tab (full computation) ----------------
 // Monthly Amortization = ceil( Amount Financed x Rate / Term Months )
-const bankRates = { RCBC:1.54, BPI:1.5698, BDO:1.5521, EastWest:1.5695, Security:1.5754 };
+let bankRates = { RCBC:1.54, BPI:1.5698, BDO:1.5521, EastWest:1.5695, Security:1.5754 };
 const peso = n => '₱' + Number(n||0).toLocaleString('en-PH', {minimumFractionDigits:2, maximumFractionDigits:2});
+
+// ---------------- Agent Info & Bank Rate Settings (editable, persisted) ----------------
+const DEFAULT_AGENT_SETTINGS = {
+  agentName: 'ROMEO CUYACOT', agentRole: 'SALES EXECUTIVE',
+  dealerName: 'CT CITIMOTORS LAS PIÑAS', dealerEmail: 'MITSUBISHIMEONG@GMAIL.COM',
+  dealerPhones: '0991-679-5402 · 0934-590-9530',
+  rates: { RCBC:1.54, BPI:1.5698, BDO:1.5521, EastWest:1.5695, Security:1.5754 }
+};
+function toggleAgentSettings(){
+  const p = document.getElementById('agentSettingsPanel');
+  const open = p.style.display !== 'none';
+  p.style.display = open ? 'none' : 'block';
+  document.getElementById('agentSettingsChevron').textContent = open ? '▼' : '▲';
+}
+function readAgentSettingsStorage(){
+  let s = null;
+  try{ s = JSON.parse(localStorage.getItem('ct_agentSettings') || 'null'); }catch(e){ s = null; }
+  s = Object.assign({}, DEFAULT_AGENT_SETTINGS, s || {});
+  s.rates = Object.assign({}, DEFAULT_AGENT_SETTINGS.rates, (s && s.rates) || {});
+  return s;
+}
+function applyAgentSettings(s){
+  document.getElementById('quoteAgentName').textContent = (s.agentName || '').toUpperCase();
+  document.getElementById('quoteAgentRole').textContent = (s.agentRole || '').toUpperCase();
+  document.getElementById('dealerName').textContent = (s.dealerName || '').toUpperCase();
+  document.getElementById('dealerEmail').textContent = (s.dealerEmail || '').toUpperCase();
+  document.getElementById('dealerPhones').textContent = s.dealerPhones || '';
+  bankRates = Object.assign({}, s.rates);
+}
+function populateAgentSettingsForm(s){
+  document.getElementById('setAgentName').value = s.agentName;
+  document.getElementById('setAgentRole').value = s.agentRole;
+  document.getElementById('setDealerName').value = s.dealerName;
+  document.getElementById('setDealerEmail').value = s.dealerEmail;
+  document.getElementById('setDealerPhones').value = s.dealerPhones;
+  document.getElementById('rateRCBC').value = s.rates.RCBC;
+  document.getElementById('rateBPI').value = s.rates.BPI;
+  document.getElementById('rateBDO').value = s.rates.BDO;
+  document.getElementById('rateEastWest').value = s.rates.EastWest;
+  document.getElementById('rateSecurity').value = s.rates.Security;
+}
+function loadAgentSettings(){
+  const s = readAgentSettingsStorage();
+  populateAgentSettingsForm(s);
+  applyAgentSettings(s);
+}
+function saveAgentSettings(){
+  const d = DEFAULT_AGENT_SETTINGS;
+  const s = {
+    agentName: document.getElementById('setAgentName').value.trim() || d.agentName,
+    agentRole: document.getElementById('setAgentRole').value.trim() || d.agentRole,
+    dealerName: document.getElementById('setDealerName').value.trim() || d.dealerName,
+    dealerEmail: document.getElementById('setDealerEmail').value.trim() || d.dealerEmail,
+    dealerPhones: document.getElementById('setDealerPhones').value.trim() || d.dealerPhones,
+    rates: {
+      RCBC: parseFloat(document.getElementById('rateRCBC').value) || d.rates.RCBC,
+      BPI: parseFloat(document.getElementById('rateBPI').value) || d.rates.BPI,
+      BDO: parseFloat(document.getElementById('rateBDO').value) || d.rates.BDO,
+      EastWest: parseFloat(document.getElementById('rateEastWest').value) || d.rates.EastWest,
+      Security: parseFloat(document.getElementById('rateSecurity').value) || d.rates.Security
+    }
+  };
+  localStorage.setItem('ct_agentSettings', JSON.stringify(s));
+  applyAgentSettings(s);
+  renderQuoteSheet();
+  const badge = document.getElementById('agentSettingsSaved');
+  badge.style.display = 'inline';
+  clearTimeout(window._agentSavedTimeout);
+  window._agentSavedTimeout = setTimeout(()=>{ badge.style.display = 'none'; }, 2200);
+}
+function resetAgentSettings(){
+  localStorage.removeItem('ct_agentSettings');
+  const s = readAgentSettingsStorage();
+  populateAgentSettingsForm(s);
+  applyAgentSettings(s);
+  renderQuoteSheet();
+}
 function amort(financed, rate, months){ return Math.ceil((financed*rate)/months); }
 function buildFinRow(prefix, financed, months){
   Object.keys(bankRates).forEach(bank=>{
@@ -2100,7 +2217,7 @@ function applyFormData(data){
     tbody.innerHTML = '';
     data._bankRows.forEach(r=>{
       const tr = document.createElement('tr');
-      tr.innerHTML = `<td><input type="text" class="bank-branch" value="${escapeHtml(r.branch)}"></td><td><input type="text" class="bank-type" value="${escapeHtml(r.type)}"></td><td><input type="text" class="bank-acct" value="${escapeHtml(r.acct)}"></td><td><input type="text" class="cc-company" value="${escapeHtml(r.ccCompany)}"></td><td><input type="text" class="cc-limit" value="${escapeHtml(r.ccLimit)}"></td><td><input type="text" class="cc-expiry" value="${escapeHtml(r.ccExpiry)}"></td>`;
+      tr.innerHTML = `<td><textarea class="bank-branch addr-field" rows="1" oninput="autoGrow(this)">${escapeHtml(r.branch)}</textarea></td><td><textarea class="bank-type addr-field" rows="1" oninput="autoGrow(this)">${escapeHtml(r.type)}</textarea></td><td><textarea class="bank-acct addr-field" rows="1" oninput="autoGrow(this)">${escapeHtml(r.acct)}</textarea></td><td><textarea class="cc-company addr-field" rows="1" oninput="autoGrow(this)">${escapeHtml(r.ccCompany)}</textarea></td><td><textarea class="cc-limit addr-field" rows="1" oninput="autoGrow(this)">${escapeHtml(r.ccLimit)}</textarea></td><td><textarea class="cc-expiry addr-field" rows="1" oninput="autoGrow(this)">${escapeHtml(r.ccExpiry)}</textarea></td>`;
       tbody.appendChild(tr);
     });
   }
@@ -2439,7 +2556,7 @@ function importBackup(evt){
 function addBankRow(){
   const tbody = document.getElementById('bankRows');
   const tr = document.createElement('tr');
-  tr.innerHTML = `<td><input type="text" class="bank-branch"></td><td><input type="text" class="bank-type"></td><td><input type="text" class="bank-acct"></td><td><input type="text" class="cc-company"></td><td><input type="text" class="cc-limit"></td><td><input type="text" class="cc-expiry"></td>`;
+  tr.innerHTML = `<td><textarea class="bank-branch addr-field" rows="1" oninput="autoGrow(this)"></textarea></td><td><textarea class="bank-type addr-field" rows="1" oninput="autoGrow(this)"></textarea></td><td><textarea class="bank-acct addr-field" rows="1" oninput="autoGrow(this)"></textarea></td><td><textarea class="cc-company addr-field" rows="1" oninput="autoGrow(this)"></textarea></td><td><textarea class="cc-limit addr-field" rows="1" oninput="autoGrow(this)"></textarea></td><td><textarea class="cc-expiry addr-field" rows="1" oninput="autoGrow(this)"></textarea></td>`;
   tbody.appendChild(tr);
 }
 function clearAll(){
@@ -2537,6 +2654,56 @@ async function downloadPDF(){
   } catch(e){
     alert('Hindi na-generate ang PDF. Subukan muli, o gamitin ang "Print (browser dialog)" bilang backup.');
   } finally {
+    restoreAddrFieldsAfterCapture(addrSwaps);
+    document.body.classList.remove('pdf-mode');
+  }
+}
+
+// Print (browser dialog) — renders the SAME clamped single-page image used by downloadPDF()
+// and prints just that image on an @page sized to match the selected paper (Letter/A4/Legal),
+// instead of relying on the browser to reflow/zoom live HTML into one page (which was
+// overflowing onto a 2nd page, especially for Legal/A4 or longer entries).
+async function printApplication(){
+  const paperSizesMM = { letter:[215.9,279.4], A4:[210,297], legal:[215.9,355.6] };
+  const paper = document.getElementById('paperSize').value;
+  const [wmm, hmm] = paperSizesMM[paper];
+  const sheet = document.getElementById('sheet');
+  const frame = document.getElementById('printImgFrame');
+
+  document.querySelectorAll('#sheet textarea.addr-field').forEach(autoGrow);
+  document.getElementById('sigBorrowerPrint').textContent = document.getElementById('sigBorrower').value || 'BORROWER NAME';
+  document.getElementById('sigExecPrint').textContent = document.getElementById('sigExec').value || 'SALES EXECUTIVE NAME';
+  document.getElementById('sigManagerPrint').textContent = document.getElementById('sigManager').value || 'SALES MANAGER NAME';
+  document.body.classList.add('pdf-mode');
+  const addrSwaps = swapAddrFieldsForCapture();
+  await new Promise(r=>setTimeout(r,50));
+
+  try{
+    const canvas = await html2canvas(sheet, {scale:2, backgroundColor:'#ffffff', useCORS:true});
+    const imgData = canvas.toDataURL('image/png');
+
+    const margin = 6;
+    const maxW = wmm - margin*2;
+    const maxH = hmm - margin*2;
+    const ratio = canvas.height / canvas.width;
+    let renderW = maxW;
+    let renderH = renderW * ratio;
+    if(renderH > maxH){ renderH = maxH; renderW = renderH / ratio; }
+    // renderW/renderH are always clamped to fit within one page — same guarantee as the PDF export.
+
+    let pageStyle = document.getElementById('dynamicPageSize');
+    if(!pageStyle){ pageStyle = document.createElement('style'); pageStyle.id = 'dynamicPageSize'; document.head.appendChild(pageStyle); }
+    pageStyle.textContent = `@media print{ @page{ size: ${wmm}mm ${hmm}mm; margin:0; } }`;
+
+    frame.innerHTML = `<img src="${imgData}" style="width:${renderW}mm; height:${renderH}mm; margin-top:${margin}mm;">`;
+    document.body.classList.add('print-img-mode');
+    await new Promise(r=>setTimeout(r,50));
+    window.print();
+  } catch(e){
+    alert('Hindi ma-print. Subukan muli, o gamitin ang "Download PDF" bilang backup.');
+  } finally {
+    document.body.classList.remove('print-img-mode');
+    frame.innerHTML = '';
     restoreAddrFieldsAfterCapture(addrSwaps);
     document.body.classList.remove('pdf-mode');
   }
@@ -3075,16 +3242,15 @@ const SPECS_DB = {
     pros: ['Most affordable Mitsubishi PH offering', 'Very fuel-efficient (up to ~27 km/L claimed)', 'Low maintenance cost, widely available parts', 'Easiest to park/maneuver in tight city spaces'],
     cons: ['Only 2 variants (1.2 MT, 1.2 CVT) — limited feature choices', 'Fewer safety features than newer rivals', 'Smaller cabin/trunk than sedan rivals'],
     comparison: 'vs Toyota Wigo: the Wigo is fresher and slightly cheaper at the entry trim, but the Mirage counters with a proven MIVEC engine and Mitsubishi\'s reliability reputation. vs Suzuki Celerio / Kia Picanto: similar price and size class — the Mirage tends to have a roomier rear seat, while these rivals may edge it out on infotainment tech.',
+    ownBase: {
+      'Engine': '1.2L 3-Cylinder DOHC MIVEC', 'Displacement': '1,193 cc',
+      'Max Power': '77 hp @ 6,000 rpm', 'Max Torque': '100 Nm @ 4,000 rpm', 'Transmission': 'CVT',
+      'Fuel Tank': '35 L', 'Ground Clearance': '160 mm', 'Wheelbase': '2,450 mm', 'Tires': '175/55 R15',
+      'Length x Width x Height': '3,795 x 1,665 x 1,500 mm'
+    },
     rivals: [{
       brand: 'Toyota',
       name: 'Toyota Wigo G CVT',
-      ownName: 'Mirage 1.2 CVT',
-      ownSpecs: {
-        'Price': '₱781,000', 'Engine': '1.2L 3-Cylinder DOHC MIVEC', 'Displacement': '1,193 cc',
-        'Max Power': '77 hp @ 6,000 rpm', 'Max Torque': '100 Nm @ 4,000 rpm', 'Transmission': 'CVT',
-        'Fuel Tank': '35 L', 'Ground Clearance': '160 mm', 'Wheelbase': '2,450 mm', 'Tires': '175/55 R15',
-        'Length x Width x Height': '3,795 x 1,665 x 1,500 mm'
-      },
       specs: {
         'Price': '₱615,000 - 789,000', 'Engine': '1.0L 3-Cylinder (1KR-VE)', 'Displacement': '998 cc',
         'Max Power': '66 hp @ 6,000 rpm', 'Max Torque': '89-90 Nm', 'Transmission': '5-speed MT or CVT',
@@ -3095,13 +3261,6 @@ const SPECS_DB = {
     {
       brand: 'Honda',
       name: 'Honda Brio RS CVT',
-      ownName: 'Mirage 1.2 CVT',
-      ownSpecs: {
-        'Price': '₱781,000', 'Engine': '1.2L 3-Cylinder DOHC MIVEC', 'Displacement': '1,193 cc',
-        'Max Power': '77 hp @ 6,000 rpm', 'Max Torque': '100 Nm @ 4,000 rpm', 'Transmission': 'CVT',
-        'Ground Clearance': '160 mm', 'Wheelbase': '2,450 mm', 'Tires': '175/55 R15',
-        'Length x Width x Height': '3,795 x 1,665 x 1,500 mm'
-      },
       specs: {
         'Price': '₱735,000 - 863,000', 'Engine': '1.2L 4-Cylinder SOHC i-VTEC', 'Displacement': '1,199 cc',
         'Max Power': '89 hp', 'Max Torque': '—', 'Transmission': '5-speed MT or CVT',
@@ -3112,13 +3271,6 @@ const SPECS_DB = {
     {
       brand: 'Kia',
       name: 'Kia Picanto',
-      ownName: 'Mirage 1.2 CVT',
-      ownSpecs: {
-        'Price': '₱781,000', 'Engine': '1.2L 3-Cylinder DOHC MIVEC', 'Displacement': '1,193 cc',
-        'Max Power': '77 hp @ 6,000 rpm', 'Max Torque': '100 Nm @ 4,000 rpm', 'Transmission': 'CVT',
-        'Ground Clearance': '160 mm', 'Wheelbase': '2,450 mm', 'Tires': '175/55 R15',
-        'Length x Width x Height': '3,795 x 1,665 x 1,500 mm'
-      },
       specs: {
         'Price': '₱635,000 (approx.)', 'Engine': '1.0L 3-Cyl MT or 1.2L 4-Cyl AT', 'Displacement': '998-1,248 cc',
         'Max Power': '—', 'Max Torque': '—', 'Transmission': '5-speed MT or 4-speed AT',
@@ -3151,17 +3303,16 @@ const SPECS_DB = {
     pros: ['Very fuel-efficient in the segment', 'Low maintenance cost, widely available parts', 'Easy to drive and park in the city', 'Most affordable Mitsubishi PH offering'],
     cons: ['Smaller/less powerful engine than most rivals', 'Fewer safety features on base variants', 'Rear drum brakes vs rivals\' rear discs on some competitors'],
     comparison: 'vs Toyota Vios / Wigo: the Mirage/Mirage G4 usually undercuts Vios on price and matches Wigo\'s fuel economy, but the Vios offers a roomier cabin and more familiar resale value. vs Honda Brio: similar city-car segment — Brio has a peppier engine feel, while the Mirage line counters with a lower price and Mitsubishi\'s reputation for reliability.',
+    ownBase: {
+      'Engine': '1.2L 3-Cylinder DOHC 12V MIVEC', 'Displacement': '1,193 cc',
+      'Max Power': '76.9 hp @ 6,000 rpm', 'Max Torque': '100 Nm @ 4,000 rpm', 'Transmission': 'CVT',
+      'Fuel Tank': '42 L', 'Ground Clearance': '170 mm', 'Wheelbase': '2,550 mm', 'Tires': '185/55 R15',
+      'Length x Width x Height': '4,305 x 1,670 x 1,485 mm'
+    },
     rivals: [
       {
         brand: 'Toyota',
         name: 'Toyota Vios 1.3 XLE CVT',
-        ownName: 'Mirage G4 GLS CVT',
-        ownSpecs: {
-          'Price': '₱937,000', 'Engine': '1.2L 3-Cylinder DOHC 12V MIVEC', 'Displacement': '1,193 cc',
-          'Max Power': '76.9 hp @ 6,000 rpm', 'Max Torque': '100 Nm @ 4,000 rpm', 'Transmission': 'CVT',
-          'Fuel Tank': '42 L', 'Ground Clearance': '170 mm', 'Wheelbase': '2,550 mm', 'Tires': '185/55 R15',
-          'Length x Width x Height': '4,305 x 1,670 x 1,485 mm'
-        },
         specs: {
           'Price': '₱908,000', 'Engine': '1.3L 4-Cylinder DOHC 16V', 'Displacement': '1,329 cc',
           'Max Power': '97.6 hp @ 6,000 rpm', 'Max Torque': '123 Nm @ 4,200 rpm', 'Transmission': 'CVT',
@@ -3172,13 +3323,6 @@ const SPECS_DB = {
       {
         brand: 'Honda',
         name: 'Honda City 1.5 V CVT',
-        ownName: 'Mirage G4 GLS CVT',
-        ownSpecs: {
-          'Price': '₱937,000', 'Engine': '1.2L 3-Cylinder DOHC 12V MIVEC', 'Displacement': '1,193 cc',
-          'Max Power': '76.9 hp @ 6,000 rpm', 'Max Torque': '100 Nm @ 4,000 rpm', 'Transmission': 'CVT',
-          'Ground Clearance': '170 mm', 'Wheelbase': '2,550 mm', 'Tires': '185/55 R15',
-          'Length x Width x Height': '4,305 x 1,670 x 1,485 mm'
-        },
         specs: {
           'Price': '₱973,000 - 1,138,000', 'Engine': '1.5L 4-Cylinder DOHC 16V i-VTEC', 'Displacement': '1,498 cc',
           'Max Power': '119-121 hp @ 6,600 rpm', 'Max Torque': '145 Nm @ 4,300 rpm', 'Transmission': 'CVT',
@@ -3189,13 +3333,6 @@ const SPECS_DB = {
       {
         brand: 'Nissan',
         name: 'Nissan Almera VL Turbo CVT',
-        ownName: 'Mirage G4 GLS CVT',
-        ownSpecs: {
-          'Price': '₱937,000', 'Engine': '1.2L 3-Cylinder DOHC 12V MIVEC', 'Displacement': '1,193 cc',
-          'Max Power': '76.9 hp @ 6,000 rpm', 'Max Torque': '100 Nm @ 4,000 rpm', 'Transmission': 'CVT',
-          'Ground Clearance': '170 mm', 'Wheelbase': '2,550 mm', 'Tires': '185/55 R15',
-          'Length x Width x Height': '4,305 x 1,670 x 1,485 mm'
-        },
         specs: {
           'Price': '₱845,000 - 1,195,000', 'Engine': '1.0L 3-Cylinder Turbo', 'Displacement': '998 cc',
           'Max Power': '99-100 hp @ 5,000 rpm', 'Max Torque': '152-160 Nm @ 2,400-4,000 rpm', 'Transmission': '5-speed MT or CVT',
@@ -3206,13 +3343,6 @@ const SPECS_DB = {
       {
         brand: 'MG',
         name: 'MG 5 1.5L CVT Style',
-        ownName: 'Mirage G4 GLS CVT',
-        ownSpecs: {
-          'Price': '₱937,000', 'Engine': '1.2L 3-Cylinder DOHC 12V MIVEC', 'Displacement': '1,193 cc',
-          'Max Power': '76.9 hp @ 6,000 rpm', 'Max Torque': '100 Nm @ 4,000 rpm', 'Transmission': 'CVT',
-          'Ground Clearance': '170 mm', 'Wheelbase': '2,550 mm', 'Tires': '185/55 R15',
-          'Length x Width x Height': '4,305 x 1,670 x 1,485 mm'
-        },
         specs: {
           'Price': '₱698,888', 'Engine': '1.5L 4-Cylinder Gasoline', 'Displacement': '1,498 cc',
           'Max Power': '112 hp @ 6,000 rpm', 'Max Torque': '150 Nm @ 4,000 rpm', 'Transmission': 'CVT',
@@ -3223,13 +3353,6 @@ const SPECS_DB = {
       {
         brand: 'Suzuki',
         name: 'Suzuki Dzire Hybrid GLX CVT',
-        ownName: 'Mirage G4 GLS CVT',
-        ownSpecs: {
-          'Price': '₱937,000', 'Engine': '1.2L 3-Cylinder DOHC 12V MIVEC', 'Displacement': '1,193 cc',
-          'Max Power': '76.9 hp @ 6,000 rpm', 'Max Torque': '100 Nm @ 4,000 rpm', 'Transmission': 'CVT',
-          'Ground Clearance': '170 mm', 'Wheelbase': '2,550 mm', 'Tires': '185/55 R15',
-          'Length x Width x Height': '4,305 x 1,670 x 1,485 mm'
-        },
         specs: {
           'Price': '₱920,000 - 998,000', 'Engine': '1.2L Dualjet Mild Hybrid', 'Displacement': '1,197 cc',
           'Max Power': '80 hp', 'Max Torque': '113 Nm', 'Transmission': 'CVT',
@@ -3240,13 +3363,6 @@ const SPECS_DB = {
       {
         brand: 'Geely',
         name: 'Geely Emgrand Premium 1.5 CVT',
-        ownName: 'Mirage G4 GLS CVT',
-        ownSpecs: {
-          'Price': '₱937,000', 'Engine': '1.2L 3-Cylinder DOHC 12V MIVEC', 'Displacement': '1,193 cc',
-          'Max Power': '76.9 hp @ 6,000 rpm', 'Max Torque': '100 Nm @ 4,000 rpm', 'Transmission': 'CVT',
-          'Ground Clearance': '170 mm', 'Wheelbase': '2,550 mm', 'Tires': '185/55 R15',
-          'Length x Width x Height': '4,305 x 1,670 x 1,485 mm'
-        },
         specs: {
           'Price': '₱949,000 - 999,000', 'Engine': '1.5L 4-Cylinder 16V', 'Displacement': '1,498 cc',
           'Max Power': '100 hp @ 5,600 rpm', 'Max Torque': '142 Nm @ 4,400 rpm', 'Transmission': 'CVT (8-speed simulated)',
@@ -3257,13 +3373,6 @@ const SPECS_DB = {
       {
         brand: 'Hyundai',
         name: 'Hyundai Accent GLS X IVT (new; also common in used market)',
-        ownName: 'Mirage G4 GLS CVT',
-        ownSpecs: {
-          'Price': '₱937,000', 'Engine': '1.2L 3-Cylinder DOHC 12V MIVEC', 'Displacement': '1,193 cc',
-          'Max Power': '76.9 hp @ 6,000 rpm', 'Max Torque': '100 Nm @ 4,000 rpm', 'Transmission': 'CVT',
-          'Ground Clearance': '170 mm', 'Wheelbase': '2,550 mm', 'Tires': '185/55 R15',
-          'Length x Width x Height': '4,305 x 1,670 x 1,485 mm'
-        },
         specs: {
           'Price': '₱790,000 - 1,038,000 (new); ₱210,000-650,000 (used)', 'Engine': '1.5L Smartstream 4-Cylinder', 'Displacement': '1,497 cc',
           'Max Power': '115 hp', 'Max Torque': '144 Nm', 'Transmission': 'IVT or 6-speed MT',
@@ -3274,13 +3383,6 @@ const SPECS_DB = {
       {
         brand: 'Chery',
         name: 'Chery Arrizo 5',
-        ownName: 'Mirage G4 GLS CVT',
-        ownSpecs: {
-          'Price': '₱937,000', 'Engine': '1.2L 3-Cylinder DOHC 12V MIVEC', 'Displacement': '1,193 cc',
-          'Max Power': '76.9 hp @ 6,000 rpm', 'Max Torque': '100 Nm @ 4,000 rpm', 'Transmission': 'CVT',
-          'Ground Clearance': '170 mm', 'Wheelbase': '2,550 mm', 'Tires': '185/55 R15',
-          'Length x Width x Height': '4,305 x 1,670 x 1,485 mm'
-        },
         specs: {
           'Price': 'Check current dealer price list', 'Engine': '1.5L Turbo 4-Cylinder DOHC', 'Displacement': '1,498 cc',
           'Max Power': '118-120 PS @ 6,300 rpm', 'Max Torque': '148 Nm @ 4,900 rpm', 'Transmission': '5-speed MT or CVT',
@@ -3315,84 +3417,115 @@ const SPECS_DB = {
     pros: ['Class-leading interior space for a 7-seater MPV', 'Best-selling MPV in PH — strong resale value', 'High ground clearance handles floods/bad roads well', 'Wide dealer & service network nationwide'],
     cons: ['Still uses an older 4-speed automatic (rivals now use CVT)', 'Only 2 airbags on base variants', 'Rear drum brakes across the range'],
     comparison: 'vs Toyota Avanza/Veloz: the Xpander offers a more premium cabin feel and higher ground clearance, while the Veloz counters with more airbags and a CVT. vs Suzuki Ertiga: Ertiga is cheaper and has a hybrid-assist option, but the Xpander\'s interior quality and MMPC\'s service reputation keep it the class leader in PH sales.',
+    ownBase: {
+      'Engine': '1.5L 4-Cylinder MIVEC', 'Displacement': '1,499 cc',
+      'Max Power': '105 PS @ 6,000 rpm', 'Max Torque': '141 Nm @ 4,000 rpm', 'Transmission': '4-speed AT',
+      'Ground Clearance': '225 mm', 'Wheelbase': '2,775 mm', 'Tires': '205/55 R17',
+      'Length x Width x Height': '4,595 x 1,750 x 1,750 mm'
+    },
     rivals: [{
       brand: 'Toyota',
-      name: 'Toyota Avanza 1.5 G CVT',
-      ownName: 'Xpander GLS AT',
-      ownSpecs: {
-        'Price': '₱1,259,000 (GLS AT)', 'Engine': '1.5L 4-Cylinder MIVEC', 'Displacement': '1,499 cc',
-        'Max Power': '105 PS @ 6,000 rpm', 'Max Torque': '141 Nm @ 4,000 rpm', 'Transmission': '4-speed AT',
-        'Ground Clearance': '225 mm', 'Wheelbase': '2,775 mm', 'Tires': '205/55 R17',
-        'Length x Width x Height': '4,595 x 1,750 x 1,750 mm'
-      },
-      specs: {
-        'Price': '₱1,071,000', 'Engine': '1.5L 4-Cylinder DOHC 16V', 'Displacement': '1,496 cc',
-        'Max Power': '105-106 hp @ 6,000 rpm', 'Max Torque': '138 Nm @ 4,200 rpm', 'Transmission': 'CVT',
-        'Fuel Tank': '43 L', 'Ground Clearance': '190 mm', 'Wheelbase': '2,750 mm', 'Tires': '—',
-        'Length x Width x Height': '4,395 x 1,730 x 1,700 mm'
-      }
+      name: 'Toyota Avanza',
+      // Verified PH-market tier lineup (Aug 2026): 1.3 J MT (base) / 1.3 E CVT (mid) / 1.5 G CVT (top)
+      variants: [
+        { tier:'base', trans:'MT', name:'Toyota Avanza 1.3 J MT', specs:{
+          'Price':'₱844,000 (approx. SRP)', 'Engine':'1.3L 4-Cylinder DOHC Dual VVT-i', 'Displacement':'1,329 cc',
+          'Max Power':'97 hp @ 6,000 rpm', 'Max Torque':'122 Nm @ 4,200 rpm', 'Transmission':'5-speed MT',
+          'Fuel Tank':'43 L', 'Ground Clearance':'180 mm', 'Wheelbase':'2,750 mm', 'Tires':'—',
+          'Length x Width x Height':'4,395 x 1,730 x 1,665 mm'
+        }},
+        { tier:'mid', trans:'AT', name:'Toyota Avanza 1.3 E CVT', specs:{
+          'Price':'₱1,016,000 (approx. SRP)', 'Engine':'1.3L 4-Cylinder DOHC Dual VVT-i', 'Displacement':'1,329 cc',
+          'Max Power':'97 hp @ 6,000 rpm', 'Max Torque':'122 Nm @ 4,200 rpm', 'Transmission':'CVT',
+          'Fuel Tank':'43 L', 'Ground Clearance':'180 mm', 'Wheelbase':'2,750 mm', 'Tires':'—',
+          'Length x Width x Height':'4,395 x 1,730 x 1,690 mm'
+        }},
+        { tier:'top', trans:'AT', name:'Toyota Avanza 1.5 G CVT', specs:{
+          'Price':'₱1,071,000 (approx. SRP)', 'Engine':'1.5L 4-Cylinder DOHC 16V', 'Displacement':'1,496 cc',
+          'Max Power':'105-106 hp @ 6,000 rpm', 'Max Torque':'138 Nm @ 4,200 rpm', 'Transmission':'CVT',
+          'Fuel Tank':'43 L', 'Ground Clearance':'190 mm', 'Wheelbase':'2,750 mm', 'Tires':'—',
+          'Length x Width x Height':'4,395 x 1,730 x 1,700 mm'
+        }}
+      ]
     },
     {
       brand: 'Suzuki',
-      name: 'Suzuki Ertiga GLX AT',
-      ownName: 'Xpander GLS AT',
-      ownSpecs: {
-        'Price': '₱1,259,000 (GLS AT)', 'Engine': '1.5L 4-Cylinder MIVEC', 'Displacement': '1,499 cc',
-        'Max Power': '105 PS @ 6,000 rpm', 'Max Torque': '141 Nm @ 4,000 rpm', 'Transmission': '4-speed AT',
-        'Ground Clearance': '225 mm', 'Wheelbase': '2,775 mm', 'Tires': '205/55 R17',
-        'Length x Width x Height': '4,595 x 1,750 x 1,750 mm'
-      },
-      specs: {
-        'Price': '₱954,000 - 1,178,000', 'Engine': '1.5L K15B DOHC 4-Cylinder', 'Displacement': '1,462 cc',
-        'Max Power': '103 hp @ 6,000 rpm', 'Max Torque': '138 Nm @ 4,400 rpm', 'Transmission': '5-speed MT or 4-speed AT',
-        'Ground Clearance': '180 mm', 'Wheelbase': '2,740 mm', 'Tires': '—',
-        'Length x Width x Height': '4,395 x 1,735 x 1,690 mm'
-      }
+      name: 'Suzuki Ertiga (Hybrid)',
+      // Verified PH-market tier lineup (Aug 2026): GA MT (base) / GL MT+AT (mid) / GLX AT (top)
+      variants: [
+        { tier:'base', trans:'MT', name:'Suzuki Ertiga GA MT', specs:{
+          'Price':'₱954,000 (approx. SRP)', 'Engine':'1.5L K15B Mild-Hybrid DOHC 4-Cylinder', 'Displacement':'1,462 cc',
+          'Max Power':'103 hp @ 6,000 rpm', 'Max Torque':'138 Nm @ 4,400 rpm', 'Transmission':'5-speed MT',
+          'Ground Clearance':'180 mm', 'Wheelbase':'2,740 mm', 'Tires':'—',
+          'Length x Width x Height':'4,395 x 1,735 x 1,690 mm'
+        }},
+        { tier:'mid', trans:'AT', name:'Suzuki Ertiga GL AT', specs:{
+          'Price':'₱1,128,000 (approx. SRP)', 'Engine':'1.5L K15B Mild-Hybrid DOHC 4-Cylinder', 'Displacement':'1,462 cc',
+          'Max Power':'103 hp @ 6,000 rpm', 'Max Torque':'138 Nm @ 4,400 rpm', 'Transmission':'4-speed AT',
+          'Ground Clearance':'180 mm', 'Wheelbase':'2,740 mm', 'Tires':'—',
+          'Length x Width x Height':'4,395 x 1,735 x 1,690 mm'
+        }},
+        { tier:'top', trans:'AT', name:'Suzuki Ertiga GLX AT', specs:{
+          'Price':'₱1,178,000 (approx. SRP)', 'Engine':'1.5L K15B Mild-Hybrid DOHC 4-Cylinder', 'Displacement':'1,462 cc',
+          'Max Power':'103 hp @ 6,000 rpm', 'Max Torque':'138 Nm @ 4,400 rpm', 'Transmission':'4-speed AT',
+          'Fuel Tank':'45 L', 'Ground Clearance':'180 mm', 'Wheelbase':'2,740 mm', 'Tires':'185/65 R15',
+          'Length x Width x Height':'4,395 x 1,735 x 1,690 mm'
+        }}
+      ]
     },
     {
       brand: 'Hyundai',
-      name: 'Hyundai Stargazer X GLS Premium IVT',
-      ownName: 'Xpander GLS AT',
-      ownSpecs: {
-        'Price': '₱1,259,000 (GLS AT)', 'Engine': '1.5L 4-Cylinder MIVEC', 'Displacement': '1,499 cc',
-        'Max Power': '105 PS @ 6,000 rpm', 'Max Torque': '141 Nm @ 4,000 rpm', 'Transmission': '4-speed AT',
-        'Ground Clearance': '225 mm', 'Wheelbase': '2,775 mm', 'Tires': '205/55 R17',
-        'Length x Width x Height': '4,595 x 1,750 x 1,750 mm'
-      },
-      specs: {
-        'Price': '₱1,118,000 - 1,378,000', 'Engine': '1.5L Smartstream 4-Cylinder NA', 'Displacement': '1,497 cc',
-        'Max Power': '113-115 hp', 'Max Torque': '144 Nm', 'Transmission': 'CVT/IVT',
-        'Ground Clearance': '185-190 mm', 'Wheelbase': '2,780 mm', 'Tires': '—',
-        'Length x Width x Height': '4,610 x 1,820 x 1,740 mm'
-      }
+      name: 'Hyundai Stargazer',
+      // Verified PH-market tier lineup (Aug 2026): GL Plus (base) / GLS (mid) / GLS Premium X IVT (top) — CVT/IVT only, no MT
+      variants: [
+        { tier:'base', trans:'AT', name:'Hyundai Stargazer 1.5 GL Plus IVT', specs:{
+          'Price':'₱1,118,000 (approx. SRP)', 'Engine':'1.5L Smartstream 4-Cylinder NA', 'Displacement':'1,497 cc',
+          'Max Power':'113-115 hp', 'Max Torque':'144 Nm', 'Transmission':'IVT (CVT)',
+          'Ground Clearance':'185-190 mm', 'Wheelbase':'2,780 mm', 'Tires':'—',
+          'Length x Width x Height':'4,460 x 1,790 x 1,655 mm'
+        }},
+        { tier:'mid', trans:'AT', name:'Hyundai Stargazer 1.5 GLS IVT', specs:{
+          'Price':'₱1,228,000 (approx. SRP)', 'Engine':'1.5L Smartstream 4-Cylinder NA', 'Displacement':'1,497 cc',
+          'Max Power':'113-115 hp', 'Max Torque':'144 Nm', 'Transmission':'IVT (CVT)',
+          'Ground Clearance':'185-190 mm', 'Wheelbase':'2,780 mm', 'Tires':'—',
+          'Length x Width x Height':'4,460 x 1,790 x 1,655 mm'
+        }},
+        { tier:'top', trans:'AT', name:'Hyundai Stargazer X 1.5 GLS Premium X IVT', specs:{
+          'Price':'₱1,378,000 (approx. SRP)', 'Engine':'1.5L Smartstream 4-Cylinder NA', 'Displacement':'1,497 cc',
+          'Max Power':'113-115 hp', 'Max Torque':'144 Nm', 'Transmission':'IVT (CVT)',
+          'Ground Clearance':'185-190 mm', 'Wheelbase':'2,780 mm', 'Tires':'—',
+          'Length x Width x Height':'4,610 x 1,820 x 1,740 mm'
+        }}
+      ]
     },
     {
       brand: 'Honda',
-      name: 'Honda BR-V VX CVT Honda Sensing',
-      ownName: 'Xpander GLS AT',
-      ownSpecs: {
-        'Price': '₱1,259,000 (GLS AT)', 'Engine': '1.5L 4-Cylinder MIVEC', 'Displacement': '1,499 cc',
-        'Max Power': '105 PS @ 6,000 rpm', 'Max Torque': '141 Nm @ 4,000 rpm', 'Transmission': '4-speed AT',
-        'Ground Clearance': '225 mm', 'Wheelbase': '2,775 mm', 'Tires': '205/55 R17',
-        'Length x Width x Height': '4,595 x 1,750 x 1,750 mm'
-      },
-      specs: {
-        'Price': '₱1,165,000 - 1,420,000', 'Engine': '1.5L i-VTEC 4-Cylinder NA', 'Displacement': '1,498 cc',
-        'Max Power': '118-121 PS', 'Max Torque': '145 Nm', 'Transmission': 'CVT or 6-speed MT',
-        'Ground Clearance': '207 mm', 'Wheelbase': '2,700 mm', 'Tires': '215/55 R17',
-        'Length x Width x Height': '4,490 x 1,780 x — mm'
-      }
+      name: 'Honda BR-V',
+      // Verified PH-market tier lineup (Aug 2026): S MT (base) / V CVT (mid) / VX CVT Honda Sensing (top)
+      variants: [
+        { tier:'base', trans:'MT', name:'Honda BR-V 1.5 S MT', specs:{
+          'Price':'₱1,090,000 (approx. SRP)', 'Engine':'1.5L i-VTEC 4-Cylinder DOHC', 'Displacement':'1,498 cc',
+          'Max Power':'118-121 PS', 'Max Torque':'145 Nm', 'Transmission':'6-speed MT',
+          'Ground Clearance':'207 mm', 'Wheelbase':'2,700 mm', 'Tires':'—',
+          'Length x Width x Height':'4,490 x 1,780 x 1,685 mm'
+        }},
+        { tier:'mid', trans:'AT', name:'Honda BR-V 1.5 V CVT', specs:{
+          'Price':'₱1,295,000 (approx. SRP)', 'Engine':'1.5L i-VTEC 4-Cylinder DOHC', 'Displacement':'1,498 cc',
+          'Max Power':'118-121 PS', 'Max Torque':'145 Nm', 'Transmission':'CVT',
+          'Ground Clearance':'207 mm', 'Wheelbase':'2,700 mm', 'Tires':'—',
+          'Length x Width x Height':'4,490 x 1,780 x 1,685 mm'
+        }},
+        { tier:'top', trans:'AT', name:'Honda BR-V 1.5 VX CVT Honda Sensing', specs:{
+          'Price':'₱1,390,000 (approx. SRP)', 'Engine':'1.5L i-VTEC 4-Cylinder DOHC', 'Displacement':'1,498 cc',
+          'Max Power':'118-121 PS', 'Max Torque':'145 Nm', 'Transmission':'CVT',
+          'Ground Clearance':'207 mm', 'Wheelbase':'2,700 mm', 'Tires':'215/55 R17',
+          'Length x Width x Height':'4,490 x 1,780 x 1,685 mm'
+        }}
+      ]
     },
     {
       brand: 'Toyota',
       name: 'Toyota Veloz 1.5L V CVT',
-      ownName: 'Xpander GLS AT',
-      ownSpecs: {
-        'Price': '₱1,259,000 (GLS AT)', 'Engine': '1.5L 4-Cylinder MIVEC', 'Displacement': '1,499 cc',
-        'Max Power': '105 PS @ 6,000 rpm', 'Max Torque': '141 Nm @ 4,000 rpm', 'Transmission': '4-speed AT',
-        'Ground Clearance': '225 mm', 'Wheelbase': '2,775 mm', 'Tires': '205/55 R17',
-        'Length x Width x Height': '4,595 x 1,750 x 1,750 mm'
-      },
       specs: {
         'Price': '₱1,104,000 - 1,262,000', 'Engine': '1.5L 4-Cylinder NA', 'Displacement': '1,496-1,497 cc',
         'Max Power': '105 hp', 'Max Torque': '138 Nm', 'Transmission': 'CVT',
@@ -3403,13 +3536,6 @@ const SPECS_DB = {
     {
       brand: 'Suzuki',
       name: 'Suzuki XL7 Hybrid',
-      ownName: 'Xpander GLS AT',
-      ownSpecs: {
-        'Price': '₱1,259,000 (GLS AT)', 'Engine': '1.5L 4-Cylinder MIVEC', 'Displacement': '1,499 cc',
-        'Max Power': '105 PS @ 6,000 rpm', 'Max Torque': '141 Nm @ 4,000 rpm', 'Transmission': '4-speed AT',
-        'Ground Clearance': '225 mm', 'Wheelbase': '2,775 mm', 'Tires': '205/55 R17',
-        'Length x Width x Height': '4,595 x 1,750 x 1,750 mm'
-      },
       specs: {
         'Price': '₱1,181,000 - 1,252,000', 'Engine': '1.5L Mild Hybrid 4-Cylinder', 'Displacement': '1,462 cc',
         'Max Power': '105 hp', 'Max Torque': '138 Nm', 'Transmission': '4-speed AT',
@@ -3420,13 +3546,6 @@ const SPECS_DB = {
     {
       brand: 'Kia',
       name: 'Kia Carens',
-      ownName: 'Xpander GLS AT',
-      ownSpecs: {
-        'Price': '₱1,259,000 (GLS AT)', 'Engine': '1.5L 4-Cylinder MIVEC', 'Displacement': '1,499 cc',
-        'Max Power': '105 PS @ 6,000 rpm', 'Max Torque': '141 Nm @ 4,000 rpm', 'Transmission': '4-speed AT',
-        'Ground Clearance': '225 mm', 'Wheelbase': '2,775 mm', 'Tires': '205/55 R17',
-        'Length x Width x Height': '4,595 x 1,750 x 1,750 mm'
-      },
       specs: {
         'Price': '₱1,570,000 (approx.)', 'Engine': '1.4L Turbo 4-Cylinder', 'Displacement': '1,398 cc',
         'Max Power': '—', 'Max Torque': '—', 'Transmission': '—',
@@ -3447,50 +3566,65 @@ const SPECS_DB = {
     pros: ['4-wheel disc brakes standard across the range', 'Distinctive, upscale styling for the price', 'GT trim brings semi-ADAS features rare in this segment', 'Roomy for a subcompact crossover'],
     cons: ['No AWD/4WD option — FWD only', 'CVT can feel less engaging than a torque-converter AT', 'Ground clearance lower than the Xpander/Destinator'],
     comparison: 'vs Toyota Yaris Cross: Yaris Cross has stronger resale and a hybrid variant, while the Xforce counters with sharper styling and more standard tech at a similar price. vs Honda WR-V: WR-V is more conservative/practical, the Xforce feels sportier and better equipped on the top GT trim.',
+    ownBase: {
+      'Engine': '1.5L 4-Cylinder MIVEC', 'Displacement': '1,499 cc',
+      'Max Power': '105 PS @ 6,000 rpm', 'Max Torque': '141 Nm @ 4,000 rpm', 'Transmission': 'CVT',
+      'Ground Clearance': '193 mm', 'Wheelbase': '2,650 mm', 'Tires': '225/50 R18',
+      'Length x Width x Height': '4,390 x 1,810 x 1,660 mm'
+    },
     rivals: [{
       brand: 'Toyota',
-      name: 'Toyota Yaris Cross 1.5 G CVT',
-      ownName: 'Xforce GT',
-      ownSpecs: {
-        'Price': '₱1,581,000 (GT)', 'Engine': '1.5L 4-Cylinder MIVEC', 'Displacement': '1,499 cc',
-        'Max Power': '105 PS @ 6,000 rpm', 'Max Torque': '141 Nm @ 4,000 rpm', 'Transmission': 'CVT',
-        'Ground Clearance': '193 mm', 'Wheelbase': '2,650 mm', 'Tires': '225/50 R18',
-        'Length x Width x Height': '4,390 x 1,810 x 1,660 mm'
-      },
-      specs: {
-        'Price': '₱1,210,000 - 1,690,000', 'Engine': '1.5L 4-Cylinder DOHC 16V', 'Displacement': '1,496 cc',
-        'Max Power': '104-105 hp @ 6,000 rpm', 'Max Torque': '138 Nm @ 4,200 rpm', 'Transmission': 'CVT',
-        'Fuel Tank': '42 L', 'Ground Clearance': '212 mm', 'Wheelbase': '2,620 mm', 'Tires': '215/60 R17',
-        'Length x Width x Height': '4,310 x 1,770 x 1,615 mm'
-      }
+      name: 'Toyota Yaris Cross',
+      // Verified PH-market tier lineup (Aug 2026): 1.5L G CVT (base) / 1.5L V CVT (mid) / 1.5 S/SE HEV CVT (top, hybrid) — all CVT, no MT
+      variants: [
+        { tier:'base', trans:'AT', name:'Toyota Yaris Cross 1.5L G CVT', specs:{
+          'Price':'₱1,210,000 (approx. SRP)', 'Engine':'1.5L 4-Cylinder DOHC 16V (gas)', 'Displacement':'1,496 cc',
+          'Max Power':'104-105 hp @ 6,000 rpm', 'Max Torque':'138 Nm @ 4,200 rpm', 'Transmission':'CVT',
+          'Fuel Tank':'36 L', 'Ground Clearance':'212 mm', 'Wheelbase':'2,620 mm', 'Tires':'215/60 R17',
+          'Length x Width x Height':'4,310 x 1,770 x 1,615 mm'
+        }},
+        { tier:'mid', trans:'AT', name:'Toyota Yaris Cross 1.5L V CVT', specs:{
+          'Price':'₱1,308,000 (approx. SRP)', 'Engine':'1.5L 4-Cylinder DOHC 16V (gas)', 'Displacement':'1,496 cc',
+          'Max Power':'104-105 hp @ 6,000 rpm', 'Max Torque':'138 Nm @ 4,200 rpm', 'Transmission':'CVT',
+          'Fuel Tank':'36 L', 'Ground Clearance':'212 mm', 'Wheelbase':'2,620 mm', 'Tires':'215/60 R17',
+          'Length x Width x Height':'4,310 x 1,770 x 1,615 mm'
+        }},
+        { tier:'top', trans:'AT', name:'Toyota Yaris Cross 1.5 S/SE HEV CVT', specs:{
+          'Price':'₱1,610,000 - 1,690,000 (approx. SRP)', 'Engine':'1.5L 4-Cylinder Hybrid', 'Displacement':'1,496 cc',
+          'Max Power':'90 hp (engine only; combined system higher)', 'Max Torque':'121 Nm (engine only)', 'Transmission':'E-CVT (Hybrid)',
+          'Fuel Tank':'36 L', 'Ground Clearance':'212 mm', 'Wheelbase':'2,620 mm', 'Tires':'215/60 R17',
+          'Length x Width x Height':'4,310 x 1,770 x 1,615 mm'
+        }}
+      ]
     },
     {
       brand: 'Kia',
-      name: 'Kia Sonet 1.5 SX AT',
-      ownName: 'Xforce GT',
-      ownSpecs: {
-        'Price': '₱1,581,000 (GT)', 'Engine': '1.5L 4-Cylinder MIVEC', 'Displacement': '1,499 cc',
-        'Max Power': '105 PS @ 6,000 rpm', 'Max Torque': '141 Nm @ 4,000 rpm', 'Transmission': 'CVT',
-        'Ground Clearance': '193 mm', 'Wheelbase': '2,650 mm', 'Tires': '225/50 R18',
-        'Length x Width x Height': '4,390 x 1,810 x 1,660 mm'
-      },
-      specs: {
-        'Price': '₱778,000 - 1,178,000', 'Engine': '1.5L 4-Cylinder NA Gasoline', 'Displacement': '1,497 cc',
-        'Max Power': '113 hp @ 6,300 rpm', 'Max Torque': '144 Nm @ 4,500 rpm', 'Transmission': '6-speed MT or IVT',
-        'Ground Clearance': '205 mm', 'Wheelbase': '2,500 mm', 'Tires': '205/55 R16',
-        'Length x Width x Height': '4,110 x 1,790 x 1,642 mm'
-      }
+      name: 'Kia Sonet',
+      // Verified PH-market tier lineup (Aug 2026): LX MT (base) / LX AT or EX AT (mid) / SX AT (top)
+      variants: [
+        { tier:'base', trans:'MT', name:'Kia Sonet 1.5 LX MT', specs:{
+          'Price':'₱778,000 (approx. SRP)', 'Engine':'1.5L 4-Cylinder NA Gasoline', 'Displacement':'1,497 cc',
+          'Max Power':'113-115 hp @ 6,300 rpm', 'Max Torque':'144 Nm @ 4,500 rpm', 'Transmission':'6-speed MT',
+          'Ground Clearance':'205 mm', 'Wheelbase':'2,500 mm', 'Tires':'—',
+          'Length x Width x Height':'4,110 x 1,790 x 1,642 mm'
+        }},
+        { tier:'mid', trans:'AT', name:'Kia Sonet 1.5 EX AT', specs:{
+          'Price':'₱978,000 - 1,018,000 (approx. SRP)', 'Engine':'1.5L 4-Cylinder NA Gasoline', 'Displacement':'1,497 cc',
+          'Max Power':'113-115 hp @ 6,300 rpm', 'Max Torque':'144 Nm @ 4,500 rpm', 'Transmission':'IVT (CVT)',
+          'Ground Clearance':'205 mm', 'Wheelbase':'2,500 mm', 'Tires':'—',
+          'Length x Width x Height':'4,110 x 1,790 x 1,642 mm'
+        }},
+        { tier:'top', trans:'AT', name:'Kia Sonet 1.5 SX AT', specs:{
+          'Price':'₱1,178,000 (approx. SRP)', 'Engine':'1.5L 4-Cylinder NA Gasoline', 'Displacement':'1,497 cc',
+          'Max Power':'113 hp @ 6,300 rpm', 'Max Torque':'144 Nm @ 4,500 rpm', 'Transmission':'IVT (CVT)',
+          'Ground Clearance':'205 mm', 'Wheelbase':'2,500 mm', 'Tires':'205/55 R16',
+          'Length x Width x Height':'4,110 x 1,790 x 1,642 mm'
+        }}
+      ]
     },
     {
       brand: 'Geely',
       name: 'Geely Coolray 1.5T Sport Limited',
-      ownName: 'Xforce GT',
-      ownSpecs: {
-        'Price': '₱1,581,000 (GT)', 'Engine': '1.5L 4-Cylinder MIVEC', 'Displacement': '1,499 cc',
-        'Max Power': '105 PS @ 6,000 rpm', 'Max Torque': '141 Nm @ 4,000 rpm', 'Transmission': 'CVT',
-        'Ground Clearance': '193 mm', 'Wheelbase': '2,650 mm', 'Tires': '225/50 R18',
-        'Length x Width x Height': '4,390 x 1,810 x 1,660 mm'
-      },
       specs: {
         'Price': '₱989,000 - 1,288,000', 'Engine': '1.5L 3-Cylinder Turbo', 'Displacement': '1,477 cc',
         'Max Power': '175-177 hp @ 5,500 rpm', 'Max Torque': '255 Nm @ 1,500 rpm', 'Transmission': '7-speed Wet DCT',
@@ -3501,13 +3635,6 @@ const SPECS_DB = {
     {
       brand: 'GAC',
       name: 'GAC GS3 Emzoom R-Style',
-      ownName: 'Xforce GT',
-      ownSpecs: {
-        'Price': '₱1,581,000 (GT)', 'Engine': '1.5L 4-Cylinder MIVEC', 'Displacement': '1,499 cc',
-        'Max Power': '105 PS @ 6,000 rpm', 'Max Torque': '141 Nm @ 4,000 rpm', 'Transmission': 'CVT',
-        'Ground Clearance': '193 mm', 'Wheelbase': '2,650 mm', 'Tires': '225/50 R18',
-        'Length x Width x Height': '4,390 x 1,810 x 1,660 mm'
-      },
       specs: {
         'Price': '₱898,000 - 1,290,000', 'Engine': '1.5L Turbo 4-Cylinder', 'Displacement': '1,497 cc',
         'Max Power': '171-174 hp', 'Max Torque': '240-270 Nm', 'Transmission': '7-speed Wet DCT',
@@ -3518,13 +3645,6 @@ const SPECS_DB = {
     {
       brand: 'MG',
       name: 'MG ZS 1.5L Style',
-      ownName: 'Xforce GT',
-      ownSpecs: {
-        'Price': '₱1,581,000 (GT)', 'Engine': '1.5L 4-Cylinder MIVEC', 'Displacement': '1,499 cc',
-        'Max Power': '105 PS @ 6,000 rpm', 'Max Torque': '141 Nm @ 4,000 rpm', 'Transmission': 'CVT',
-        'Ground Clearance': '193 mm', 'Wheelbase': '2,650 mm', 'Tires': '225/50 R18',
-        'Length x Width x Height': '4,390 x 1,810 x 1,660 mm'
-      },
       specs: {
         'Price': '₱948,888 - 1,329,000', 'Engine': '1.5L 4-Cylinder NA', 'Displacement': '1,495 cc',
         'Max Power': '110-114 hp @ 6,000 rpm', 'Max Torque': '141-150 Nm @ 4,000 rpm', 'Transmission': 'CVT/AT',
@@ -3535,13 +3655,6 @@ const SPECS_DB = {
     {
       brand: 'Hyundai',
       name: 'Hyundai Creta GL IVT',
-      ownName: 'Xforce GT',
-      ownSpecs: {
-        'Price': '₱1,581,000 (GT)', 'Engine': '1.5L 4-Cylinder MIVEC', 'Displacement': '1,499 cc',
-        'Max Power': '105 PS @ 6,000 rpm', 'Max Torque': '141 Nm @ 4,000 rpm', 'Transmission': 'CVT',
-        'Ground Clearance': '193 mm', 'Wheelbase': '2,650 mm', 'Tires': '225/50 R18',
-        'Length x Width x Height': '4,390 x 1,810 x 1,660 mm'
-      },
       specs: {
         'Price': '₱1,134,000 - 1,379,000', 'Engine': '1.5L NA (N-Line: 1.5L Turbo)', 'Displacement': '1,497 cc',
         'Max Power': '113-115 hp (N-Line: 158 hp)', 'Max Torque': '144 Nm (N-Line: 253 Nm)', 'Transmission': 'IVT/6MT (N-Line: 7DCT)',
@@ -3552,13 +3665,6 @@ const SPECS_DB = {
     {
       brand: 'Kia',
       name: 'Kia Seltos',
-      ownName: 'Xforce GT',
-      ownSpecs: {
-        'Price': '₱1,581,000 (GT)', 'Engine': '1.5L 4-Cylinder MIVEC', 'Displacement': '1,499 cc',
-        'Max Power': '105 PS @ 6,000 rpm', 'Max Torque': '141 Nm @ 4,000 rpm', 'Transmission': 'CVT',
-        'Ground Clearance': '193 mm', 'Wheelbase': '2,650 mm', 'Tires': '225/50 R18',
-        'Length x Width x Height': '4,390 x 1,810 x 1,660 mm'
-      },
       specs: {
         'Price': '₱1,098,000 - 1,198,000+', 'Engine': '1.5L 4-Cylinder NA', 'Displacement': '1,497 cc',
         'Max Power': '113 hp', 'Max Torque': '144 Nm', 'Transmission': 'IVT',
@@ -3569,13 +3675,6 @@ const SPECS_DB = {
     {
       brand: 'Chery',
       name: 'Chery Tiggo 5X Pro',
-      ownName: 'Xforce GT',
-      ownSpecs: {
-        'Price': '₱1,581,000 (GT)', 'Engine': '1.5L 4-Cylinder MIVEC', 'Displacement': '1,499 cc',
-        'Max Power': '105 PS @ 6,000 rpm', 'Max Torque': '141 Nm @ 4,000 rpm', 'Transmission': 'CVT',
-        'Ground Clearance': '193 mm', 'Wheelbase': '2,650 mm', 'Tires': '225/50 R18',
-        'Length x Width x Height': '4,390 x 1,810 x 1,660 mm'
-      },
       specs: {
         'Price': 'Check current dealer price list', 'Engine': 'Check current dealer spec sheet', 'Displacement': '—',
         'Max Power': '—', 'Max Torque': '—', 'Transmission': '—',
@@ -3586,13 +3685,6 @@ const SPECS_DB = {
     {
       brand: 'GAC',
       name: 'GAC GS4',
-      ownName: 'Xforce GT',
-      ownSpecs: {
-        'Price': '₱1,581,000 (GT)', 'Engine': '1.5L 4-Cylinder MIVEC', 'Displacement': '1,499 cc',
-        'Max Power': '105 PS @ 6,000 rpm', 'Max Torque': '141 Nm @ 4,000 rpm', 'Transmission': 'CVT',
-        'Ground Clearance': '193 mm', 'Wheelbase': '2,650 mm', 'Tires': '225/50 R18',
-        'Length x Width x Height': '4,390 x 1,810 x 1,660 mm'
-      },
       specs: {
         'Price': 'Check current dealer price list', 'Engine': 'Check current dealer spec sheet', 'Displacement': '—',
         'Max Power': '—', 'Max Torque': '—', 'Transmission': '—',
@@ -3613,16 +3705,15 @@ const SPECS_DB = {
     pros: ['Turbocharged engine gives it strong power for its size', 'Sits neatly between the Xforce and Montero Sport in price/size', '7-seat flexibility with SUV road presence', '4-wheel disc brakes'],
     cons: ['Turbo-CVT combo is newer/less proven long-term vs rivals\' conventional ATs', 'No 4WD option', 'Relatively new nameplate — fewer used-market data points'],
     comparison: 'vs Toyota Corolla Cross: Corolla Cross counters with a hybrid powertrain and Toyota resale value, while the Destinator offers a turbocharged engine with more power, a lower price, and higher ground clearance. vs Honda BR-V/N7X: those are smaller and simpler — the Destinator offers more power and a more premium cabin.',
+    ownBase: {
+      'Engine': '1.5L Turbo 4-Cylinder MIVEC', 'Displacement': '1,499 cc',
+      'Max Power': 'up to 163 PS', 'Max Torque': '250 Nm', 'Transmission': 'CVT',
+      'Ground Clearance': '214 mm', 'Wheelbase': '2,815 mm', 'Tires': '225/55 R18',
+      'Length x Width x Height': '4,680 x 1,840 x 1,780 mm'
+    },
     rivals: [{
       brand: 'Toyota',
       name: 'Toyota Corolla Cross 1.8 V HEV',
-      ownName: 'Destinator GT',
-      ownSpecs: {
-        'Price': '₱1,929,000 - 1,939,000', 'Engine': '1.5L Turbo 4-Cylinder MIVEC', 'Displacement': '1,499 cc',
-        'Max Power': 'up to 163 PS', 'Max Torque': '250 Nm', 'Transmission': 'CVT',
-        'Ground Clearance': '214 mm', 'Wheelbase': '2,815 mm', 'Tires': '225/55 R18',
-        'Length x Width x Height': '4,680 x 1,840 x 1,780 mm'
-      },
       specs: {
         'Price': '₱1,514,000 - 1,943,000', 'Engine': '1.8L 4-Cyl Hybrid (2ZR-FXE)', 'Displacement': '1,798 cc',
         'Max Power': '122 PS combined system', 'Max Torque': '142 Nm', 'Transmission': 'E-CVT',
@@ -3633,13 +3724,6 @@ const SPECS_DB = {
     {
       brand: 'Chery',
       name: 'Chery Tiggo 7 Pro Premium CVT',
-      ownName: 'Destinator GT',
-      ownSpecs: {
-        'Price': '₱1,929,000 - 1,939,000', 'Engine': '1.5L Turbo 4-Cylinder MIVEC', 'Displacement': '1,499 cc',
-        'Max Power': 'up to 163 PS', 'Max Torque': '250 Nm', 'Transmission': 'CVT',
-        'Ground Clearance': '214 mm', 'Wheelbase': '2,815 mm', 'Tires': '225/55 R18',
-        'Length x Width x Height': '4,680 x 1,840 x 1,780 mm'
-      },
       specs: {
         'Price': '₱1,048,000 - 1,248,000', 'Engine': '1.5L Turbo 4-Cylinder', 'Displacement': '1,498 cc',
         'Max Power': '143-145 hp @ 5,500 rpm', 'Max Torque': '210 Nm @ 4,400 rpm', 'Transmission': 'CVT',
@@ -3650,13 +3734,6 @@ const SPECS_DB = {
     {
       brand: 'Jetour',
       name: 'Jetour Dashing',
-      ownName: 'Destinator GT',
-      ownSpecs: {
-        'Price': '₱1,929,000 - 1,939,000', 'Engine': '1.5L Turbo 4-Cylinder MIVEC', 'Displacement': '1,499 cc',
-        'Max Power': 'up to 163 PS', 'Max Torque': '250 Nm', 'Transmission': 'CVT',
-        'Ground Clearance': '214 mm', 'Wheelbase': '2,815 mm', 'Tires': '225/55 R18',
-        'Length x Width x Height': '4,680 x 1,840 x 1,780 mm'
-      },
       specs: {
         'Price': '₱1,373,000', 'Engine': '1.5L Turbo 4-Cylinder', 'Displacement': '1,498 cc',
         'Max Power': '154-156 hp', 'Max Torque': '230 Nm', 'Transmission': 'CVT/DCT',
@@ -3667,13 +3744,6 @@ const SPECS_DB = {
     {
       brand: 'BYD',
       name: 'BYD Atto 3 Premium (Electric)',
-      ownName: 'Destinator GT',
-      ownSpecs: {
-        'Price': '₱1,929,000 - 1,939,000', 'Engine': '1.5L Turbo 4-Cylinder MIVEC', 'Displacement': '1,499 cc',
-        'Max Power': 'up to 163 PS', 'Max Torque': '250 Nm', 'Transmission': 'CVT',
-        'Ground Clearance': '214 mm', 'Wheelbase': '2,815 mm', 'Tires': '225/55 R18',
-        'Length x Width x Height': '4,680 x 1,840 x 1,780 mm'
-      },
       specs: {
         'Price': '₱1,498,000 - 1,798,000', 'Engine': 'Electric Motor (60.5 kWh battery, up to 480km range)', 'Displacement': '—',
         'Max Power': '201-204 hp', 'Max Torque': '310 Nm', 'Transmission': 'Single-speed AT',
@@ -3684,13 +3754,6 @@ const SPECS_DB = {
     {
       brand: 'Toyota',
       name: 'Toyota Innova Zenix 2.0 V CVT',
-      ownName: 'Destinator GT',
-      ownSpecs: {
-        'Price': '₱1,929,000 - 1,939,000', 'Engine': '1.5L Turbo 4-Cylinder MIVEC', 'Displacement': '1,499 cc',
-        'Max Power': 'up to 163 PS', 'Max Torque': '250 Nm', 'Transmission': 'CVT',
-        'Ground Clearance': '214 mm', 'Wheelbase': '2,815 mm', 'Tires': '225/55 R18',
-        'Length x Width x Height': '4,680 x 1,840 x 1,780 mm'
-      },
       specs: {
         'Price': '₱1,676,000 - 1,991,000', 'Engine': '2.0L NA (Q trim: Hybrid)', 'Displacement': '1,987 cc',
         'Max Power': '174 hp (hybrid)', 'Max Torque': '205 Nm (hybrid)', 'Transmission': 'CVT',
@@ -3701,13 +3764,6 @@ const SPECS_DB = {
     {
       brand: 'Honda',
       name: 'Honda CR-V V Turbo / RS eHEV',
-      ownName: 'Destinator GT',
-      ownSpecs: {
-        'Price': '₱1,929,000 - 1,939,000', 'Engine': '1.5L Turbo 4-Cylinder MIVEC', 'Displacement': '1,499 cc',
-        'Max Power': 'up to 163 PS', 'Max Torque': '250 Nm', 'Transmission': 'CVT',
-        'Ground Clearance': '214 mm', 'Wheelbase': '2,815 mm', 'Tires': '225/55 R18',
-        'Length x Width x Height': '4,680 x 1,840 x 1,780 mm'
-      },
       specs: {
         'Price': '₱2,358,000 - 2,838,000', 'Engine': '1.5L Turbo (gas) or 2.0L Hybrid', 'Displacement': '1,498-1,993 cc',
         'Max Power': '146-187 hp', 'Max Torque': '183-240 Nm', 'Transmission': 'CVT or E-CVT',
@@ -3718,13 +3774,6 @@ const SPECS_DB = {
     {
       brand: 'Geely',
       name: 'Geely Okavango Elite',
-      ownName: 'Destinator GT',
-      ownSpecs: {
-        'Price': '₱1,929,000 - 1,939,000', 'Engine': '1.5L Turbo 4-Cylinder MIVEC', 'Displacement': '1,499 cc',
-        'Max Power': 'up to 163 PS', 'Max Torque': '250 Nm', 'Transmission': 'CVT',
-        'Ground Clearance': '214 mm', 'Wheelbase': '2,815 mm', 'Tires': '225/55 R18',
-        'Length x Width x Height': '4,680 x 1,840 x 1,780 mm'
-      },
       specs: {
         'Price': '₱1,368,000 - 1,765,000', 'Engine': '1.5L Turbo w/ 48V Mild Hybrid', 'Displacement': '1,477 cc',
         'Max Power': '187-190 hp', 'Max Torque': '300 Nm', 'Transmission': '7-speed DCT',
@@ -3735,13 +3784,6 @@ const SPECS_DB = {
     {
       brand: 'Hyundai',
       name: 'Hyundai Tucson',
-      ownName: 'Destinator GT',
-      ownSpecs: {
-        'Price': '₱1,929,000 - 1,939,000', 'Engine': '1.5L Turbo 4-Cylinder MIVEC', 'Displacement': '1,499 cc',
-        'Max Power': 'up to 163 PS', 'Max Torque': '250 Nm', 'Transmission': 'CVT',
-        'Ground Clearance': '214 mm', 'Wheelbase': '2,815 mm', 'Tires': '225/55 R18',
-        'Length x Width x Height': '4,680 x 1,840 x 1,780 mm'
-      },
       specs: {
         'Price': '₱1,680,000 - 2,290,000', 'Engine': 'Check current dealer spec sheet', 'Displacement': '—',
         'Max Power': '—', 'Max Torque': '—', 'Transmission': '—',
@@ -3752,13 +3794,6 @@ const SPECS_DB = {
     {
       brand: 'Kia',
       name: 'Kia Sportage',
-      ownName: 'Destinator GT',
-      ownSpecs: {
-        'Price': '₱1,929,000 - 1,939,000', 'Engine': '1.5L Turbo 4-Cylinder MIVEC', 'Displacement': '1,499 cc',
-        'Max Power': 'up to 163 PS', 'Max Torque': '250 Nm', 'Transmission': 'CVT',
-        'Ground Clearance': '214 mm', 'Wheelbase': '2,815 mm', 'Tires': '225/55 R18',
-        'Length x Width x Height': '4,680 x 1,840 x 1,780 mm'
-      },
       specs: {
         'Price': 'Check current dealer price list', 'Engine': 'Check current dealer spec sheet', 'Displacement': '—',
         'Max Power': '—', 'Max Torque': '—', 'Transmission': '—',
@@ -3769,13 +3804,6 @@ const SPECS_DB = {
     {
       brand: 'Honda',
       name: 'Honda HR-V',
-      ownName: 'Destinator GT',
-      ownSpecs: {
-        'Price': '₱1,929,000 - 1,939,000', 'Engine': '1.5L Turbo 4-Cylinder MIVEC', 'Displacement': '1,499 cc',
-        'Max Power': 'up to 163 PS', 'Max Torque': '250 Nm', 'Transmission': 'CVT',
-        'Ground Clearance': '214 mm', 'Wheelbase': '2,815 mm', 'Tires': '225/55 R18',
-        'Length x Width x Height': '4,680 x 1,840 x 1,780 mm'
-      },
       specs: {
         'Price': '₱1,450,000 - 1,799,000 (est.)', 'Engine': 'Check current dealer spec sheet', 'Displacement': '—',
         'Max Power': '—', 'Max Torque': '—', 'Transmission': '—',
@@ -3796,50 +3824,65 @@ const SPECS_DB = {
     pros: ['Strong torque figures, great for towing/hauling', 'Well-regarded off-road system on 4x4 variants', 'Won the 2025 Asia Cross Country Rally, boosting durability reputation', 'Wide range of body/trim configurations'],
     cons: ['Rear drum brakes on most variants', 'Ride can feel firm unloaded (leaf-spring rear)', 'Top Athlete trim pricing approaches midsize-SUV territory'],
     comparison: 'vs Toyota Hilux: Hilux has stronger resale and a bigger service network, but the Triton counters with more torque and a more modern cabin/tech package. vs Ford Ranger: Ranger offers a punchier bi-turbo option and more ADAS, while the Triton is generally the more affordable, fuel-efficient choice.',
+    ownBase: {
+      'Engine': '2.4L Turbodiesel', 'Displacement': '2,442 cc',
+      'Max Power': '181 PS', 'Max Torque': '430 Nm', 'Transmission': '6-speed AT',
+      'Wheelbase': '3,130 mm', 'Ground Clearance': 'up to 228 mm', 'Tires': 'up to 265/60 R18',
+      'Length x Width x Height': '5,360 x 1,930 x — mm'
+    },
     rivals: [{
       brand: 'Toyota',
-      name: 'Toyota Hilux 2.8L 4x4',
-      ownName: 'Triton GLS 4x4 AT',
-      ownSpecs: {
-        'Price': 'Check current dealer price list', 'Engine': '2.4L Turbodiesel', 'Displacement': '2,442 cc',
-        'Max Power': '181 PS', 'Max Torque': '430 Nm', 'Transmission': '6-speed AT, Super Select 4WD-II',
-        'Wheelbase': '3,130 mm', 'Ground Clearance': 'up to 228 mm', 'Tires': 'up to 265/60 R18',
-        'Length x Width x Height': '5,360 x 1,930 x — mm'
-      },
-      specs: {
-        'Price': '₱1,772,000 - 2,460,000', 'Engine': '2.8L Turbodiesel (1GD-FTV)', 'Displacement': '2,755 cc',
-        'Max Power': '201-204 hp @ 3,000-3,400 rpm', 'Max Torque': '420-500 Nm', 'Transmission': '6-speed MT or 6-speed AT',
-        'Wheelbase': '3,085 mm', 'Ground Clearance': '—', 'Tires': '—',
-        'Length x Width x Height': '5,320 x 1,885 x 1,865 mm'
-      }
+      name: 'Toyota Hilux',
+      // Verified PH-market tier lineup (Aug 2026, all-new generation launched Jun 2026): E 4x2 MT (base) / G 4x2 AT (mid) / Conquest 4x4 AT (top)
+      variants: [
+        { tier:'base', trans:'MT', name:'Toyota Hilux 2.4 E 4x2 MT', specs:{
+          'Price':'₱1,098,000 (approx. SRP)', 'Engine':'2.4L Turbodiesel', 'Displacement':'2,393 cc',
+          'Max Power':'148 hp', 'Max Torque':'400 Nm', 'Transmission':'6-speed MT',
+          'Wheelbase':'3,085 mm', 'Ground Clearance':'—', 'Tires':'—',
+          'Length x Width x Height':'5,325 x 1,900 x 1,845 mm'
+        }},
+        { tier:'mid', trans:'AT', name:'Toyota Hilux 2.4 G 4x2 AT', specs:{
+          'Price':'₱1,960,000 (approx. SRP)', 'Engine':'2.4L Turbodiesel', 'Displacement':'2,393 cc',
+          'Max Power':'148 hp', 'Max Torque':'400 Nm', 'Transmission':'6-speed AT',
+          'Wheelbase':'3,085 mm', 'Ground Clearance':'310 mm', 'Tires':'18-inch alloy',
+          'Length x Width x Height':'5,325 x 1,900 x 1,845 mm'
+        }},
+        { tier:'top', trans:'AT', name:'Toyota Hilux Conquest 2.8 4x4 AT', specs:{
+          'Price':'₱2,364,000 - 2,460,000 (approx. SRP)', 'Engine':'2.8L Turbodiesel (1GD-FTV)', 'Displacement':'2,755 cc',
+          'Max Power':'201 hp @ 3,000-3,400 rpm', 'Max Torque':'500 Nm', 'Transmission':'6-speed AT',
+          'Wheelbase':'3,085 mm', 'Ground Clearance':'310 mm', 'Tires':'265/60 R18',
+          'Length x Width x Height':'5,325 x 1,900 x 1,845 mm'
+        }}
+      ]
     },
     {
       brand: 'Ford',
-      name: 'Ford Ranger 2.0L Bi-Turbo 4x4',
-      ownName: 'Triton GLS 4x4 AT',
-      ownSpecs: {
-        'Price': 'Check current dealer price list', 'Engine': '2.4L Turbodiesel', 'Displacement': '2,442 cc',
-        'Max Power': '181 PS', 'Max Torque': '430 Nm', 'Transmission': '6-speed AT, Super Select 4WD-II',
-        'Wheelbase': '3,130 mm', 'Ground Clearance': 'up to 228 mm', 'Tires': 'up to 265/60 R18',
-        'Length x Width x Height': '5,360 x 1,930 x — mm'
-      },
-      specs: {
-        'Price': '₱1,379,000 - 2,355,000', 'Engine': '2.0L Single/Bi-Turbo EcoBlue Diesel', 'Displacement': '1,996 cc',
-        'Max Power': '170-210 hp', 'Max Torque': '405-500 Nm', 'Transmission': '6MT/6AT/10AT',
-        'Wheelbase': '3,270 mm', 'Ground Clearance': '235 mm', 'Tires': '255/70 R16',
-        'Length x Width x Height': '5,370 x 1,918 x — mm'
-      }
+      name: 'Ford Ranger',
+      // Verified PH-market tier lineup (Aug 2026): XL 4x2 MT (base, Single-Turbo) / XLT 4x2 AT (mid, Single-Turbo) / Wildtrak 4x4 AT (top, Bi-Turbo)
+      variants: [
+        { tier:'base', trans:'MT', name:'Ford Ranger 2.0L Turbo XL 4x2 MT', specs:{
+          'Price':'₱1,199,000 (approx. SRP)', 'Engine':'2.0L Single-Turbo EcoBlue Diesel', 'Displacement':'1,996 cc',
+          'Max Power':'170 hp', 'Max Torque':'405 Nm', 'Transmission':'6-speed MT',
+          'Wheelbase':'3,270 mm', 'Ground Clearance':'235 mm', 'Tires':'—',
+          'Length x Width x Height':'5,370 x 1,918 x 1,884 mm'
+        }},
+        { tier:'mid', trans:'AT', name:'Ford Ranger 2.0L Turbo XLT 4x2 AT', specs:{
+          'Price':'₱1,694,000 (approx. SRP)', 'Engine':'2.0L Single-Turbo EcoBlue Diesel', 'Displacement':'1,996 cc',
+          'Max Power':'170 hp', 'Max Torque':'405 Nm', 'Transmission':'6-speed AT',
+          'Wheelbase':'3,270 mm', 'Ground Clearance':'235 mm', 'Tires':'—',
+          'Length x Width x Height':'5,370 x 1,918 x 1,884 mm'
+        }},
+        { tier:'top', trans:'AT', name:'Ford Ranger 2.0L Bi-Turbo Wildtrak 4x4 AT', specs:{
+          'Price':'₱2,355,000 (approx. SRP)', 'Engine':'2.0L Bi-Turbo EcoBlue Diesel', 'Displacement':'1,996 cc',
+          'Max Power':'210 hp', 'Max Torque':'500 Nm', 'Transmission':'10-speed AT',
+          'Wheelbase':'3,270 mm', 'Ground Clearance':'235 mm', 'Tires':'255/70 R16',
+          'Length x Width x Height':'5,370 x 1,918 x 1,884 mm'
+        }}
+      ]
     },
     {
       brand: 'Nissan',
       name: 'Nissan Navara VL 4x4',
-      ownName: 'Triton GLS 4x4 AT',
-      ownSpecs: {
-        'Price': 'Check current dealer price list', 'Engine': '2.4L Turbodiesel', 'Displacement': '2,442 cc',
-        'Max Power': '181 PS', 'Max Torque': '430 Nm', 'Transmission': '6-speed AT, Super Select 4WD-II',
-        'Wheelbase': '3,130 mm', 'Ground Clearance': 'up to 228 mm', 'Tires': 'up to 265/60 R18',
-        'Length x Width x Height': '5,360 x 1,930 x — mm'
-      },
       specs: {
         'Price': '₱1,240,000 (approx.)', 'Engine': '2.5L Turbodiesel', 'Displacement': '2,488 cc',
         'Max Power': '161 hp', 'Max Torque': '403 Nm', 'Transmission': '7-speed AT',
@@ -3850,13 +3893,6 @@ const SPECS_DB = {
     {
       brand: 'Others',
       name: 'Isuzu D-Max',
-      ownName: 'Triton GLS 4x4 AT',
-      ownSpecs: {
-        'Price': 'Check current dealer price list', 'Engine': '2.4L Turbodiesel', 'Displacement': '2,442 cc',
-        'Max Power': '181 PS', 'Max Torque': '430 Nm', 'Transmission': '6-speed AT, Super Select 4WD-II',
-        'Wheelbase': '3,130 mm', 'Ground Clearance': 'up to 228 mm', 'Tires': 'up to 265/60 R18',
-        'Length x Width x Height': '5,360 x 1,930 x — mm'
-      },
       specs: {
         'Price': '₱978,000 (starting)', 'Engine': '1.9L Turbodiesel', 'Displacement': '1,898 cc',
         'Max Power': '148 hp', 'Max Torque': '350 Nm', 'Transmission': 'Manual/Automatic',
@@ -3867,13 +3903,6 @@ const SPECS_DB = {
     {
       brand: 'Others',
       name: 'Mazda BT-50',
-      ownName: 'Triton GLS 4x4 AT',
-      ownSpecs: {
-        'Price': 'Check current dealer price list', 'Engine': '2.4L Turbodiesel', 'Displacement': '2,442 cc',
-        'Max Power': '181 PS', 'Max Torque': '430 Nm', 'Transmission': '6-speed AT, Super Select 4WD-II',
-        'Wheelbase': '3,130 mm', 'Ground Clearance': 'up to 228 mm', 'Tires': 'up to 265/60 R18',
-        'Length x Width x Height': '5,360 x 1,930 x — mm'
-      },
       specs: {
         'Price': '₱1,600,000 - 1,950,000', 'Engine': '3.0L Turbodiesel', 'Displacement': '2,999 cc',
         'Max Power': '187-190 hp', 'Max Torque': '450 Nm', 'Transmission': '6-speed MT or 6-speed AT',
@@ -3894,16 +3923,15 @@ const SPECS_DB = {
     pros: ['Proven ladder-frame toughness for rough roads/towing', 'Smooth 8-speed automatic is a segment highlight', 'Strong resale value in the PH midsize SUV segment', 'Roomy 7-seat cabin with flexible cargo config'],
     cons: ['Diesel clatter more noticeable than car-based rivals', 'Fuel economy trails car-based SUVs', 'Turning radius larger due to ladder-frame body-on-frame design'],
     comparison: 'vs Toyota Fortuner: Fortuner has stronger brand resale and wider parts availability; the Montero Sport counters with a smoother 8-speed AT and better low-end torque delivery. vs Ford Everest: Everest offers more tech/ADAS at a higher price, while the Montero Sport stays more accessible.',
+    ownBase: {
+      'Engine': '2.4L Turbodiesel w/ VG Turbo MIVEC', 'Displacement': '2,398 cc',
+      'Max Power': '179 hp', 'Max Torque': '430 Nm', 'Transmission': '8-speed AT',
+      'Wheelbase': '2,800 mm', 'Tires': '18-inch Alloy',
+      'Length x Width x Height': '4,825 x 1,815 x 1,835 mm'
+    },
     rivals: [{
       brand: 'Toyota',
       name: 'Toyota Fortuner 2.8L',
-      ownName: 'Montero Sport GLS',
-      ownSpecs: {
-        'Price': 'Check current dealer price list', 'Engine': '2.4L Turbodiesel w/ VG Turbo MIVEC', 'Displacement': '2,398 cc',
-        'Max Power': '179 hp', 'Max Torque': '430 Nm', 'Transmission': '8-speed AT or 6-speed MT',
-        'Wheelbase': '2,800 mm', 'Tires': '18-inch Alloy',
-        'Length x Width x Height': '4,825 x 1,815 x 1,835 mm'
-      },
       specs: {
         'Price': '₱1,775,000 - 2,656,000', 'Engine': '2.8L Turbodiesel (1GD-FTV)', 'Displacement': '2,755 cc',
         'Max Power': '201 hp', 'Max Torque': '500 Nm', 'Transmission': '6-speed AT',
@@ -3914,13 +3942,6 @@ const SPECS_DB = {
     {
       brand: 'Ford',
       name: 'Ford Everest 2.0L Bi-Turbo 4x4',
-      ownName: 'Montero Sport GLS',
-      ownSpecs: {
-        'Price': 'Check current dealer price list', 'Engine': '2.4L Turbodiesel w/ VG Turbo MIVEC', 'Displacement': '2,398 cc',
-        'Max Power': '179 hp', 'Max Torque': '430 Nm', 'Transmission': '8-speed AT or 6-speed MT',
-        'Wheelbase': '2,800 mm', 'Tires': '18-inch Alloy',
-        'Length x Width x Height': '4,825 x 1,815 x 1,835 mm'
-      },
       specs: {
         'Price': '₱1,849,000 - 2,640,000', 'Engine': '2.0L Single/Bi-Turbo EcoBlue Diesel', 'Displacement': '1,996 cc',
         'Max Power': '170-210 hp', 'Max Torque': '405-500 Nm', 'Transmission': '6AT or 10AT',
@@ -3931,13 +3952,6 @@ const SPECS_DB = {
     {
       brand: 'Isuzu',
       name: 'Isuzu mu-X (RZ4E / 3.0L)',
-      ownName: 'Montero Sport GLS',
-      ownSpecs: {
-        'Price': 'Check current dealer price list', 'Engine': '2.4L Turbodiesel w/ VG Turbo MIVEC', 'Displacement': '2,398 cc',
-        'Max Power': '179 hp', 'Max Torque': '430 Nm', 'Transmission': '8-speed AT or 6-speed MT',
-        'Wheelbase': '2,800 mm', 'Tires': '18-inch Alloy',
-        'Length x Width x Height': '4,825 x 1,815 x 1,835 mm'
-      },
       specs: {
         'Price': '₱1,725,000 - 2,670,000', 'Engine': '1.9L (base) or 3.0L (higher trims) Turbodiesel', 'Displacement': '1,898-2,999 cc',
         'Max Power': '148-187 hp', 'Max Torque': '350-450 Nm', 'Transmission': '6-speed AT',
@@ -3948,13 +3962,6 @@ const SPECS_DB = {
     {
       brand: 'Nissan',
       name: 'Nissan Terra VL 4x2',
-      ownName: 'Montero Sport GLS',
-      ownSpecs: {
-        'Price': 'Check current dealer price list', 'Engine': '2.4L Turbodiesel w/ VG Turbo MIVEC', 'Displacement': '2,398 cc',
-        'Max Power': '179 hp', 'Max Torque': '430 Nm', 'Transmission': '8-speed AT or 6-speed MT',
-        'Wheelbase': '2,800 mm', 'Tires': '18-inch Alloy',
-        'Length x Width x Height': '4,825 x 1,815 x 1,835 mm'
-      },
       specs: {
         'Price': '₱1,969,000 - 2,469,000', 'Engine': '2.5L Turbodiesel', 'Displacement': '2,488 cc',
         'Max Power': '187 hp', 'Max Torque': '450 Nm', 'Transmission': '7-speed AT',
@@ -3965,13 +3972,6 @@ const SPECS_DB = {
     {
       brand: 'Others',
       name: 'Chevrolet Trailblazer',
-      ownName: 'Montero Sport GLS',
-      ownSpecs: {
-        'Price': 'Check current dealer price list', 'Engine': '2.4L Turbodiesel w/ VG Turbo MIVEC', 'Displacement': '2,398 cc',
-        'Max Power': '179 hp', 'Max Torque': '430 Nm', 'Transmission': '8-speed AT or 6-speed MT',
-        'Wheelbase': '2,800 mm', 'Tires': '18-inch Alloy',
-        'Length x Width x Height': '4,825 x 1,815 x 1,835 mm'
-      },
       specs: {
         'Price': '₱1,519,000 - 1,702,000', 'Engine': 'Diesel (variant-dependent)', 'Displacement': '—',
         'Max Power': '155 hp', 'Max Torque': '236-500 Nm (variant-dependent)', 'Transmission': 'Automatic',
@@ -3992,16 +3992,15 @@ const SPECS_DB = {
     pros: ['Decades-long track record for durability in PH', 'Very low cost of ownership and parts', 'Flexible body configurations for business use', 'Strong resale as a commercial workhorse'],
     cons: ['Basic safety features vs modern passenger vans', 'Manual transmission only', 'Ride comfort is utilitarian, not passenger-car-like'],
     comparison: 'vs Hyundai H-100: H-100 has a slight power edge, but the L300\'s nationwide MMPC parts/service network and decades of fleet trust keep it the default choice for many PH businesses. vs Foton Gratour: Gratour undercuts on price, while the L300 wins on long-term reliability reputation.',
+    ownBase: {
+      'Engine': '2.2L Turbo-Intercooled Diesel', 'Displacement': '2,268 cc',
+      'Max Power': '98 hp @ 3,500 rpm', 'Max Torque': '200 Nm @ 3,500 rpm', 'Transmission': '5-speed Manual',
+      'Ground Clearance': '195 mm', 'Wheelbase': '2,350 mm', 'Tires': '185 R14C-8PR',
+      'Length x Width x Height': '4,440 x 1,695 x 1,915 mm'
+    },
     rivals: [{
       brand: 'Hyundai',
       name: 'Hyundai H-100 2.5 CRDi',
-      ownName: 'L300 Versa Van',
-      ownSpecs: {
-        'Price': 'Check current dealer price list', 'Engine': '2.2L Turbo-Intercooled Diesel', 'Displacement': '2,268 cc',
-        'Max Power': '98 hp @ 3,500 rpm', 'Max Torque': '200 Nm @ 3,500 rpm', 'Transmission': '5-speed Manual',
-        'Ground Clearance': '195 mm', 'Wheelbase': '2,350 mm', 'Tires': '185 R14C-8PR',
-        'Length x Width x Height': '4,440 x 1,695 x 1,915 mm'
-      },
       specs: {
         'Price': '₱1,024,000 - 1,355,000', 'Engine': '2.5L CRDi Diesel', 'Displacement': '2,497 cc',
         'Max Power': '128 hp', 'Max Torque': '255 Nm', 'Transmission': '6-speed Manual',
@@ -4012,13 +4011,6 @@ const SPECS_DB = {
     {
       brand: 'Toyota',
       name: 'Toyota Lite Ace 1.5 Cargo',
-      ownName: 'L300 Versa Van',
-      ownSpecs: {
-        'Price': 'Check current dealer price list', 'Engine': '2.2L Turbo-Intercooled Diesel', 'Displacement': '2,268 cc',
-        'Max Power': '98 hp @ 3,500 rpm', 'Max Torque': '200 Nm @ 3,500 rpm', 'Transmission': '5-speed Manual',
-        'Ground Clearance': '195 mm', 'Wheelbase': '2,350 mm', 'Tires': '185 R14C-8PR',
-        'Length x Width x Height': '4,440 x 1,695 x 1,915 mm'
-      },
       specs: {
         'Price': '₱651,000', 'Engine': '1.5L Gasoline', 'Displacement': '1,496 cc',
         'Max Power': '97 hp', 'Max Torque': '134 Nm', 'Transmission': '5-speed Manual',
@@ -4029,13 +4021,6 @@ const SPECS_DB = {
     {
       brand: 'Isuzu',
       name: 'Isuzu Traviz L Utility Van',
-      ownName: 'L300 Versa Van',
-      ownSpecs: {
-        'Price': 'Check current dealer price list', 'Engine': '2.2L Turbo-Intercooled Diesel', 'Displacement': '2,268 cc',
-        'Max Power': '98 hp @ 3,500 rpm', 'Max Torque': '200 Nm @ 3,500 rpm', 'Transmission': '5-speed Manual',
-        'Ground Clearance': '195 mm', 'Wheelbase': '2,350 mm', 'Tires': '185 R14C-8PR',
-        'Length x Width x Height': '4,440 x 1,695 x 1,915 mm'
-      },
       specs: {
         'Price': '₱1,070,000', 'Engine': '2.5L Diesel', 'Displacement': '2,499 cc',
         'Max Power': '77 hp', 'Max Torque': '177 Nm', 'Transmission': 'Manual',
@@ -4046,13 +4031,6 @@ const SPECS_DB = {
     {
       brand: 'Suzuki',
       name: 'Suzuki APV GLX',
-      ownName: 'L300 Versa Van',
-      ownSpecs: {
-        'Price': 'Check current dealer price list', 'Engine': '2.2L Turbo-Intercooled Diesel', 'Displacement': '2,268 cc',
-        'Max Power': '98 hp @ 3,500 rpm', 'Max Torque': '200 Nm @ 3,500 rpm', 'Transmission': '5-speed Manual',
-        'Ground Clearance': '195 mm', 'Wheelbase': '2,350 mm', 'Tires': '185 R14C-8PR',
-        'Length x Width x Height': '4,440 x 1,695 x 1,915 mm'
-      },
       specs: {
         'Price': '₱743,000 - 975,000', 'Engine': '1.6L Gasoline (G16A)', 'Displacement': '1,590 cc',
         'Max Power': '91-92.5 hp', 'Max Torque': '127 Nm', 'Transmission': '5-speed Manual',
@@ -4063,13 +4041,6 @@ const SPECS_DB = {
     {
       brand: 'Kia',
       name: 'Kia K2500',
-      ownName: 'L300 Versa Van',
-      ownSpecs: {
-        'Price': 'Check current dealer price list', 'Engine': '2.2L Turbo-Intercooled Diesel', 'Displacement': '2,268 cc',
-        'Max Power': '98 hp @ 3,500 rpm', 'Max Torque': '200 Nm @ 3,500 rpm', 'Transmission': '5-speed Manual',
-        'Ground Clearance': '195 mm', 'Wheelbase': '2,350 mm', 'Tires': '185 R14C-8PR',
-        'Length x Width x Height': '4,440 x 1,695 x 1,915 mm'
-      },
       specs: {
         'Price': '₱820,000 - 1,238,000', 'Engine': '2.5L CRDi Turbodiesel', 'Displacement': '2,497 cc',
         'Max Power': '128-130 hp', 'Max Torque': '255 Nm', 'Transmission': '6-speed Manual',
@@ -4080,17 +4051,121 @@ const SPECS_DB = {
   }
 };
 
-function getSpecsForUnit(unitName){
+function getModelKeyForUnit(unitName){
   const u = (unitName||'').toUpperCase();
-  if(u.includes('MIRAGE') && u.includes('G4')) return SPECS_DB.MIRAGE_G4;
-  if(u.includes('MIRAGE')) return SPECS_DB.MIRAGE_HATCH;
-  if(u.includes('XPANDER')) return SPECS_DB.XPANDER;
-  if(u.includes('XFORCE')) return SPECS_DB.XFORCE;
-  if(u.includes('DESTINATOR')) return SPECS_DB.DESTINATOR;
-  if(u.includes('TRITON')) return SPECS_DB.TRITON;
-  if(u.includes('MONTERO')) return SPECS_DB.MONTERO;
-  if(u.includes('L300') || u.includes('VERSA')) return SPECS_DB.L300;
+  if(u.includes('MIRAGE') && u.includes('G4')) return 'MIRAGE_G4';
+  if(u.includes('MIRAGE')) return 'MIRAGE_HATCH';
+  if(u.includes('XPANDER')) return 'XPANDER';
+  if(u.includes('XFORCE')) return 'XFORCE';
+  if(u.includes('DESTINATOR')) return 'DESTINATOR';
+  if(u.includes('TRITON')) return 'TRITON';
+  if(u.includes('MONTERO')) return 'MONTERO';
+  if(u.includes('L300') || u.includes('VERSA')) return 'L300';
   return null;
+}
+
+function getSpecsForUnit(unitName){
+  const key = getModelKeyForUnit(unitName);
+  return key ? SPECS_DB[key] : null;
+}
+
+// ---------------- Variant/trim detection for accurate comparisons ----------------
+// Every trim within a model shares the same platform/engine family in PH-market MMPC
+// lineups (verified against current PH price lists), EXCEPT where noted below (e.g.
+// Xpander GLX MT uses a 5-speed manual instead of the 4-speed AT other trims get).
+// Patterns are checked in order — most specific first — so "GLX MT" matches before "GLX".
+// Each trim entry now also carries `tier` (base | mid | top) and `trans` (MT | AT) so the
+// comparison table can match the rival's trim of the SAME class/tier — never a random one.
+const MODEL_TRIMS = {
+  MIRAGE_HATCH: [
+    {test:/\bMT\b/, label:'GLX MT', tier:'base', trans:'MT', over:{'Transmission':'5-speed MT'}},
+    {test:/.*/,     label:'GLX CVT', tier:'top', trans:'AT', over:{'Transmission':'CVT'}}
+  ],
+  MIRAGE_G4: [
+    {test:/GLX[^,]*MT/, label:'GLX MT',  tier:'base', trans:'MT', over:{'Transmission':'5-speed MT'}},
+    {test:/GLS/,         label:'GLS CVT', tier:'top',  trans:'AT', over:{'Transmission':'CVT'}},
+    {test:/GLX/,         label:'GLX CVT', tier:'mid',  trans:'AT', over:{'Transmission':'CVT'}},
+    {test:/.*/,          label:'GLX CVT', tier:'mid',  trans:'AT', over:{'Transmission':'CVT'}}
+  ],
+  XPANDER: [
+    {test:/GLX[^,]*MT/, label:'GLX MT',  tier:'base', trans:'MT', over:{'Transmission':'5-speed MT'}},
+    {test:/CROSS/,       label:'Cross AT', tier:'top', trans:'AT', over:{'Transmission':'4-speed AT', 'Length x Width x Height':'4,595 x 1,790 x 1,750 mm'}},
+    {test:/GLX/,         label:'GLX AT',  tier:'mid', trans:'AT', over:{'Transmission':'4-speed AT'}},
+    {test:/GLS/,         label:'GLS AT',  tier:'top', trans:'AT', over:{'Transmission':'4-speed AT'}},
+    {test:/.*/,          label:'GLS AT',  tier:'top', trans:'AT', over:{'Transmission':'4-speed AT'}}
+  ],
+  XFORCE: [
+    {test:/GLX/, label:'GLX CVT', tier:'base', trans:'AT', over:{}},
+    {test:/GT/,  label:'GT CVT',  tier:'top',  trans:'AT', over:{}},
+    {test:/GLS/, label:'GLS CVT', tier:'mid',  trans:'AT', over:{}},
+    {test:/.*/,  label:'GLS CVT', tier:'mid',  trans:'AT', over:{}}
+  ],
+  DESTINATOR: [
+    {test:/GLX/, label:'GLX CVT', tier:'base', trans:'AT', over:{}},
+    {test:/GT/,  label:'GT CVT',  tier:'top',  trans:'AT', over:{}},
+    {test:/GLS/, label:'GLS CVT', tier:'mid',  trans:'AT', over:{}},
+    {test:/.*/,  label:'GLX CVT', tier:'base', trans:'AT', over:{}}
+  ],
+  TRITON: [
+    {test:/(4WD|4X4)[^,]*MT|MT[^,]*(4WD|4X4)/, label:'GLX 4WD MT',    tier:'base', trans:'MT', over:{'Transmission':'6-speed MT, Super Select 4WD-II'}},
+    {test:/MT/,                                 label:'GLX 2WD MT',    tier:'base', trans:'MT', over:{'Transmission':'6-speed MT'}},
+    {test:/ATHLETE/,                            label:'Athlete 4WD AT', tier:'top',  trans:'AT', over:{'Transmission':'6-speed AT, Super Select 4WD-II', 'Max Power':'201 PS', 'Max Torque':'470 Nm'}},
+    {test:/GX/,                                 label:'GX 2WD AT',     tier:'mid',  trans:'AT', over:{'Transmission':'6-speed AT'}},
+    {test:/GLS/,                                label:'GLS 2WD AT',    tier:'mid',  trans:'AT', over:{'Transmission':'6-speed AT'}},
+    {test:/GLX/,                                label:'GLX 2WD AT',    tier:'base', trans:'AT', over:{'Transmission':'6-speed AT'}},
+    {test:/.*/,                                 label:'GLS 2WD AT',    tier:'mid',  trans:'AT', over:{'Transmission':'6-speed AT'}}
+  ],
+  MONTERO: [
+    {test:/GLX/, label:'GLX MT', tier:'base', trans:'MT', over:{'Transmission':'6-speed MT'}},
+    {test:/GLS/, label:'GLS AT', tier:'top',  trans:'AT', over:{'Transmission':'8-speed AT'}},
+    {test:/.*/,  label:'GLS AT', tier:'top',  trans:'AT', over:{'Transmission':'8-speed AT'}}
+  ],
+  L300: [
+    {test:/VERSA/,  label:'Versa Van MT', tier:'top',  trans:'MT', over:{}},
+    {test:/EXCEED/, label:'Exceed FB MT', tier:'mid',  trans:'MT', over:{}},
+    {test:/.*/,     label:'Standard MT',  tier:'base', trans:'MT', over:{}}
+  ]
+};
+
+// Given a rival entry, returns the specific trim/tier that matches the currently selected
+// Mitsubishi trim (same tier AND same transmission type when possible). Rivals that don't yet
+// have verified per-tier data (`variants`) fall back to their single spec on file, and that is
+// clearly flagged in the UI so nobody mistakes it for a tier-matched comparison.
+function pickRivalVariant(rival, ownTier, ownTrans){
+  if(!rival) return null;
+  if(!rival.variants || !rival.variants.length){
+    return { name: rival.name, specs: rival.specs || {}, tier: null, trans: null, singleSpec: true };
+  }
+  const variants = rival.variants;
+  let match = variants.find(v=>v.tier===ownTier && v.trans===ownTrans);
+  if(!match) match = variants.find(v=>v.tier===ownTier);
+  if(!match) match = variants.find(v=>v.trans===ownTrans);
+  if(!match){
+    const rank = {base:0, mid:1, top:2};
+    const ownRank = rank[ownTier] !== undefined ? rank[ownTier] : 1;
+    let best = variants[0], bestDist = Infinity;
+    variants.forEach(v=>{
+      const d = Math.abs((rank[v.tier] !== undefined ? rank[v.tier] : 1) - ownRank);
+      if(d < bestDist){ bestDist = d; best = v; }
+    });
+    match = best;
+  }
+  return Object.assign({}, match, { singleSpec:false });
+}
+
+// Builds the "own vehicle" name + specs used in the comparison table, always matching
+// the EXACT trim currently selected (fixes the old bug where the comparison silently
+// showed a different, hardcoded trim regardless of which unit was picked).
+function computeOwnVehicle(modelKey, unitName, srp){
+  const entry = SPECS_DB[modelKey];
+  if(!entry || !entry.ownBase) return null;
+  const u = (unitName||'').toUpperCase();
+  const table = MODEL_TRIMS[modelKey] || [];
+  const trim = table.find(t=>t.test.test(u)) || table[table.length-1] || {label:'', over:{}, tier:'top', trans:'AT'};
+  const specs = Object.assign({}, entry.ownBase, trim.over || {});
+  specs['Price'] = (srp!==undefined && srp!==null && srp!=='') ? peso(srp) + ' (' + trim.label + ')' : (specs['Price'] || '—');
+  const modelLabel = (entry.label || modelKey).split('/')[0].trim();
+  return { name: modelLabel + ' ' + trim.label, specs: specs, tier: trim.tier || 'top', trans: trim.trans || 'AT', trimLabel: trim.label };
 }
 
 // ---------------- Vehicle Details tab ----------------
@@ -4112,14 +4187,20 @@ function renderVehicleDetails(){
   const body = document.getElementById('detailsBody');
   if(sel.value===''){
     body.innerHTML = '<p class="hint" style="max-width:none;">Pumili ng vehicle sa itaas para makita ang specs, features, pros &amp; cons, at paghahambing sa ibang brands.</p>';
+    currentOwnVehicle = null;
+    currentDetailsRivals = [];
     return;
   }
   const v = vehicles[parseInt(sel.value,10)];
-  const specs = getSpecsForUnit(v.unit);
+  const modelKey = getModelKeyForUnit(v.unit);
+  const specs = modelKey ? SPECS_DB[modelKey] : null;
   if(!specs){
     body.innerHTML = `<p class="hint" style="max-width:none;">Wala pang naka-file na detalyadong specs para sa <b>${escapeHtml(v.unit)}</b>. Pwede itong idagdag sa SPECS_DB sa code (Mirage/Xpander/Xforce/Destinator/Triton/Montero/L300 lang ang naka-cover ngayon).</p>`;
+    currentOwnVehicle = null;
+    currentDetailsRivals = [];
     return;
   }
+  currentOwnVehicle = computeOwnVehicle(modelKey, v.unit, v.srp);
   let html = `<h2 style="margin-top:0;">${escapeHtml(v.unit)}</h2>`;
   html += Object.keys(specs.groups).map(groupName=>{
     const rows = specs.groups[groupName];
@@ -4165,6 +4246,7 @@ function renderVehicleDetails(){
 
 const BRAND_LIST = ['Toyota','Honda','Suzuki','Kia','Nissan','Ford','Hyundai','MG','BYD','GAC','Chery','Geely','Jetour','Tesla','Other Electric Brands','Others'];
 let currentDetailsRivals = [];
+let currentOwnVehicle = null;
 
 function onRivalBrandChange(){
   const brand = document.getElementById('rivalBrandFilter').value;
@@ -4191,11 +4273,27 @@ function renderComparisonTable(){
   const sel = document.getElementById('rivalBrandSelect');
   const idx = sel ? parseInt(sel.value,10) : 0;
   const r = currentDetailsRivals[idx] || currentDetailsRivals[0];
-  const rows = Object.keys(r.ownSpecs);
-  let html = `<table class="compare-table"><tr><th></th><th>${escapeHtml(r.ownName)}</th><th>${escapeHtml(r.name)}</th></tr>`;
+  const ownName = currentOwnVehicle ? currentOwnVehicle.name : (r.name || '');
+  const ownSpecs = currentOwnVehicle ? currentOwnVehicle.specs : {};
+  const ownTier = currentOwnVehicle ? currentOwnVehicle.tier : null;
+  const ownTrans = currentOwnVehicle ? currentOwnVehicle.trans : null;
+  const matched = pickRivalVariant(r, ownTier, ownTrans);
+  const rivalName = matched ? matched.name : r.name;
+  const rivalSpecs = matched ? (matched.specs || {}) : (r.specs || {});
+  const rows = Object.keys(ownSpecs);
+  const tierLabelMap = {base:'base/entry-level', mid:'mid-spec', top:'top-of-the-line'};
+  let noteHtml = '';
+  if(matched && !matched.singleSpec){
+    const tierTxt = tierLabelMap[matched.tier] || matched.tier || '';
+    const transTxt = matched.trans === 'MT' ? 'manual' : (matched.trans === 'AT' ? 'automatic/CVT' : '');
+    noteHtml = `<p style="font-size:11px; color:#3a7a54; margin:0 0 6px 0;">✓ Tier-matched: ${escapeHtml(currentOwnVehicle ? currentOwnVehicle.trimLabel : '')} (${tierTxt}${transTxt ? ', ' + transTxt : ''}) is being compared against the ${escapeHtml(tierTxt)} ${escapeHtml(transTxt)} variant of the ${escapeHtml(r.brand)} — hindi na basta iisang variant lang para sa lahat.</p>`;
+  } else if(matched && matched.singleSpec){
+    noteHtml = `<p style="font-size:11px; color:#a17a1f; margin:0 0 6px 0;">⚠ Iisang variant pa lang ang naka-verify na data para sa ${escapeHtml(r.brand)} ${escapeHtml(r.name)} (hindi pa naka-tier-split by base/mid/top). Ang specs sa ibaba ay yung naka-file na variant lang, hindi pa awtomatikong tumutugma sa napiling trim ng Mitsubishi.</p>`;
+  }
+  let html = noteHtml + `<table class="compare-table"><tr><th></th><th>${escapeHtml(ownName)}</th><th>${escapeHtml(rivalName)}</th></tr>`;
   rows.forEach(label=>{
-    const ownVal = r.ownSpecs[label] || '—';
-    const rivalVal = r.specs[label] || '—';
+    const ownVal = ownSpecs[label] || '—';
+    const rivalVal = rivalSpecs[label] || '—';
     const ownNum = extractNumber(ownVal);
     const rivalNum = extractNumber(rivalVal);
     let ownCls = '', rivalCls = '';
@@ -5140,6 +5238,7 @@ if(_cameFromLoginLink || (isLoggedIn() && !location.hash.startsWith('#login=')))
 
 loadBulletin();
 initQuoteTab();
+loadAgentSettings();
 initCalendar();
 loadNotepad();
 if(lsGet('cl_sidebar_hidden', false)) document.body.classList.add('sidebar-hidden');
