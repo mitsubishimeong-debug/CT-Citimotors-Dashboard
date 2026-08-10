@@ -86,7 +86,7 @@
     background:var(--orange); border-color:var(--orange);
   }
   #sheet input[type="checkbox"]:checked::after{
-    content:""; position:absolute; left:3px; top:0px;
+    content:" "; position:absolute; left:3px; top:0px;
     width:4px; height:8px;
     border:solid #fff; border-width:0 2px 2px 0;
     transform:rotate(45deg);
@@ -246,7 +246,7 @@
   .cal-day.other-month{color:#ccc; background:transparent;}
   .cal-day.today{border:1.5px solid var(--orange); font-weight:700;}
   .cal-day.selected{background:var(--sidebar-active); color:#241a04; font-weight:700;}
-  .cal-day.has-event::after{content:''; position:absolute; bottom:2px; left:50%; transform:translateX(-50%); width:4px; height:4px; border-radius:50%; background:var(--orange);}
+  .cal-day.has-event::after{content:' '; position:absolute; bottom:2px; left:50%; transform:translateX(-50%); width:4px; height:4px; border-radius:50%; background:var(--orange);}
   .cal-day.selected.has-event::after{background:#241a04;}
   .cal-event-row{display:flex; justify-content:space-between; align-items:center; background:#f7f8fa; border-radius:5px; padding:6px 8px; margin-bottom:5px; font-size:11.5px;}
   .cal-event-row button{background:#a12626; color:#fff; border:none; border-radius:3px; padding:2px 6px; font-size:10px; cursor:pointer;}
@@ -275,7 +275,7 @@
   .sidebar-nav button{ font-weight:600; position:relative; transition: background 0.15s ease, color 0.15s ease, padding-left 0.15s ease; }
   .sidebar-nav button:hover{ padding-left:16px; }
   .sidebar-nav button.active{ box-shadow: 0 2px 8px rgba(195,162,107,0.35); }
-  .sidebar-nav button.active::before{ content:''; position:absolute; left:-10px; top:50%; transform:translateY(-50%); width:4px; height:60%; background:var(--ent-accent); border-radius:3px; }
+  .sidebar-nav button.active::before{ content:' '; position:absolute; left:-10px; top:50%; transform:translateY(-50%); width:4px; height:60%; background:var(--ent-accent); border-radius:3px; }
   .sidebar-profile{ display:flex; align-items:center; gap:9px; padding:12px 14px; border-top:1px solid rgba(255,255,255,0.12); }
   .sidebar-profile .avatar{ width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg,var(--ent-accent),var(--sidebar-active)); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:12.5px; color:#151f33; flex-shrink:0; }
   .sidebar-profile .info{ min-width:0; flex:1; }
@@ -337,7 +337,7 @@
   .gh-quick-box{background:#f4f7fb; border:1px solid #dde5ef; border-radius:7px; padding:12px;}
   .gh-quick-box textarea{width:100%; box-sizing:border-box; padding:9px; border:1px solid #ccc; border-radius:5px; font-size:11.5px; resize:vertical; min-height:54px; font-family:inherit;}
   .gh-divider{display:flex; align-items:center; gap:8px; margin:16px 0 10px; color:#999; font-size:10.5px; text-transform:uppercase; letter-spacing:.05em;}
-  .gh-divider::before, .gh-divider::after{content:""; flex:1; height:1px; background:#e2e2e2;}
+  .gh-divider::before, .gh-divider::after{content:" "; flex:1; height:1px; background:#e2e2e2;}
   .gh-advanced{border:1px solid #e2e2e2; border-radius:7px; padding:2px 12px 10px;}
   .gh-advanced summary{cursor:pointer; font-size:11.5px; font-weight:700; color:#555; padding:9px 0; list-style:none;}
   .gh-advanced summary::-webkit-details-marker{display:none;}
@@ -462,7 +462,7 @@
     .label{font-size:9.5px;}
     .sig-row td{padding-top:2px;}
     .no-print{display:none !important;}
-    .sig-img-holder:empty::before{content:"" !important;}
+    .sig-img-holder:empty::before{display:none !important;}
     * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }
   }
 
@@ -482,7 +482,7 @@
   body.pdf-mode .sheet{font-size:9.5px; border:none !important;}
   body.pdf-mode .sig-line textarea{display:none;}
   body.pdf-mode .sig-print-only{display:block !important;}
-  body.pdf-mode .sig-img-holder:empty::before{content:"" !important;}
+  body.pdf-mode .sig-img-holder:empty::before{display:none !important;}
 </style>
 </head>
 <body>
