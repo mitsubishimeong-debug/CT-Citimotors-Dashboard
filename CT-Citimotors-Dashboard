@@ -118,7 +118,8 @@
         ],
         "_signature": null
       },
-      "pipelineStage": "Save Application"
+      "pipelineStage": "Released",
+      "lostReason": ""
     },
     "app_1786328576065": {
       "id": "app_1786328576065",
@@ -764,5 +765,5 @@
   ],
   "calendarEvents": {},
   "notepad": "",
-  "savedAt": "2026-08-10T07:38:14.242Z"
+  "savedAt": "2026-08-10T07:38:37.340Z"
 }
