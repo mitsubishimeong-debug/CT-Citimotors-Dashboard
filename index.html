@@ -141,91 +141,77 @@
   .quick-action-btn:hover{border-color:var(--sidebar-active); background:#fdf9f2;}
   .quick-action-btn span{font-size:12px;}
 
-  /* ---- AI Conversations (Messenger-style inbox) ---- */
-  .aiconvo-wrap{max-width:1300px; margin:0 auto; display:flex; gap:14px; align-items:flex-start;}
-  .aiconvo-list-col{flex:0 0 340px; background:var(--ent-card); border:1px solid var(--ent-border); border-radius:var(--ent-radius); overflow:hidden; box-shadow:var(--ent-shadow);}
-  .aiconvo-list-head{padding:14px 16px; border-bottom:1px solid var(--ent-border);}
-  .aiconvo-list-head h3{margin:0 0 8px 0; font-size:14px; color:var(--ent-text);}
-  .aiconvo-list-head input{width:100%; padding:8px 10px; border:1px solid var(--ent-border); border-radius:8px; font-size:12px; font-family:inherit;}
-  .aiconvo-items{max-height:640px; overflow-y:auto;}
-  .aiconvo-item{display:flex; gap:10px; padding:12px 16px; border-bottom:1px solid var(--ent-border); cursor:pointer; align-items:flex-start;}
-  .aiconvo-item:hover{background:#f7f9fc;}
-  body.dark-mode .aiconvo-item:hover{background:#182238;}
-  .aiconvo-item.active{background:#eef3fd; border-left:3px solid var(--ent-secondary);}
-  .aiconvo-avatar{width:38px; height:38px; border-radius:50%; background:var(--navy); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; flex-shrink:0;}
-  .aiconvo-item-body{flex:1; min-width:0;}
-  .aiconvo-item-top{display:flex; justify-content:space-between; gap:6px;}
-  .aiconvo-item-name{font-weight:700; font-size:12.5px; color:var(--ent-text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-  .aiconvo-item-time{font-size:10px; color:var(--ent-text-mut); flex-shrink:0;}
-  .aiconvo-item-veh{font-size:10.5px; color:var(--ent-secondary); font-weight:600; margin-top:1px;}
-  .aiconvo-item-last{font-size:11px; color:var(--ent-text-mut); margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-  .aiconvo-item-badges{display:flex; gap:5px; margin-top:5px; flex-wrap:wrap;}
-  .badge-pill{font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; padding:2px 7px; border-radius:20px;}
-  .badge-ai-active{background:#dcfce7; color:#166534;}
-  .badge-ai-paused{background:#fef3c7; color:#92400e;}
-  .badge-unread{background:var(--ent-danger); color:#fff;}
-  .badge-stage{background:#e0e7ff; color:#3730a3;}
-  .aiconvo-detail-col{flex:1; min-width:0; display:flex; gap:14px; align-items:flex-start;}
-  .aiconvo-thread-col{flex:1.3; background:var(--ent-card); border:1px solid var(--ent-border); border-radius:var(--ent-radius); box-shadow:var(--ent-shadow); display:flex; flex-direction:column; height:684px;}
-  .aiconvo-thread-head{padding:14px 18px; border-bottom:1px solid var(--ent-border); display:flex; justify-content:space-between; align-items:center;}
-  .aiconvo-thread-head h3{margin:0; font-size:14px;}
-  .aiconvo-thread-head .sub{font-size:11px; color:var(--ent-text-mut); margin-top:2px;}
-  .aiconvo-thread-body{flex:1; overflow-y:auto; padding:16px 18px; display:flex; flex-direction:column; gap:10px;}
-  .aiconvo-bubble-row{display:flex;}
-  .aiconvo-bubble-row.customer{justify-content:flex-start;}
-  .aiconvo-bubble-row.ai{justify-content:flex-end;}
-  .aiconvo-bubble{max-width:70%; padding:9px 13px; border-radius:14px; font-size:12px; line-height:1.4;}
-  .aiconvo-bubble-row.customer .aiconvo-bubble{background:#eef1f5; color:#111; border-bottom-left-radius:3px;}
-  body.dark-mode .aiconvo-bubble-row.customer .aiconvo-bubble{background:#1c2740; color:var(--ent-text);}
-  .aiconvo-bubble-row.ai .aiconvo-bubble{background:var(--ent-secondary); color:#fff; border-bottom-right-radius:3px;}
-  .aiconvo-bubble-meta{font-size:9px; color:var(--ent-text-mut); margin-top:3px;}
-  .aiconvo-thread-empty{flex:1; display:flex; align-items:center; justify-content:center; color:var(--ent-text-mut); font-size:12.5px; flex-direction:column; gap:8px;}
-  .aiconvo-profile-col{flex:1; background:var(--ent-card); border:1px solid var(--ent-border); border-radius:var(--ent-radius); box-shadow:var(--ent-shadow); padding:18px; height:684px; overflow-y:auto;}
-  .profile-block{margin-bottom:18px;}
-  .profile-block h4{margin:0 0 8px 0; font-size:11px; text-transform:uppercase; letter-spacing:0.05em; color:var(--ent-text-mut); border-bottom:1px solid var(--ent-border); padding-bottom:6px;}
-  .profile-row{display:flex; justify-content:space-between; gap:8px; font-size:12px; padding:3px 0;}
-  .profile-row .k{color:var(--ent-text-mut);}
-  .profile-row .v{font-weight:600; text-align:right; color:var(--ent-text);}
-  .ai-summary-card{background:linear-gradient(135deg, #0F172A, #1e3a5f); color:#fff; border-radius:12px; padding:14px 16px; font-size:12px; line-height:1.6;}
-  .ai-summary-card b{color:var(--sidebar-active);}
-  .takeover-toggle-wrap{display:flex; align-items:center; justify-content:space-between; background:#f7f9fc; border-radius:10px; padding:10px 14px; margin-top:6px;}
-  body.dark-mode .takeover-toggle-wrap{background:#182238;}
-  .takeover-toggle{position:relative; width:46px; height:24px; border-radius:14px; background:#10B981; cursor:pointer; border:none; flex-shrink:0;}
-  .takeover-toggle.is-manual{background:#F59E0B;}
-  .takeover-toggle::after{content:''; position:absolute; top:3px; left:3px; width:18px; height:18px; border-radius:50%; background:#fff; transition:left 0.15s ease;}
-  .takeover-toggle.is-manual::after{left:25px;}
+  /* ================= AI Sales CRM extension ================= */
+  /* Inbox layout */
+  .inbox-shell{display:grid; grid-template-columns:320px 1fr; gap:14px; max-width:1300px; margin:0 auto; align-items:start;}
+  @media (max-width:900px){ .inbox-shell{grid-template-columns:1fr;} }
+  .inbox-list{background:#fff; border:1px solid #e2e5ea; border-radius:10px; max-height:78vh; overflow-y:auto;}
+  .inbox-search{padding:10px; border-bottom:1px solid #eee; position:sticky; top:0; background:#fff; z-index:2;}
+  .inbox-search input{width:100%; padding:8px 10px; border:1px solid #ccc; border-radius:6px; font-size:12.5px;}
+  .inbox-item{display:flex; gap:10px; padding:12px; border-bottom:1px solid #f0f1f3; cursor:pointer; align-items:flex-start;}
+  .inbox-item:hover{background:#f7f8fa;}
+  .inbox-item.active{background:#fdf3e4; border-left:3px solid var(--orange);}
+  .inbox-avatar{width:38px; height:38px; border-radius:50%; background:var(--navy); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:13px; flex-shrink:0;}
+  .inbox-meta{min-width:0; flex:1;}
+  .inbox-name-row{display:flex; justify-content:space-between; gap:6px;}
+  .inbox-name{font-weight:700; font-size:12.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .inbox-time{font-size:9.5px; color:#8a93a3; flex-shrink:0;}
+  .inbox-sub{font-size:11px; color:#667; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:2px;}
+  .inbox-lastmsg{font-size:11px; color:#8a93a3; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:3px;}
+  .inbox-badges{display:flex; gap:4px; margin-top:5px; flex-wrap:wrap;}
+  .chip{font-size:9px; font-weight:700; padding:2px 7px; border-radius:20px; text-transform:uppercase; letter-spacing:0.03em;}
+  .chip-ai{background:#e0ecff; color:#1d4ed8;}
+  .chip-human{background:#fde8e8; color:#a12626;}
+  .chip-unread{background:var(--orange); color:#fff;}
+  .stage-chip{background:#eef1f5; color:#334; }
+  .inbox-empty{padding:30px; text-align:center; color:#8a93a3; font-size:12.5px;}
+
+  .chat-panel{background:#fff; border:1px solid #e2e5ea; border-radius:10px; display:flex; flex-direction:column; height:78vh;}
+  .chat-panel-header{padding:14px 16px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;}
+  .chat-panel-header h3{margin:0; font-size:14px;}
+  .chat-thread{flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:10px;}
+  .chat-bubble{max-width:70%; padding:9px 12px; border-radius:12px; font-size:12.5px; line-height:1.4;}
+  .chat-bubble.customer{align-self:flex-start; background:#f1f2f4; border-bottom-left-radius:3px;}
+  .chat-bubble.ai{align-self:flex-end; background:var(--navy); color:#fff; border-bottom-right-radius:3px;}
+  .chat-bubble.agent{align-self:flex-end; background:var(--orange); color:#fff; border-bottom-right-radius:3px;}
+  .chat-bubble .cb-meta{font-size:9px; opacity:0.75; margin-top:4px;}
+  .chat-empty{flex:1; display:flex; align-items:center; justify-content:center; color:#8a93a3; font-size:12.5px;}
+
+  /* Customer Profile panel */
+  .profile-panel{padding:16px; border-top:1px solid #eee;}
+  .profile-section{margin-bottom:14px;}
+  .profile-section h4{font-size:10.5px; text-transform:uppercase; letter-spacing:0.06em; color:var(--orange); margin:0 0 8px 0; border-bottom:1px solid #eee; padding-bottom:4px;}
+  .profile-row{display:flex; justify-content:space-between; font-size:12px; padding:3px 0;}
+  .profile-row span:first-child{color:#666;}
+  .profile-row span:last-child{font-weight:700; text-align:right; max-width:60%;}
+  .ai-summary-card{background:linear-gradient(135deg,#1c3350 0%,#254264 100%); color:#fff; border-radius:10px; padding:14px;}
+  .ai-summary-card .row{display:flex; justify-content:space-between; padding:4px 0; font-size:12px; border-bottom:1px solid rgba(255,255,255,0.12);}
+  .ai-summary-card .row:last-child{border-bottom:none;}
+  .ai-summary-card .row span:first-child{color:#cfd8e6;}
+  .takeover-toggle-row{display:flex; align-items:center; justify-content:space-between; background:#f7f8fa; border-radius:8px; padding:10px 12px; margin-bottom:10px;}
+  .takeover-switch{position:relative; width:52px; height:26px; background:#3a7a54; border-radius:20px; cursor:pointer; transition:background 0.2s;}
+  .takeover-switch.human{background:#a12626;}
+  .takeover-switch .knob{position:absolute; top:2px; left:2px; width:22px; height:22px; background:#fff; border-radius:50%; transition:left 0.2s;}
+  .takeover-switch.human .knob{left:28px;}
   .takeover-label{font-size:11.5px; font-weight:700;}
 
-  /* ---- Pipeline (Kanban) ---- */
-  .pipeline-wrap{max-width:1500px; margin:0 auto;}
-  .pipeline-board{display:flex; gap:12px; overflow-x:auto; padding-bottom:10px;}
-  .pipeline-col{flex:0 0 220px; background:#eef1f5; border-radius:12px; padding:10px; min-height:200px;}
-  body.dark-mode .pipeline-col{background:#141d30;}
-  .pipeline-col.drag-over{outline:2px dashed var(--ent-secondary); outline-offset:-2px;}
-  .pipeline-col-head{display:flex; justify-content:space-between; align-items:center; padding:4px 4px 10px 4px; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:0.03em; color:var(--ent-text-mut);}
-  .pipeline-col-count{background:#fff; border-radius:20px; padding:1px 8px; font-size:10.5px;}
-  body.dark-mode .pipeline-col-count{background:#1F2A3D;}
-  .pipeline-card{background:var(--ent-card); border-radius:9px; padding:10px 11px; margin-bottom:8px; box-shadow:0 1px 2px rgba(0,0,0,0.08); cursor:grab; border-left:3px solid var(--ent-secondary);}
-  .pipeline-card:active{cursor:grabbing;}
-  .pipeline-card .pc-name{font-weight:700; font-size:12px; color:var(--ent-text);}
-  .pipeline-card .pc-veh{font-size:10.5px; color:var(--ent-secondary); margin-top:2px;}
-  .pipeline-card .pc-meta{font-size:10px; color:var(--ent-text-mut); margin-top:5px; display:flex; justify-content:space-between;}
+  /* Pipeline Kanban */
+  .kanban-board{display:flex; gap:12px; overflow-x:auto; padding-bottom:10px; max-width:1300px; margin:0 auto;}
+  .kanban-col{background:#f4f5f7; border-radius:10px; min-width:220px; max-width:240px; flex-shrink:0; display:flex; flex-direction:column; max-height:76vh;}
+  .kanban-col-header{padding:10px 12px; font-size:11.5px; font-weight:800; text-transform:uppercase; letter-spacing:0.03em; color:#445; display:flex; justify-content:space-between; border-bottom:2px solid #e2e5ea;}
+  .kanban-col-body{padding:8px; overflow-y:auto; flex:1; min-height:60px;}
+  .kanban-col-body.drag-over{background:#eef1f5;}
+  .kanban-card{background:#fff; border:1px solid #e2e5ea; border-radius:8px; padding:10px; margin-bottom:8px; cursor:grab; box-shadow:0 1px 2px rgba(0,0,0,0.04); font-size:11.5px;}
+  .kanban-card:active{cursor:grabbing;}
+  .kanban-card .kc-name{font-weight:700; margin-bottom:3px;}
+  .kanban-card .kc-veh{color:#667; font-size:10.5px;}
+  .kanban-card .kc-meta{display:flex; justify-content:space-between; margin-top:6px; font-size:9.5px; color:#8a93a3;}
 
-  /* ---- Data Service settings box (inside Sync tab) ---- */
-  .ds-config-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:8px;}
-  .ds-config-grid label{font-size:11px; color:#cdd6e4; display:block; margin-bottom:3px;}
-  .ds-config-grid input, .ds-config-grid select{width:100%; padding:7px 9px; border-radius:5px; border:none; font-size:12px; font-family:inherit;}
-  .ds-status-pill{display:inline-block; font-size:10.5px; font-weight:700; padding:3px 9px; border-radius:20px; margin-top:8px;}
-  .ds-status-ok{background:#dcfce7; color:#166534;}
-  .ds-status-bad{background:#fee2e2; color:#991b1b;}
-  .ds-status-idle{background:rgba(255,255,255,0.15); color:#fff;}
-
-  @media (max-width:1100px){
-    .aiconvo-wrap{flex-direction:column;}
-    .aiconvo-list-col{flex:none; width:100%;}
-    .aiconvo-detail-col{flex-direction:column; width:100%;}
-    .aiconvo-thread-col, .aiconvo-profile-col{width:100%; height:auto; max-height:520px;}
-  }
+  /* Data source settings modal */
+  .ds-modal-box{max-width:460px;}
+  .ds-modal-box label{font-size:11.5px; font-weight:700; color:#333; display:block; margin:10px 0 4px;}
+  .ds-modal-box input[type="text"], .ds-modal-box select{width:100%; padding:9px; border:1px solid #ccc; border-radius:5px; font-size:12.5px;}
+  .ds-hint{font-size:10.5px; color:#777; margin-top:4px; line-height:1.4;}
 
   /* ---- Calendar & Notepad ---- */
   .cal-nav-btn{background:var(--navy); color:#fff; border:none; width:24px; height:24px; border-radius:4px; cursor:pointer; font-size:13px;}
@@ -319,11 +305,23 @@
   /* ---- GitHub Cloud Sync modal ---- */
   .gh-modal-box{max-width:440px;}
   .gh-modal-box label{font-size:11.5px; font-weight:700; color:#333; display:block; margin:10px 0 4px;}
-  .gh-modal-box input[type="text"], .gh-modal-box input[type="password"]{width:100%; padding:9px; border:1px solid #ccc; border-radius:5px; font-size:12.5px;}
+  .gh-modal-box input[type="text"], .gh-modal-box input[type="password"], .gh-modal-box input[type="email"]{width:100%; padding:9px; border:1px solid #ccc; border-radius:5px; font-size:12.5px; box-sizing:border-box;}
   .gh-modal-box .gh-hint{font-size:10.5px; color:#777; margin-top:4px; line-height:1.4;}
   .gh-status{font-size:11.5px; margin-top:10px; padding:8px; border-radius:5px;}
   .gh-status.ok{background:#d4edda; color:#1e5c30;}
   .gh-status.err{background:#f8d7da; color:#7a1f27;}
+  .gh-quick-box{background:#f4f7fb; border:1px solid #dde5ef; border-radius:7px; padding:12px;}
+  .gh-quick-box textarea{width:100%; box-sizing:border-box; padding:9px; border:1px solid #ccc; border-radius:5px; font-size:11.5px; resize:vertical; min-height:54px; font-family:inherit;}
+  .gh-divider{display:flex; align-items:center; gap:8px; margin:16px 0 10px; color:#999; font-size:10.5px; text-transform:uppercase; letter-spacing:.05em;}
+  .gh-divider::before, .gh-divider::after{content:""; flex:1; height:1px; background:#e2e2e2;}
+  .gh-advanced{border:1px solid #e2e2e2; border-radius:7px; padding:2px 12px 10px;}
+  .gh-advanced summary{cursor:pointer; font-size:11.5px; font-weight:700; color:#555; padding:9px 0; list-style:none;}
+  .gh-advanced summary::-webkit-details-marker{display:none;}
+  .gh-advanced summary::before{content:"▸ "; color:#999;}
+  .gh-advanced[open] summary::before{content:"▾ "; color:#999;}
+  .gh-link-box{background:#eaf5ee; border:1px solid #bfe3cc; border-radius:7px; padding:12px; margin-top:14px;}
+  .gh-link-box textarea{width:100%; box-sizing:border-box; padding:9px; border:1px solid #a9d6b8; border-radius:5px; font-size:10.5px; resize:vertical; min-height:50px; font-family:monospace; background:#fff;}
+  .gh-copy-btn{margin-top:8px; width:100%; padding:9px; border:0; border-radius:5px; background:#3a7a54; color:#fff; font-weight:700; font-size:12px; cursor:pointer;}
 
   /* ---- Vehicle Specs modal ---- */
   .specs-modal-box{max-width:480px; max-height:80vh; overflow-y:auto;}
@@ -340,7 +338,7 @@
   .compare-table .cmp-label{text-align:left; font-weight:700; color:#555; background:#f7f7f8;}
   .compare-table .cmp-better{color:#1e7a3d; font-weight:800; background:#e9f7ee;}
   .compare-table .cmp-worse{color:#8a1f1f; font-weight:600;}
-  #tab-form, #tab-bulletin, #tab-details, #tab-saved, #tab-quote, #tab-monitoring, #tab-messages, #tab-sync{display:none;}
+  #tab-form, #tab-bulletin, #tab-details, #tab-saved, #tab-quote, #tab-monitoring, #tab-messages, #tab-sync, #tab-inbox, #tab-pipeline{display:none;}
 
   /* bold + all-caps as the borrower/co-borrower details are typed, so the bank checker reads them fast */
   #sheet input[type="text"]{font-weight:700; letter-spacing:0.2px; text-transform:uppercase;}
@@ -463,14 +461,14 @@
     </div>
     <nav class="sidebar-nav">
       <button onclick="switchTab('dashboard')" id="btn-tab-dashboard">📊 Dashboard</button>
+      <button onclick="switchTab('inbox')" id="btn-tab-inbox">💬 AI Conversations</button>
+      <button onclick="switchTab('pipeline')" id="btn-tab-pipeline">📋 Pipeline</button>
       <button onclick="switchTab('form')" id="btn-tab-form">📄 Application Form</button>
       <button onclick="switchTab('quote')" id="btn-tab-quote">🧮 Quotation</button>
       <button onclick="switchTab('bulletin')" id="btn-tab-bulletin">🚗 Vehicle Bulletin</button>
       <button onclick="switchTab('details')" id="btn-tab-details">🚘 Vehicle Details</button>
       <button onclick="switchTab('saved')" id="btn-tab-saved">💾 Saved Applications</button>
       <button onclick="switchTab('monitoring')" id="btn-tab-monitoring">📋 Monitoring</button>
-      <button onclick="switchTab('aiconvo')" id="btn-tab-aiconvo">🤖 AI Conversations</button>
-      <button onclick="switchTab('pipeline')" id="btn-tab-pipeline">🧲 Pipeline</button>
       <button onclick="switchTab('messages')" id="btn-tab-messages">📨 Messages</button>
       <button onclick="switchTab('sync')" id="btn-tab-sync">🔗 Sync (QR)</button>
     </nav>
@@ -483,6 +481,7 @@
     </div>
     <div class="sidebar-footer">
       <button onclick="openGithubModal()" id="sidebarLoginBtn">🔐 Log In / Sync</button>
+      <button onclick="openDataSourceModal()" id="sidebarDataSourceBtn" style="margin-top:6px;">🔌 Data Source (n8n/Sheets)</button>
     </div>
     <div id="syncStatusFooter" style="font-size:9.5px; color:#8fd6a8; text-align:center; padding:0 10px 8px 10px; display:none;"></div>
     <div class="sidebar-version">CT Citimotors CRM · v2.0 Enterprise</div>
@@ -499,7 +498,6 @@
   <div class="tn-right">
     <div class="tn-clock"><b id="tnTime">--:--</b><br><span id="tnDate">—</span></div>
     <button class="tn-icon-btn" id="tnNotifBtn" onclick="switchTab('messages')" title="Notifications">🔔<span class="tn-badge" id="tnNotifBadge" style="display:none;">0</span></button>
-    <button class="tn-icon-btn" onclick="window.open('https://mail.google.com/mail/u/2/#inbox','_blank')" title="Open Gmail Inbox (mitsubishimeong@gmail.com)">✉️</button>
     <button class="tn-icon-btn" onclick="toggleDarkMode()" title="Toggle dark mode" id="tnDarkBtn">🌙</button>
     <div class="tn-user">
       <div class="avatar">RM</div>
@@ -518,13 +516,18 @@
   </div>
   <div class="kpi-grid" id="kpiGrid"></div>
 
+  <div class="dash-panel" style="max-width:1200px; margin:0 auto 16px auto;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+      <h3 style="margin:0;">🤖 AI Sales Pipeline Overview</h3>
+      <button class="quick-action-btn" style="min-width:auto; padding:6px 12px; flex-direction:row; gap:6px;" onclick="switchTab('inbox')">💬 Open Inbox</button>
+    </div>
+    <div class="kpi-grid" id="crmStatsPanel"></div>
+  </div>
+
   <div class="quick-actions">
     <button class="quick-action-btn" onclick="switchTab('quote')">🧮<span>Quotation</span></button>
     <button class="quick-action-btn" onclick="switchTab('bulletin')">🚗<span>Vehicle Bulletin</span></button>
     <button class="quick-action-btn" onclick="switchTab('details')">🚘<span>Vehicle Details</span></button>
-    <button class="quick-action-btn" onclick="switchTab('aiconvo')">🤖<span>AI Conversations</span></button>
-    <button class="quick-action-btn" onclick="switchTab('pipeline')">🧲<span>Pipeline</span></button>
-    <button class="quick-action-btn" onclick="window.open('https://mail.google.com/mail/u/2/#inbox','_blank')">✉️<span>Gmail Inbox</span></button>
   </div>
 
   <div class="dash-panel" style="max-width:1200px; margin:0 auto 16px auto;">
@@ -614,6 +617,27 @@
       <div id="idPrintStatus" style="font-size:11px; color:#667; margin-top:8px;"></div>
     </div>
   </div>
+</div>
+
+<div id="tab-inbox">
+  <div class="dash-header">
+    <h1>AI Conversations</h1>
+    <p>Messenger AI replies, leads, at chat history mula sa n8n automation mo.</p>
+  </div>
+  <div class="inbox-shell">
+    <div class="inbox-list" id="inboxList"></div>
+    <div class="chat-panel" id="chatPanel">
+      <div class="chat-empty">Pumili ng customer sa kaliwa para makita ang buong usapan.</div>
+    </div>
+  </div>
+</div>
+
+<div id="tab-pipeline">
+  <div class="dash-header">
+    <h1>Sales Pipeline</h1>
+    <p>I-drag ang cards papunta sa susunod na stage. Awtomatikong nase-save ang bagong stage.</p>
+  </div>
+  <div class="kanban-board" id="kanbanBoard"></div>
 </div>
 
 <div class="toolbar no-print" id="formToolbar">
@@ -1178,46 +1202,6 @@
       <canvas id="qrScanCanvas" style="display:none;"></canvas>
       <div class="sync-progress" id="scanProgress"></div>
     </div>
-
-    <div class="sync-box">
-      <b>3️⃣ AI CRM DATA SOURCE — connect sa n8n Messenger bot data</b><br>
-      <p style="font-size:11px; color:#cdd6e4; margin:6px 0 4px 0;">Ito ang nagpapakita ng Leads at Conversations sa "AI Conversations" at "Pipeline" tabs. Read gamit ang public Google Sheet (kailangan naka-share "Anyone with the link — Viewer"). Para gumana ang drag-and-drop stage update at Human Takeover toggle (pag-save pabalik sa Sheet), kailangan i-deploy ang kasamang Google Apps Script bilang Web App at ilagay dito ang URL nito.</p>
-      <div class="ds-config-grid">
-        <div>
-          <label>Data Source Type</label>
-          <select id="dsType">
-            <option value="googlesheets">Google Sheets</option>
-            <option value="restapi">REST API</option>
-            <option value="firebase">Firebase (future)</option>
-            <option value="supabase">Supabase (future)</option>
-          </select>
-        </div>
-        <div>
-          <label>Google Sheet ID</label>
-          <input type="text" id="dsSheetId" placeholder="1DWOMBOSK0bklfj3Flmh_GixrEXKvh2Ml3UUb4bgxuA4">
-        </div>
-        <div>
-          <label>Leads tab/sheet name</label>
-          <input type="text" id="dsLeadsSheetName" value="Leads">
-        </div>
-        <div>
-          <label>Conversations tab/sheet name</label>
-          <input type="text" id="dsConvoSheetName" value="Conversations">
-        </div>
-        <div style="grid-column:1 / -1;">
-          <label>Write endpoint (Apps Script Web App URL — for stage updates &amp; human takeover)</label>
-          <input type="text" id="dsWriteUrl" placeholder="https://script.google.com/macros/s/XXXXXXX/exec">
-        </div>
-        <div style="grid-column:1 / -1;">
-          <label>REST API base URL (only if Data Source Type = REST API)</label>
-          <input type="text" id="dsRestUrl" placeholder="https://your-api.example.com">
-        </div>
-      </div>
-      <button onclick="dsSaveConfig()" style="margin-top:10px;">💾 Save &amp; Connect</button>
-      <button onclick="dsRefreshAll()" style="background:#555;">🔄 Test / Refresh Now</button>
-      <button onclick="dsDownloadAppsScript()" style="background:#3a7a54;">⬇️ Download Apps Script (for writes)</button>
-      <div id="dsConfigStatus" class="ds-status-pill ds-status-idle">Not connected</div>
-    </div>
   </div>
 </div>
 
@@ -1243,24 +1227,75 @@
 <div class="modal-overlay no-print" id="githubModal">
   <div class="modal-box gh-modal-box">
     <h3>🔐 Account Login / Cloud Sync</h3>
-    <p class="gh-hint">Mag-login gamit ang email mo para awtomatikong ma-sync ang data mo (applications, monitoring, bulletin, bank/credit contacts, calendar, notes) sa kahit anong device — laptop, phone, atbp. Ang totoong storage ay ang sarili mong libreng GitHub repo; ang GitHub token + repo ang gumagana bilang "password" ng account mo, kaya ito rin ang ibibigay mo sa ibang tao balang araw para maka-login din sila sa parehong account.</p>
-    <label>Email Address (account name)</label>
-    <input type="email" id="ghEmail" placeholder="e.g. romeo@citimotors.com">
-    <label>Personal Access Token</label>
-    <input type="password" id="ghToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
-    <div class="gh-hint">Gawa ka ng token sa github.com → Settings → Developer settings → Personal access tokens → Fine-grained token → bigyan ng <b>Read & Write access sa "Contents"</b> ng repo na gagamitin mo. Naka-save lang ito dito sa browser mo — hindi ito ipinapadala kahit saan maliban sa GitHub mismo.</div>
-    <label>Repository (username/repo-name)</label>
-    <input type="text" id="ghRepo" placeholder="e.g. juandelacruz/citimotors-data">
-    <label>File path sa loob ng repo</label>
-    <input type="text" id="ghPath" value="citimotors-data.json">
+
+    <div class="gh-quick-box" id="ghQuickBox">
+      <label style="margin-top:0;">Mabilis na Login</label>
+      <p class="gh-hint" style="margin-top:0;">Kung mayroon kang <b>Login Link</b> galing sa admin/manager mo, i-paste dito lang at pindutin ang "Gamitin" — wala nang ibang need punan.</p>
+      <textarea id="ghQuickLink" placeholder="I-paste dito ang login link na ibinigay sa iyo…"></textarea>
+      <div class="modal-actions" style="margin-top:8px;">
+        <button style="background:#3a7a54; color:#fff; width:100%;" onclick="applyQuickLoginLink()">✅ Gamitin ang Link na Ito</button>
+      </div>
+    </div>
+
+    <div class="gh-divider">o kaya</div>
+
+    <details class="gh-advanced" id="ghAdvancedDetails">
+      <summary>Unang Beses / Admin Setup (manu-manong paglagay ng account)</summary>
+      <p class="gh-hint">Kailangan lang gawin nang <b>isang beses</b> ng unang mag-se-set up. Pagkatapos, may lalabas na Login Link na pwede mong ipasa sa ibang gagamit — hindi na nila kailangang gawin itong hakbang na ito.</p>
+      <label>Email Address (account name)</label>
+      <input type="email" id="ghEmail" placeholder="e.g. romeo@citimotors.com">
+      <label>Personal Access Token</label>
+      <input type="password" id="ghToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+      <div class="gh-hint">Gawa ka ng token sa github.com → Settings → Developer settings → Personal access tokens → Fine-grained token → bigyan ng <b>Read & Write access sa "Contents"</b> ng repo na gagamitin mo. Naka-save lang ito dito sa browser mo — hindi ito ipinapadala kahit saan maliban sa GitHub mismo.</div>
+      <label>Repository (username/repo-name)</label>
+      <input type="text" id="ghRepo" placeholder="e.g. juandelacruz/citimotors-data">
+      <label>File path sa loob ng repo</label>
+      <input type="text" id="ghPath" value="citimotors-data.json">
+      <div class="modal-actions" style="margin-top:14px;">
+        <button style="background:var(--navy); color:#fff;" onclick="githubSave()">☁️ Save Now</button>
+        <button style="background:var(--orange); color:#fff;" onclick="githubLoad()">⬇️ Load Now</button>
+        <button style="background:#3a7a54; color:#fff;" onclick="loginAccount()">🔐 Log In &amp; Sync</button>
+      </div>
+    </details>
+
+    <div class="gh-link-box" id="ghLinkBox" style="display:none;">
+      <label style="margin-top:0;">🔗 Login Link mo (i-save o ipasa sa iba)</label>
+      <p class="gh-hint" style="margin-top:0;">Kopyahin ang link na ito at i-<b>Add to Home Screen</b> sa phone mo (o i-bookmark), para hindi ka na hihingan ng login kahit mag-refresh o mag-restart ng browser. Sinuman may hawak ng link na ito ay maka-a-access sa parehong data, kaya ipasa lang ito sa taong dapat may access.</p>
+      <textarea id="ghLinkOutput" readonly onclick="this.select()"></textarea>
+      <button class="gh-copy-btn" onclick="copyLoginLink()">📋 Kopyahin ang Link</button>
+    </div>
+
     <div class="modal-actions" style="margin-top:14px;">
       <button style="background:#eee;" onclick="closeGithubModal()">Close</button>
       <button style="background:#a12626; color:#fff; display:none;" id="ghLogoutBtn" onclick="logoutAccount()">Log Out</button>
-      <button style="background:var(--navy); color:#fff;" onclick="githubSave()">☁️ Save Now</button>
-      <button style="background:var(--orange); color:#fff;" onclick="githubLoad()">⬇️ Load Now</button>
-      <button style="background:#3a7a54; color:#fff;" onclick="loginAccount()">🔐 Log In &amp; Sync</button>
     </div>
     <div id="ghStatus"></div>
+  </div>
+</div>
+
+<div class="modal-overlay no-print" id="dsModal">
+  <div class="modal-box ds-modal-box">
+    <h3>🔌 Connect AI Conversations / Leads Data</h3>
+    <p class="ds-hint">Dito mo ikokonekta ang CRM na ito sa totoong lead/conversation data mula sa n8n Messenger automation mo (na naka-store sa Google Sheets). Walang ibang pwedeng magbasa nito kundi ikaw — deretso lang ito sa Apps Script URL na sarili mong dine-deploy.</p>
+    <label>Data Source Type</label>
+    <select id="dsType" onchange="dsTypeChanged()">
+      <option value="mock">Demo Data (walang koneksyon, para lang makita ang UI)</option>
+      <option value="appsscript">Google Sheets via Apps Script Web App (recommended)</option>
+      <option value="rest">Custom REST API</option>
+      <option value="firebase" disabled>Firebase (hindi pa available)</option>
+      <option value="supabase" disabled>Supabase (hindi pa available)</option>
+    </select>
+    <div id="dsUrlField">
+      <label>Web App / API URL</label>
+      <input type="text" id="dsUrl" placeholder="https://script.google.com/macros/s/XXXXX/exec">
+      <div class="ds-hint" id="dsUrlHint"></div>
+    </div>
+    <div class="modal-actions" style="margin-top:14px;">
+      <button style="background:#eee;" onclick="closeDataSourceModal()">Close</button>
+      <button style="background:var(--navy); color:#fff;" onclick="testDataSource()">🔍 Test Connection</button>
+      <button style="background:var(--orange); color:#fff;" onclick="saveDataSourceConfig()">💾 Save &amp; Reload Data</button>
+    </div>
+    <div id="dsStatus"></div>
   </div>
 </div>
 
@@ -1271,62 +1306,6 @@
       <select id="detailsVehicleSelect" onchange="renderVehicleDetails()"><option value="">— Choose a unit —</option></select>
     </div>
     <div id="detailsBody"><p class="hint" style="max-width:none;">Pumili ng vehicle sa itaas para makita ang specs, features, pros &amp; cons, at paghahambing sa ibang brands.</p></div>
-  </div>
-</div>
-
-<div id="tab-aiconvo">
-  <div class="dash-header" style="display:flex; justify-content:space-between; align-items:center; max-width:1300px;">
-    <div>
-      <h1>AI Conversations</h1>
-      <p>Messenger inbox ng AI bot — lahat ng lead at chat history, real-time mula sa Google Sheets.</p>
-    </div>
-    <div style="display:flex; gap:8px; align-items:center;">
-      <span id="aiconvoDsStatus" class="ds-status-pill ds-status-idle">Not connected</span>
-      <button onclick="dsRefreshAll()" style="background:var(--navy); color:#fff; border:none; padding:8px 14px; border-radius:6px; cursor:pointer; font-size:12px;">🔄 Refresh</button>
-    </div>
-  </div>
-  <div class="aiconvo-wrap">
-    <div class="aiconvo-list-col">
-      <div class="aiconvo-list-head">
-        <h3>Inbox (<span id="aiconvoCount">0</span>)</h3>
-        <input type="text" id="aiconvoSearchInput" placeholder="Search name, phone, FB ID, vehicle, stage..." oninput="renderAIConvoList()">
-      </div>
-      <div class="aiconvo-items" id="aiconvoItems"><p style="padding:16px; color:var(--ent-text-mut); font-size:12px;">Wala pang connected data source. Pumunta sa Sync (QR) tab para i-configure ang Google Sheet.</p></div>
-    </div>
-    <div class="aiconvo-detail-col">
-      <div class="aiconvo-thread-col">
-        <div id="aiconvoThreadHead" class="aiconvo-thread-head" style="display:none;">
-          <div>
-            <h3 id="aiconvoThreadName">—</h3>
-            <div class="sub" id="aiconvoThreadSub">—</div>
-          </div>
-          <div class="takeover-toggle-wrap" style="padding:6px 10px;">
-            <span class="takeover-label" id="aiconvoTakeoverLabel">AI Active</span>
-            <button class="takeover-toggle" id="aiconvoTakeoverBtn" onclick="toggleHumanTakeover()"></button>
-          </div>
-        </div>
-        <div id="aiconvoThreadBody" class="aiconvo-thread-empty">
-          <span style="font-size:28px;">💬</span>
-          <span>Pumili ng customer sa kaliwa para makita ang buong conversation.</span>
-        </div>
-      </div>
-      <div class="aiconvo-profile-col" id="aiconvoProfileCol">
-        <p style="color:var(--ent-text-mut); font-size:12px;">Walang napiling customer.</p>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div id="tab-pipeline">
-  <div class="dash-header" style="display:flex; justify-content:space-between; align-items:center; max-width:1500px;">
-    <div>
-      <h1>Sales Pipeline</h1>
-      <p>I-drag ang cards papunta sa susunod na stage. Awtomatikong mase-save sa data source.</p>
-    </div>
-    <button onclick="dsRefreshAll()" style="background:var(--navy); color:#fff; border:none; padding:8px 14px; border-radius:6px; cursor:pointer; font-size:12px;">🔄 Refresh</button>
-  </div>
-  <div class="pipeline-wrap">
-    <div class="pipeline-board" id="pipelineBoard"></div>
   </div>
 </div>
 
@@ -1375,7 +1354,7 @@ function toggleSidebar(){
 }
 
 function switchTab(name){
-  ['dashboard','form','quote','bulletin','details','saved','monitoring','aiconvo','pipeline','messages','sync'].forEach(n=>{
+  ['dashboard','form','quote','bulletin','details','saved','monitoring','messages','sync','inbox','pipeline'].forEach(n=>{
     document.getElementById('tab-'+n).style.display = (n===name)?'block':'none';
     document.getElementById('btn-tab-'+n).classList.toggle('active', n===name);
   });
@@ -1387,11 +1366,11 @@ function switchTab(name){
   if(name==='monitoring') renderMonitoringTable();
   if(name==='quote'){ refreshBulletinPicker(); renderQuoteSheet(); }
   if(name==='details'){ refreshDetailsPicker(); }
-  if(name==='aiconvo') renderAIConversationsTab();
-  if(name==='pipeline') renderPipelineTab();
   if(name==='messages') renderMessagesTab();
   if(name==='dashboard') renderDashboard();
-  const bcLabels = {dashboard:'Dashboard', form:'Application Form', quote:'Quotation', bulletin:'Vehicle Bulletin', details:'Vehicle Details', saved:'Saved Applications', monitoring:'Monitoring', aiconvo:'AI Conversations', pipeline:'Pipeline', messages:'Messages', sync:'Sync (QR)'};
+  if(name==='inbox') renderInboxTab();
+  if(name==='pipeline') renderPipelineTab();
+  const bcLabels = {dashboard:'Dashboard', form:'Application Form', quote:'Quotation', bulletin:'Vehicle Bulletin', details:'Vehicle Details', saved:'Saved Applications', monitoring:'Monitoring', messages:'Messages', sync:'Sync (QR)', inbox:'AI Conversations', pipeline:'Pipeline'};
   const bcEl = document.getElementById('tnBreadcrumb');
   if(bcEl) bcEl.textContent = bcLabels[name] || name;
 }
@@ -1426,21 +1405,10 @@ function tnUpdateNotifBadge(){
 function tnGlobalSearch(){
   const q = (document.getElementById('tnSearchInput').value||'').trim();
   if(!q) return;
-  const needle = q.toLowerCase();
-  // If it looks like an AI-lead match (name/phone/FB id/vehicle/stage), prefer the AI Conversations inbox
-  const leads = dsCache.leads || [];
-  const leadHit = leads.some(l => [l.customerName,l.contactNumber,l.facebookId,l.preferredUnit,l.pipelineStage].filter(Boolean).join(' ').toLowerCase().includes(needle));
-  if(leadHit){
-    switchTab('aiconvo');
-    setTimeout(()=>{
-      const input = document.getElementById('aiconvoSearchInput');
-      if(input){ input.value = q; renderAIConvoList(); }
-    }, 60);
-    return;
-  }
   switchTab('monitoring');
   setTimeout(()=>{
     const rows = document.querySelectorAll('#monitoringRows tr');
+    const needle = q.toLowerCase();
     let firstMatch = null;
     rows.forEach(row=>{
       const match = row.textContent.toLowerCase().includes(needle);
@@ -1556,7 +1524,8 @@ async function loginAccount(){
   updateAccountUI();
   await githubLoad(true);
   await githubSave(true);
-  ghShowStatus('✅ Naka-login bilang ' + email + '. Awtomatiko nang ma-sasync ang data mo sa lahat ng device na maglo-login gamit itong parehong token/repo.', true);
+  ghShowStatus('✅ Naka-login bilang ' + email + '. I-kopya ang Login Link sa ibaba para hindi ka na hihingan ulit ng login.', true);
+  showLoginLinkBox();
 }
 function logoutAccount(){
   if(!confirm('Mag-log out? Mananatili ang data dito sa device na ito, pero titigil ang auto-sync hanggang mag-login ka ulit.')) return;
@@ -1565,6 +1534,71 @@ function logoutAccount(){
   _suppressAutoSync = false;
   updateAccountUI();
   closeGithubModal();
+}
+
+// ---------------- Login Link (survives refresh / storage getting cleared on mobile browsers) ----------------
+// Encodes { email, token, repo, path } into the URL's #login= fragment so a bookmarked /
+// "Add to Home Screen" link logs a device back in automatically, even if localStorage
+// gets wiped (common on mobile in-app browsers like Messenger's, or Safari private mode).
+function buildLoginLink(){
+  const session = getLoginSession();
+  const cfg = lsGet('cl_github_config', {});
+  if(!session || !session.email || !cfg.token || !cfg.repo) return null;
+  const payload = { email: session.email, token: cfg.token, repo: cfg.repo, path: cfg.path || 'citimotors-data.json' };
+  const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
+  const base = location.origin + location.pathname;
+  return base + '#login=' + encoded;
+}
+function showLoginLinkBox(){
+  const link = buildLoginLink();
+  const box = document.getElementById('ghLinkBox');
+  if(!link || !box) return;
+  document.getElementById('ghLinkOutput').value = link;
+  box.style.display = '';
+}
+async function copyLoginLink(){
+  const ta = document.getElementById('ghLinkOutput');
+  ta.select();
+  try{
+    await navigator.clipboard.writeText(ta.value);
+    ghShowStatus('✅ Nakopya na ang Login Link. I-paste ito sa Home Screen shortcut o bookmark.', true);
+  }catch(e){
+    ghShowStatus('Hindi awtomatikong nakopya — pindutin lang nang matagal ang text box sa itaas at piliin ang "Copy".', false);
+  }
+}
+function applyLoginPayload(payload){
+  if(!payload || !payload.email || !payload.token || !payload.repo) return false;
+  _suppressAutoSync = true;
+  lsSet('cl_github_config', { token: payload.token, repo: payload.repo, path: payload.path || 'citimotors-data.json' });
+  lsSet('cl_login_session', { email: payload.email });
+  _suppressAutoSync = false;
+  return true;
+}
+function applyQuickLoginLink(){
+  const raw = document.getElementById('ghQuickLink').value.trim();
+  if(!raw){ ghShowStatus('I-paste muna ang login link na ibinigay sa iyo.', false); return; }
+  const hashIdx = raw.indexOf('#login=');
+  const encoded = hashIdx !== -1 ? raw.slice(hashIdx + '#login='.length) : raw;
+  let payload;
+  try{ payload = JSON.parse(decodeURIComponent(escape(atob(encoded)))); }
+  catch(e){ ghShowStatus('Mukhang mali o hindi kumpleto ang na-paste na link. Subukan ulit i-kopya nang buo.', false); return; }
+  if(!applyLoginPayload(payload)){ ghShowStatus('Kulang ang impormasyon sa link na ito.', false); return; }
+  updateAccountUI();
+  ghShowStatus('Naglo-login...', true);
+  githubLoad(true).then(()=>{
+    ghShowStatus('✅ Naka-login bilang ' + payload.email + '.', true);
+    showLoginLinkBox();
+    closeGithubModal();
+  });
+}
+// Auto-login from a bookmarked/home-screen link, if the URL carries one — runs on every page load.
+function applyLoginFromHash(){
+  const m = location.hash.match(/^#login=(.+)$/);
+  if(!m) return false;
+  let payload;
+  try{ payload = JSON.parse(decodeURIComponent(escape(atob(m[1])))); }
+  catch(e){ return false; }
+  return applyLoginPayload(payload);
 }
 let _autoSyncTimer = null;
 function queueAutoSync(){
@@ -2660,14 +2694,6 @@ function renderDashboard(){
   const ongoing = monitoring.filter(r=>r.status==='ONGOING').length;
   const approved = monitoring.filter(r=>r.status==='APPROVED').length;
   const declined = monitoring.filter(r=>r.status==='DECLINED').length;
-  const releasedMonitoring = monitoring.filter(r=>(r.dateRelease||'').trim()!=='').length;
-
-  const leads = dsCache.leads || [];
-  const activeAI = leads.filter(l => (l.aiStatus||'').toLowerCase()!=='paused' && (l.humanTakeover||'').toLowerCase()!=='true' && (l.humanTakeover||'')!==true).length;
-  const qualifiedLeads = leads.filter(l => (l.pipelineStage||'').toLowerCase()==='qualified').length;
-  const applicationsCount = leads.filter(l => (l.pipelineStage||'').toLowerCase()==='application').length;
-  const approvedLeads = leads.filter(l => (l.pipelineStage||'').toLowerCase()==='approved').length;
-  const releasedLeads = leads.filter(l => (l.pipelineStage||'').toLowerCase()==='released').length;
 
   const kpis = [
     {label:'Total Clients', value: monitoring.length, sub:'sa Monitoring', accent:'navy', goto:'monitoring', icon:'👥'},
@@ -2675,13 +2701,6 @@ function renderDashboard(){
     {label:'Approved', value: approved, sub:'completed deals', accent:'green', goto:'monitoring', icon:'✅'},
     {label:'Declined', value: declined, sub:'did not push through', accent:'red', goto:'monitoring', icon:'⛔'},
     {label:'Saved Applications', value: appsList.length, sub:'application forms filed', accent:'navy', goto:'saved', icon:'💾'},
-    {label:'Total Leads (AI)', value: leads.length, sub:'from Messenger bot', accent:'navy', goto:'aiconvo', icon:'🧲'},
-    {label:'Active AI Conversations', value: activeAI, sub:'AI still handling', accent:'green', goto:'aiconvo', icon:'🤖'},
-    {label:'Qualified Leads', value: qualifiedLeads, sub:'sa pipeline', accent:'gold', goto:'pipeline', icon:'🎯'},
-    {label:'Applications', value: applicationsCount, sub:'nag-apply na', accent:'navy', goto:'pipeline', icon:'📝'},
-    {label:'Approved (Pipeline)', value: approvedLeads, sub:'financing approved', accent:'green', goto:'pipeline', icon:'✅'},
-    {label:'Released', value: releasedMonitoring, sub:'na-release na ang unit (Monitoring)', accent:'green', goto:'monitoring', icon:'🚗'},
-    {label:'Released (Pipeline)', value: releasedLeads, sub:'na-release na ang unit (AI Pipeline)', accent:'green', goto:'pipeline', icon:'🚗'},
   ];
   document.getElementById('kpiGrid').innerHTML = kpis.map(k=>`
     <div class="kpi-card accent-${k.accent}" style="cursor:pointer;" onclick="switchTab('${k.goto}')">
@@ -2746,6 +2765,14 @@ function openGithubModal(){
   document.getElementById('ghRepo').value = cfg.repo || '';
   document.getElementById('ghPath').value = cfg.path || 'citimotors-data.json';
   document.getElementById('ghStatus').innerHTML = '';
+  document.getElementById('ghQuickLink').value = '';
+  document.getElementById('ghLinkBox').style.display = 'none';
+  if(isLoggedIn()){
+    showLoginLinkBox();
+    document.getElementById('ghAdvancedDetails').open = false;
+  } else {
+    document.getElementById('ghAdvancedDetails').open = false;
+  }
   document.getElementById('githubModal').classList.add('open');
 }
 function closeGithubModal(){ document.getElementById('githubModal').classList.remove('open'); }
@@ -4391,480 +4418,354 @@ async function idGeneratePrintPdf(){
   }
 }
 
-// =====================================================================================
-// ================  AI-POWERED SALES CRM — DATA SERVICE LAYER  ======================
-// =====================================================================================
-// Pluggable data source: Google Sheets today, REST API / Firebase / Supabase later —
-// none of the UI code below (AI Conversations, Pipeline, Dashboard KPIs) talks to a
-// specific backend directly. It only calls dsGetLeads()/dsGetConversations()/dsWriteUpdate().
-// Swap the adapter in dsFetchLeadsRaw()/dsFetchConvoRaw()/dsWriteUpdate() and everything
-// above keeps working unchanged.
-
-const dsCache = { leads: [], conversations: [], lastFetch: null };
-let dsConfig = { type:'googlesheets', sheetId:'1DWOMBOSK0bklfj3Flmh_GixrEXKvh2Ml3UUb4bgxuA4', leadsSheetName:'Leads', convoSheetName:'Conversations', writeUrl:'', restUrl:'' };
-let dsSelectedLeadId = null;
-let dsAutoRefreshTimer = null;
+// ================= AI Sales CRM extension =================
+// ---- Data Service Layer: swappable adapters (Mock / Google Sheets via Apps Script / REST API) ----
+const DS_CONFIG_KEY = 'cl_datasource_config';
+function getDsConfig(){ return lsGet(DS_CONFIG_KEY, {type:'mock', url:''}); }
+function setDsConfig(cfg){ lsSet(DS_CONFIG_KEY, cfg); }
 
 const PIPELINE_STAGES = ['New Lead','Contacted','Qualified','Quotation Sent','Application','Approved','Released','Lost'];
 
-function dsLoadConfig(){
-  dsConfig = lsGet('cl_ds_config', dsConfig);
-  const ids = {dsType:'type', dsSheetId:'sheetId', dsLeadsSheetName:'leadsSheetName', dsConvoSheetName:'convoSheetName', dsWriteUrl:'writeUrl', dsRestUrl:'restUrl'};
-  Object.keys(ids).forEach(elId=>{
-    const el = document.getElementById(elId);
-    if(el) el.value = dsConfig[ids[elId]] || (elId==='dsLeadsSheetName' ? 'Leads' : elId==='dsConvoSheetName' ? 'Conversations' : '');
-  });
-}
+const MOCK_LEADS = [
+  { id:'L-1001', date:'2026-08-01', name:'Juan Dela Cruz', contact:'09171234567', facebookId:'fb_1001', preferredUnit:'2026 XPANDER GLS', employmentStatus:'Employed', location:'Las Piñas City', inquiry:'Ask about monthly DP', status:'New', source:'Facebook Messenger', assignedTo:'AI', aiStatus:'Active', pipelineStage:'New Lead', lastAiReply:'Pwede po mag-DP ng 20-40%, ilan po ang gusto niyo?', lastCustomerReply:'Magkano po monthly sa 20% DP?', lastActivity:'2026-08-08 10:15', conversationCount:6, humanTakeover:false, aiSummary:'Interesado sa Xpander GLS, tinatanong ang DP options, walang budget pa na nasabi.' },
+  { id:'L-1002', date:'2026-07-28', name:'Maria Santos', contact:'09189876543', facebookId:'fb_1002', preferredUnit:'2026 MONTERO GLS', employmentStatus:'Self-Employed', location:'Parañaque City', inquiry:'Requesting quotation', status:'Qualified', source:'Facebook Messenger', assignedTo:'Agent', aiStatus:'Paused', pipelineStage:'Quotation Sent', lastAiReply:'Ito po ang quotation para sa Montero GLS.', lastCustomerReply:'Salamat, babasahin ko po.', lastActivity:'2026-08-07 15:40', conversationCount:14, humanTakeover:true, aiSummary:'Interesado sa Montero GLS, ₱200,000 downpayment budget, self-employed, hinihintay ang quotation review.' },
+  { id:'L-1003', date:'2026-07-20', name:'Pedro Reyes', contact:'09201112233', facebookId:'fb_1003', preferredUnit:'2026 MIRAGE G4 GLS CVT', employmentStatus:'Employed', location:'Muntinlupa City', inquiry:'Application submitted', status:'In Process', source:'Facebook Messenger', assignedTo:'Agent', aiStatus:'Paused', pipelineStage:'Application', lastAiReply:'—', lastCustomerReply:'Nasubmit ko na po yung requirements.', lastActivity:'2026-08-06 09:05', conversationCount:22, humanTakeover:true, aiSummary:'Na-submit na ang application para sa Mirage G4, hinihintay ang bank approval.' },
+  { id:'L-1004', date:'2026-07-10', name:'Ana Lim', contact:'09221234567', facebookId:'fb_1004', preferredUnit:'2026 TRITON GLS AT', employmentStatus:'Employed', location:'Las Piñas City', inquiry:'Loan approved, waiting for release', status:'Approved', source:'Facebook Messenger', assignedTo:'Agent', aiStatus:'Paused', pipelineStage:'Approved', lastAiReply:'—', lastCustomerReply:'Kailan po pwede i-release?', lastActivity:'2026-08-05 14:00', conversationCount:30, humanTakeover:true, aiSummary:'Approved na ang Triton GLS loan, hinihintay ang release date.' },
+  { id:'L-1005', date:'2026-06-15', name:'Carlos Tan', contact:'09231234567', facebookId:'fb_1005', preferredUnit:'2026 XFORCE GT', employmentStatus:'OFW', location:'Las Piñas City', inquiry:'Not qualified, income insufficient', status:'Lost', source:'Facebook Messenger', assignedTo:'AI', aiStatus:'Active', pipelineStage:'Lost', lastAiReply:'Pasensya na po, hindi po sapat ang income requirement.', lastCustomerReply:'Sayang naman, salamat po.', lastActivity:'2026-07-01 11:20', conversationCount:9, humanTakeover:false, aiSummary:'Interesado sa Xforce GT pero hindi naabot ang income requirement bilang OFW applicant.' }
+];
+const MOCK_CONVERSATIONS = {
+  'L-1001': [
+    { ts:'2026-08-08 09:50', sender:'customer', message:'Hi, magkano po yung Xpander GLS?', intent:'pricing_inquiry' },
+    { ts:'2026-08-08 09:51', sender:'ai', message:'Magandang araw po! Ang Xpander GLS ay nasa ₱1,259,000. Gusto niyo po ba ng sample computation?', intent:'pricing_reply' },
+    { ts:'2026-08-08 10:14', sender:'customer', message:'Opo, magkano po monthly sa 20% DP?', intent:'financing_inquiry' },
+    { ts:'2026-08-08 10:15', sender:'ai', message:'Pwede po mag-DP ng 20-40%, ilan po ang gusto niyo?', intent:'financing_reply' }
+  ],
+  'L-1002': [
+    { ts:'2026-08-07 15:10', sender:'customer', message:'Pa-quotation po ng Montero GLS.', intent:'quotation_request' },
+    { ts:'2026-08-07 15:12', sender:'ai', message:'Sige po, iproprocess ko na ang quotation niyo.', intent:'quotation_ack' },
+    { ts:'2026-08-07 15:38', sender:'agent', message:'Hi Ma\'am Maria, ito po yung quotation namin — [PDF attached].', intent:'human_reply' },
+    { ts:'2026-08-07 15:40', sender:'customer', message:'Salamat, babasahin ko po.', intent:'acknowledgement' }
+  ]
+};
 
-function dsSaveConfig(){
-  dsConfig = {
-    type: document.getElementById('dsType').value,
-    sheetId: document.getElementById('dsSheetId').value.trim(),
-    leadsSheetName: document.getElementById('dsLeadsSheetName').value.trim() || 'Leads',
-    convoSheetName: document.getElementById('dsConvoSheetName').value.trim() || 'Conversations',
-    writeUrl: document.getElementById('dsWriteUrl').value.trim(),
-    restUrl: document.getElementById('dsRestUrl').value.trim(),
-  };
-  lsSet('cl_ds_config', dsConfig);
-  dsRefreshAll();
-}
-
-function dsSetStatus(ok, msg){
-  ['aiconvoDsStatus','dsConfigStatus'].forEach(id=>{
-    const el = document.getElementById(id);
-    if(!el) return;
-    el.className = 'ds-status-pill ' + (ok===null ? 'ds-status-idle' : ok ? 'ds-status-ok' : 'ds-status-bad');
-    el.textContent = msg;
-  });
-}
-
-// ---- Google Sheets gviz JSON reader (works for any sheet shared "Anyone with the link — Viewer") ----
-async function dsFetchGoogleSheetTab(sheetId, tabName){
-  const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(tabName)}`;
-  const res = await fetch(url);
-  if(!res.ok) throw new Error('HTTP ' + res.status);
-  const text = await res.text();
-  const match = text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\);?\s*$/);
-  if(!match) throw new Error('Unexpected response mula sa Google Sheets — siguraduhing naka-share "Anyone with the link".');
-  const json = JSON.parse(match[1]);
-  const cols = json.table.cols.map(c => (c.label || c.id || '').trim());
-  const rows = (json.table.rows || []).map(r => {
-    const obj = {};
-    (r.c || []).forEach((cell, i) => { obj[cols[i]] = cell ? (cell.f !== undefined && cell.f !== null ? cell.f : cell.v) : ''; });
-    return obj;
-  });
-  return rows;
-}
-
-function dsField(row, ...names){
-  for(const n of names){
-    for(const key of Object.keys(row)){
-      if(key.toLowerCase().replace(/[^a-z0-9]/g,'') === n.toLowerCase().replace(/[^a-z0-9]/g,'')) return row[key];
-    }
-  }
-  return '';
-}
-
-function dsNormalizeLead(row){
+function normalizeLead(raw){
+  const g = (a,b)=> raw[a] ?? raw[b] ?? '';
   return {
-    leadId: String(dsField(row,'Lead ID','LeadId') || ''),
-    date: dsField(row,'Date'),
-    customerName: dsField(row,'Customer Name','Name'),
-    contactNumber: dsField(row,'Contact Number','Phone'),
-    facebookId: String(dsField(row,'Facebook ID','FacebookId','PSID') || ''),
-    preferredUnit: dsField(row,'Preferred Unit','Vehicle'),
-    employmentStatus: dsField(row,'Employment Status'),
-    location: dsField(row,'Location'),
-    inquiry: dsField(row,'Inquiry'),
-    status: dsField(row,'Status'),
-    source: dsField(row,'Source'),
-    assignedTo: dsField(row,'Assigned To') || 'Unassigned',
-    aiStatus: dsField(row,'AI Status') || 'active',
-    pipelineStage: dsField(row,'Pipeline Stage') || 'New Lead',
-    lastAiReply: dsField(row,'Last AI Reply'),
-    lastCustomerReply: dsField(row,'Last Customer Reply'),
-    lastActivity: dsField(row,'Last Activity') || dsField(row,'Date'),
-    conversationCount: Number(dsField(row,'Conversation Count')) || 0,
-    humanTakeover: String(dsField(row,'Human Takeover')).toLowerCase()==='true' || String(dsField(row,'Human Takeover')).toLowerCase()==='yes',
-    aiSummary: dsField(row,'AI Summary'),
+    id: g('Lead ID','id') || g('id','Lead ID'),
+    date: g('Date','date'),
+    name: g('Customer Name','name'),
+    contact: g('Contact Number','contact'),
+    facebookId: g('Facebook ID','facebookId'),
+    preferredUnit: g('Preferred Unit','preferredUnit'),
+    employmentStatus: g('Employment Status','employmentStatus'),
+    location: g('Location','location'),
+    inquiry: g('Inquiry','inquiry'),
+    status: g('Status','status'),
+    source: g('Source','source'),
+    assignedTo: g('Assigned To','assignedTo') || 'AI',
+    aiStatus: g('AI Status','aiStatus') || 'Active',
+    pipelineStage: g('Pipeline Stage','pipelineStage') || 'New Lead',
+    lastAiReply: g('Last AI Reply','lastAiReply'),
+    lastCustomerReply: g('Last Customer Reply','lastCustomerReply'),
+    lastActivity: g('Last Activity','lastActivity'),
+    conversationCount: Number(g('Conversation Count','conversationCount')) || 0,
+    humanTakeover: String(g('Human Takeover','humanTakeover')).toLowerCase()==='true' || g('Mode','mode')==='Human',
+    aiSummary: g('AI Summary','aiSummary')
   };
 }
 
-function dsNormalizeConvo(row){
-  return {
-    conversationId: String(dsField(row,'Conversation ID') || ''),
-    leadId: String(dsField(row,'Lead ID') || ''),
-    facebookId: String(dsField(row,'Facebook ID','FacebookId','PSID') || ''),
-    timestamp: dsField(row,'Timestamp'),
-    sender: dsField(row,'Sender') || 'Customer',
-    message: dsField(row,'Message'),
-    aiIntent: dsField(row,'AI Intent'),
-  };
-}
-
-async function dsRefreshAll(){
-  dsLoadConfig();
-  if(dsConfig.type==='googlesheets' && dsConfig.sheetId){
-    dsSetStatus(null, 'Connecting...');
-    try{
-      const [leadRows, convoRows] = await Promise.all([
-        dsFetchGoogleSheetTab(dsConfig.sheetId, dsConfig.leadsSheetName),
-        dsFetchGoogleSheetTab(dsConfig.sheetId, dsConfig.convoSheetName).catch(()=>[]),
-      ]);
-      dsCache.leads = leadRows.map(dsNormalizeLead).filter(l=>l.customerName || l.leadId);
-      dsCache.conversations = convoRows.map(dsNormalizeConvo);
-      dsCache.lastFetch = new Date();
-      dsSetStatus(true, `Connected — ${dsCache.leads.length} leads`);
-    }catch(err){
-      dsSetStatus(false, 'Connection failed: ' + err.message);
-    }
-  } else if(dsConfig.type==='restapi' && dsConfig.restUrl){
-    dsSetStatus(null, 'Connecting...');
-    try{
-      const [leadsRes, convoRes] = await Promise.all([
-        fetch(dsConfig.restUrl.replace(/\/$/,'') + '/leads').then(r=>r.json()).catch(()=>[]),
-        fetch(dsConfig.restUrl.replace(/\/$/,'') + '/conversations').then(r=>r.json()).catch(()=>[]),
-      ]);
-      dsCache.leads = (leadsRes||[]).map(dsNormalizeLead);
-      dsCache.conversations = (convoRes||[]).map(dsNormalizeConvo);
-      dsSetStatus(true, `Connected — ${dsCache.leads.length} leads`);
-    }catch(err){
-      dsSetStatus(false, 'Connection failed: ' + err.message);
-    }
-  } else {
-    dsSetStatus(null, 'Not connected — configure sa Sync (QR) tab');
-  }
-  // re-render whatever is currently visible
-  if(document.getElementById('tab-aiconvo').style.display==='block') renderAIConversationsTab();
-  if(document.getElementById('tab-pipeline').style.display==='block') renderPipelineTab();
-  if(document.getElementById('tab-dashboard').style.display==='block') renderDashboard();
-}
-
-// Writes back to Google Sheets via a small Apps Script Web App (bypasses the need for
-// OAuth/service-account credentials in client-side code). Uses text/plain to dodge the
-// CORS preflight that Apps Script doesn't handle for application/json POSTs.
-async function dsWriteUpdate(leadId, fields){
-  if(dsConfig.type==='googlesheets'){
-    if(!dsConfig.writeUrl){
-      alert('Local update lang muna ito — hindi pa naka-configure ang Write endpoint (Apps Script URL) kaya babalik sa dati pag nag-Refresh. I-setup sa Sync (QR) tab kung gusto mong permanenteng masave sa Google Sheet.');
-      return false;
-    }
-    try{
-      await fetch(dsConfig.writeUrl, {
-        method:'POST',
-        headers:{'Content-Type':'text/plain;charset=utf-8'},
-        body: JSON.stringify({ action:'updateLead', leadId, fields }),
-      });
-      return true;
-    }catch(err){
-      alert('Hindi na-save sa Google Sheet: ' + err.message);
-      return false;
-    }
-  } else if(dsConfig.type==='restapi' && dsConfig.restUrl){
-    try{
-      await fetch(dsConfig.restUrl.replace(/\/$/,'') + '/leads/' + encodeURIComponent(leadId), {
-        method:'PATCH', headers:{'Content-Type':'application/json'}, body: JSON.stringify(fields),
-      });
-      return true;
-    }catch(err){ alert('Hindi na-save: ' + err.message); return false; }
-  }
-  return false;
-}
-
-function dsDownloadAppsScript(){
-  const code = `/**
- * Citimotors AI CRM — Google Apps Script Web App
- * Deploy: Extensions > Apps Script (sa parehong Google Sheet) > paste this file >
- *   Deploy > New deployment > type "Web app" > Execute as "Me" > Who has access "Anyone" >
- *   Deploy, then copy the Web App URL into the CRM's Sync (QR) tab ("Write endpoint").
- *
- * Handles: updating a lead's Pipeline Stage / AI Status / Human Takeover / Assigned To
- * from the CRM (drag-and-drop pipeline, human-takeover toggle) so the Google Sheet used
- * by the n8n Messenger workflow always reflects what's shown in the CRM.
- *
- * IMPORTANT: When "Human Takeover" is toggled from the CRM, this ALSO updates the
- * "Chat Control" tab's "Assigned To" column (matched by Facebook ID) — that's the
- * value the n8n workflow's "Check Assigned To" node actually reads to decide whether
- * the AI should keep auto-replying. Without this, the CRM toggle only changed a label
- * in the Leads tab and never actually paused the bot.
- */
-const LEADS_SHEET_NAME = 'Leads';
-const LEAD_ID_COLUMN = 'Lead ID';
-const CHAT_CONTROL_SHEET_NAME = 'Chat Control';
-const CHAT_CONTROL_FB_COLUMN = 'Facebook ID';
-const CHAT_CONTROL_ASSIGNED_COLUMN = 'Assigned To';
-// Must match the value n8n's "Check Assigned To" / "Check Assigned To1" nodes compare against.
-const HUMAN_TAKEOVER_ASSIGNEE = 'Romeo';
-
-function doPost(e) {
-  const payload = JSON.parse(e.postData.contents);
-  if (payload.action === 'updateLead') {
-    updateLead(payload.leadId, payload.fields);
-    return ContentService.createTextOutput(JSON.stringify({ ok: true })).setMimeType(ContentService.MimeType.JSON);
-  }
-  return ContentService.createTextOutput(JSON.stringify({ ok: false, error: 'Unknown action' })).setMimeType(ContentService.MimeType.JSON);
-}
-
-function updateLead(leadId, fields) {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  const sheet = ss.getSheetByName(LEADS_SHEET_NAME);
-  const data = sheet.getDataRange().getValues();
-  const headers = data[0];
-  const idColIdx = headers.indexOf(LEAD_ID_COLUMN);
-  if (idColIdx === -1) throw new Error('Lead ID column not found');
-
-  for (let r = 1; r < data.length; r++) {
-    if (String(data[r][idColIdx]) === String(leadId)) {
-      Object.keys(fields).forEach(fieldKey => {
-        const colIdx = headers.indexOf(fieldKey);
-        if (colIdx !== -1) sheet.getRange(r + 1, colIdx + 1).setValue(fields[fieldKey]);
-      });
-      const lastActivityIdx = headers.indexOf('Last Activity');
-      if (lastActivityIdx !== -1) sheet.getRange(r + 1, lastActivityIdx + 1).setValue(new Date().toISOString());
-
-      // If Human Takeover changed, propagate it to Chat Control so the bot itself
-      // actually stops/resumes replying (not just a label change in the CRM).
-      if (Object.prototype.hasOwnProperty.call(fields, 'Human Takeover')) {
-        const fbIdx = headers.indexOf('Facebook ID');
-        const facebookId = fbIdx !== -1 ? String(data[r][fbIdx]) : '';
-        const isTakeover = String(fields['Human Takeover']).toLowerCase() === 'true' ||
-                            String(fields['Human Takeover']).toLowerCase() === 'yes';
-        if (facebookId) {
-          syncChatControlAssignedTo(ss, facebookId, isTakeover ? HUMAN_TAKEOVER_ASSIGNEE : '');
-        }
+const DataService = {
+  async getLeads(){
+    const cfg = getDsConfig();
+    if(cfg.type==='appsscript' || cfg.type==='rest'){
+      try{
+        const res = await fetch(cfg.url + (cfg.url.includes('?')?'&':'?') + 'action=leads');
+        const json = await res.json();
+        const rows = Array.isArray(json) ? json : (json.leads || json.data || []);
+        return rows.map(normalizeLead);
+      }catch(e){
+        console.error('DataService.getLeads failed, falling back to demo data', e);
+        return MOCK_LEADS;
       }
-      break;
     }
-  }
-}
-
-function syncChatControlAssignedTo(ss, facebookId, assignedToValue) {
-  const ccSheet = ss.getSheetByName(CHAT_CONTROL_SHEET_NAME);
-  if (!ccSheet) return; // sheet not set up yet — skip silently
-  const ccData = ccSheet.getDataRange().getValues();
-  const ccHeaders = ccData[0];
-  const fbColIdx = ccHeaders.indexOf(CHAT_CONTROL_FB_COLUMN);
-  let assignedColIdx = ccHeaders.indexOf(CHAT_CONTROL_ASSIGNED_COLUMN);
-  if (fbColIdx === -1) return;
-
-  // Add "Assigned To" column if it doesn't exist yet.
-  if (assignedColIdx === -1) {
-    assignedColIdx = ccHeaders.length;
-    ccSheet.getRange(1, assignedColIdx + 1).setValue(CHAT_CONTROL_ASSIGNED_COLUMN);
-  }
-
-  for (let r = 1; r < ccData.length; r++) {
-    if (String(ccData[r][fbColIdx]) === String(facebookId)) {
-      ccSheet.getRange(r + 1, assignedColIdx + 1).setValue(assignedToValue);
-      const lastUpdateIdx = ccHeaders.indexOf('Last Update');
-      if (lastUpdateIdx !== -1) ccSheet.getRange(r + 1, lastUpdateIdx + 1).setValue(new Date().toISOString());
-      return;
+    return MOCK_LEADS;
+  },
+  async getConversations(leadId){
+    const cfg = getDsConfig();
+    if(cfg.type==='appsscript' || cfg.type==='rest'){
+      try{
+        const res = await fetch(cfg.url + (cfg.url.includes('?')?'&':'?') + 'action=conversations&leadId=' + encodeURIComponent(leadId));
+        const json = await res.json();
+        const rows = Array.isArray(json) ? json : (json.conversations || json.data || []);
+        return rows.map(r=>({ ts: r['Timestamp']||r.ts, sender: (r['Sender']||r.sender||'').toLowerCase(), message: r['Message']||r.message, intent: r['AI Intent']||r.intent }));
+      }catch(e){
+        console.error('DataService.getConversations failed, falling back to demo data', e);
+        return MOCK_CONVERSATIONS[leadId] || [];
+      }
     }
+    return MOCK_CONVERSATIONS[leadId] || [];
+  },
+  async updateLead(leadId, fields){
+    const cfg = getDsConfig();
+    if(cfg.type==='appsscript' || cfg.type==='rest'){
+      try{
+        await fetch(cfg.url, { method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({ action:'updateLead', leadId, fields }) });
+        return true;
+      }catch(e){ console.error('DataService.updateLead failed', e); return false; }
+    }
+    const lead = MOCK_LEADS.find(l=>l.id===leadId);
+    if(lead) Object.assign(lead, fields);
+    return true;
+  },
+  async setHumanTakeover(leadId, facebookId, isHuman){
+    const cfg = getDsConfig();
+    if(cfg.type==='appsscript' || cfg.type==='rest'){
+      try{
+        await fetch(cfg.url, { method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify({ action:'setTakeover', facebookId, mode: isHuman?'Human':'AI' }) });
+        return true;
+      }catch(e){ console.error('DataService.setHumanTakeover failed', e); return false; }
+    }
+    const lead = MOCK_LEADS.find(l=>l.id===leadId);
+    if(lead){ lead.humanTakeover = isHuman; lead.assignedTo = isHuman?'Agent':'AI'; lead.aiStatus = isHuman?'Paused':'Active'; }
+    return true;
   }
-  // No existing Chat Control row for this customer yet — create one.
-  const newRow = [];
-  newRow[fbColIdx] = facebookId;
-  newRow[assignedColIdx] = assignedToValue;
-  const lastUpdateIdx = ccHeaders.indexOf('Last Update');
-  if (lastUpdateIdx !== -1) newRow[lastUpdateIdx] = new Date().toISOString();
-  ccSheet.appendRow(newRow);
+};
+
+// ---- Data Source settings modal ----
+function openDataSourceModal(){
+  const cfg = getDsConfig();
+  document.getElementById('dsType').value = cfg.type || 'mock';
+  document.getElementById('dsUrl').value = cfg.url || '';
+  dsTypeChanged();
+  document.getElementById('dsStatus').innerHTML = '';
+  document.getElementById('dsModal').classList.add('open');
 }
-`;
-  const blob = new Blob([code], {type:'text/plain'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = 'citimotors-crm-apps-script.gs';
-  document.body.appendChild(a); a.click(); a.remove();
-  URL.revokeObjectURL(url);
+function closeDataSourceModal(){ document.getElementById('dsModal').classList.remove('open'); }
+function dsTypeChanged(){
+  const type = document.getElementById('dsType').value;
+  const urlField = document.getElementById('dsUrlField');
+  const hint = document.getElementById('dsUrlHint');
+  urlField.style.display = (type==='appsscript' || type==='rest') ? 'block' : 'none';
+  if(type==='appsscript'){
+    hint.textContent = 'I-deploy ang ibinigay naming Google Apps Script bilang Web App (Anyone can access), tapos i-paste dito ang URL na nagsisimula sa https://script.google.com/macros/s/.../exec';
+  } else if(type==='rest'){
+    hint.textContent = 'Base URL ng sarili mong REST API na sumusunod sa parehong endpoints (?action=leads, ?action=conversations&leadId=X, POST updateLead/setTakeover).';
+  }
+}
+async function testDataSource(){
+  const type = document.getElementById('dsType').value;
+  const url = document.getElementById('dsUrl').value.trim();
+  const statusEl = document.getElementById('dsStatus');
+  if(type==='mock'){ statusEl.innerHTML = '<div class="gh-status ok">✅ Demo data mode — walang kailangang koneksyon.</div>'; return; }
+  if(!url){ statusEl.innerHTML = '<div class="gh-status err">Maglagay muna ng URL.</div>'; return; }
+  statusEl.innerHTML = '<div class="gh-status">Sinusubukan kumonekta...</div>';
+  try{
+    const res = await fetch(url + (url.includes('?')?'&':'?') + 'action=leads');
+    const json = await res.json();
+    const count = Array.isArray(json) ? json.length : (json.leads||json.data||[]).length;
+    statusEl.innerHTML = `<div class="gh-status ok">✅ Konektado! Nakita ang ${count} leads.</div>`;
+  }catch(e){
+    statusEl.innerHTML = `<div class="gh-status err">Hindi makonekta: ${escapeHtml(e.message||String(e))}</div>`;
+  }
+}
+async function saveDataSourceConfig(){
+  const type = document.getElementById('dsType').value;
+  const url = document.getElementById('dsUrl').value.trim();
+  setDsConfig({ type, url });
+  document.getElementById('dsStatus').innerHTML = '<div class="gh-status ok">✅ Na-save ang settings. Nire-reload ang data...</div>';
+  await renderInboxTab();
+  await renderPipelineTab();
+  await renderCrmStatsOnDashboard();
+  setTimeout(closeDataSourceModal, 900);
 }
 
-// ---------------- AI Conversations tab ----------------
-function renderAIConversationsTab(){
-  dsSelectedLeadId = null;
-  renderAIConvoList();
-  document.getElementById('aiconvoThreadHead').style.display = 'none';
-  document.getElementById('aiconvoThreadBody').outerHTML = '<div id="aiconvoThreadBody" class="aiconvo-thread-empty"><span style="font-size:28px;">💬</span><span>Pumili ng customer sa kaliwa para makita ang buong conversation.</span></div>';
-  document.getElementById('aiconvoProfileCol').innerHTML = '<p style="color:var(--ent-text-mut); font-size:12px;">Walang napiling customer.</p>';
-}
+// ---- AI Conversations inbox ----
+let currentInboxLeads = [];
+let currentOpenLeadId = null;
 
-function renderAIConvoList(){
-  const holder = document.getElementById('aiconvoItems');
-  const q = (document.getElementById('aiconvoSearchInput').value || '').toLowerCase();
-  let leads = dsCache.leads.slice();
-  if(q){
-    leads = leads.filter(l => [l.customerName,l.contactNumber,l.facebookId,l.preferredUnit,l.pipelineStage].filter(Boolean).join(' ').toLowerCase().includes(q));
-  }
-  leads.sort((a,b)=> new Date(b.lastActivity||0) - new Date(a.lastActivity||0));
-  document.getElementById('aiconvoCount').textContent = leads.length;
+async function renderInboxTab(){
+  const listEl = document.getElementById('inboxList');
+  listEl.innerHTML = '<div class="inbox-empty">Naglo-load...</div>';
+  currentInboxLeads = await DataService.getLeads();
+  renderInboxList(currentInboxLeads);
+}
+function renderInboxList(leads){
+  const listEl = document.getElementById('inboxList');
+  let html = `<div class="inbox-search"><input type="text" id="inboxSearchInput" placeholder="Hanapin: pangalan, contact, FB ID, vehicle..." oninput="filterInboxList(this.value)"></div>`;
   if(leads.length===0){
-    holder.innerHTML = '<p style="padding:16px; color:var(--ent-text-mut); font-size:12px;">Walang lead na nakita. Siguraduhing tama ang Sheet ID/tab names sa Sync (QR) tab, at naka-share ang Sheet.</p>';
-    return;
+    html += '<div class="inbox-empty">Walang lead na makita.</div>';
+  } else {
+    html += leads.map(l=>{
+      const initials = (l.name||'?').split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
+      return `
+      <div class="inbox-item ${l.id===currentOpenLeadId?'active':''}" onclick="openLeadConversation('${escapeHtml(l.id)}')">
+        <div class="inbox-avatar">${escapeHtml(initials)}</div>
+        <div class="inbox-meta">
+          <div class="inbox-name-row"><span class="inbox-name">${escapeHtml(l.name)}</span><span class="inbox-time">${escapeHtml((l.lastActivity||'').split(' ')[1]||'')}</span></div>
+          <div class="inbox-sub">${escapeHtml(l.preferredUnit||'—')}</div>
+          <div class="inbox-lastmsg">${escapeHtml(l.lastCustomerReply || l.lastAiReply || 'Walang mensahe pa')}</div>
+          <div class="inbox-badges">
+            <span class="chip ${l.humanTakeover?'chip-human':'chip-ai'}">${l.humanTakeover?'Human':'AI'}</span>
+            <span class="chip stage-chip">${escapeHtml(l.pipelineStage||'New Lead')}</span>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
   }
-  holder.innerHTML = leads.map(l=>{
-    const initials = (l.customerName||'?').split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
-    const aiActive = l.aiStatus.toLowerCase()!=='paused' && !l.humanTakeover;
-    return `<div class="aiconvo-item ${dsSelectedLeadId===l.leadId?'active':''}" onclick="openConversation('${escapeHtml(l.leadId)}')">
-      <div class="aiconvo-avatar">${escapeHtml(initials||'?')}</div>
-      <div class="aiconvo-item-body">
-        <div class="aiconvo-item-top">
-          <span class="aiconvo-item-name">${escapeHtml(l.customerName||'(Walang pangalan)')}</span>
-          <span class="aiconvo-item-time">${dsFormatRelTime(l.lastActivity)}</span>
-        </div>
-        <div class="aiconvo-item-veh">${escapeHtml(l.preferredUnit||'—')}</div>
-        <div class="aiconvo-item-last">${escapeHtml(l.lastCustomerReply || l.lastAiReply || l.inquiry || 'Walang message pa')}</div>
-        <div class="aiconvo-item-badges">
-          <span class="badge-pill ${aiActive?'badge-ai-active':'badge-ai-paused'}">${aiActive?'AI Active':'Manual'}</span>
-          <span class="badge-pill badge-stage">${escapeHtml(l.pipelineStage||'New Lead')}</span>
-        </div>
-      </div>
-    </div>`;
-  }).join('');
+  listEl.innerHTML = html;
 }
-
-function dsFormatRelTime(val){
-  if(!val) return '';
-  const d = new Date(val);
-  if(isNaN(d.getTime())) return String(val).slice(0,16);
-  const diffMin = Math.round((Date.now()-d.getTime())/60000);
-  if(diffMin < 1) return 'ngayon lang';
-  if(diffMin < 60) return diffMin+'m';
-  if(diffMin < 1440) return Math.round(diffMin/60)+'h';
-  return d.toLocaleDateString('en-PH',{month:'short',day:'numeric'});
-}
-
-function openConversation(leadId){
-  dsSelectedLeadId = leadId;
-  const lead = dsCache.leads.find(l=>l.leadId===leadId);
-  if(!lead) return;
-  renderAIConvoList();
-
-  document.getElementById('aiconvoThreadHead').style.display = 'flex';
-  document.getElementById('aiconvoThreadName').textContent = lead.customerName || '(Walang pangalan)';
-  document.getElementById('aiconvoThreadSub').textContent = `${lead.preferredUnit||'—'} · ${lead.pipelineStage||'New Lead'} · ${lead.contactNumber||'walang contact number'}`;
-
-  const aiActive = lead.aiStatus.toLowerCase()!=='paused' && !lead.humanTakeover;
-  const toggleBtn = document.getElementById('aiconvoTakeoverBtn');
-  toggleBtn.classList.toggle('is-manual', !aiActive);
-  document.getElementById('aiconvoTakeoverLabel').textContent = aiActive ? 'AI Active' : 'Human Takeover';
-
-  renderThread(lead);
-  renderProfile(lead);
-}
-
-function dsConvosForLead(lead){
-  // Match primarily by Facebook ID (always known from the first message) and fall back
-  // to Lead ID (only assigned once the lead is "complete") so nothing gets orphaned.
-  return dsCache.conversations.filter(c =>
-    (lead.facebookId && c.facebookId && c.facebookId===lead.facebookId) ||
-    (lead.leadId && c.leadId && c.leadId===lead.leadId)
+function filterInboxList(q){
+  q = q.toLowerCase();
+  const filtered = currentInboxLeads.filter(l=>
+    (l.name||'').toLowerCase().includes(q) ||
+    (l.contact||'').toLowerCase().includes(q) ||
+    (l.facebookId||'').toLowerCase().includes(q) ||
+    (l.preferredUnit||'').toLowerCase().includes(q) ||
+    (l.pipelineStage||'').toLowerCase().includes(q)
   );
+  renderInboxList(filtered);
 }
-
-function renderThread(lead){
-  const msgs = dsConvosForLead(lead).sort((a,b)=> new Date(a.timestamp||0) - new Date(b.timestamp||0));
-  const holder = document.getElementById('aiconvoThreadBody');
-  if(msgs.length===0){
-    holder.className = 'aiconvo-thread-empty';
-    holder.innerHTML = `<span style="font-size:28px;">📭</span><span>Walang naka-log na conversation records para kay ${escapeHtml(lead.customerName||'client na ito')} sa "${escapeHtml(dsConfig.convoSheetName)}" sheet.</span>`;
-    return;
-  }
-  holder.className = 'aiconvo-thread-body';
-  holder.innerHTML = msgs.map(m=>{
-    const isAi = (m.sender||'').toLowerCase()==='ai';
-    return `<div class="aiconvo-bubble-row ${isAi?'ai':'customer'}">
-      <div>
-        <div class="aiconvo-bubble">${escapeHtml(m.message||'')}</div>
-        <div class="aiconvo-bubble-meta" style="text-align:${isAi?'right':'left'};">${isAi?'🤖 AI':'👤 Customer'} · ${dsFormatRelTime(m.timestamp)}${m.aiIntent?' · intent: '+escapeHtml(m.aiIntent):''}</div>
+async function openLeadConversation(leadId){
+  currentOpenLeadId = leadId;
+  renderInboxList(currentInboxLeads);
+  const lead = currentInboxLeads.find(l=>l.id===leadId);
+  const panel = document.getElementById('chatPanel');
+  panel.innerHTML = '<div class="chat-empty">Naglo-load ng usapan...</div>';
+  const convo = await DataService.getConversations(leadId);
+  let html = `
+    <div class="chat-panel-header">
+      <div><h3>${escapeHtml(lead.name)}</h3><div style="font-size:11px; color:#8a93a3;">${escapeHtml(lead.preferredUnit||'—')} · ${escapeHtml(lead.pipelineStage||'New Lead')}</div></div>
+      <div class="takeover-toggle-row" style="margin:0;">
+        <span class="takeover-label">${lead.humanTakeover?'🧑 Human Takeover':'🤖 AI Active'}</span>
+        <div class="takeover-switch ${lead.humanTakeover?'human':''}" onclick="toggleHumanTakeover('${escapeHtml(leadId)}')"><div class="knob"></div></div>
       </div>
-    </div>`;
-  }).join('');
-  holder.scrollTop = holder.scrollHeight;
+    </div>
+    <div class="chat-thread">`;
+  if(convo.length===0){
+    html += '<div class="chat-empty">Walang naka-log na conversation history para dito.</div>';
+  } else {
+    html += convo.map(m=>{
+      const cls = m.sender==='customer' ? 'customer' : (m.sender==='agent' ? 'agent' : 'ai');
+      return `<div class="chat-bubble ${cls}">${escapeHtml(m.message)}<div class="cb-meta">${escapeHtml(m.ts||'')}${m.intent?' · '+escapeHtml(m.intent):''}</div></div>`;
+    }).join('');
+  }
+  html += `</div><div class="profile-panel">${renderCustomerProfileHtml(lead)}</div>`;
+  panel.innerHTML = html;
 }
-
-function renderProfile(lead){
-  const col = document.getElementById('aiconvoProfileCol');
-  const aiActive = lead.aiStatus.toLowerCase()!=='paused' && !lead.humanTakeover;
-  col.innerHTML = `
-    <div class="profile-block">
+function renderCustomerProfileHtml(lead){
+  return `
+    <div class="profile-section">
       <h4>Profile Information</h4>
-      <div class="profile-row"><span class="k">Name</span><span class="v">${escapeHtml(lead.customerName||'—')}</span></div>
-      <div class="profile-row"><span class="k">Contact Number</span><span class="v">${escapeHtml(lead.contactNumber||'—')}</span></div>
-      <div class="profile-row"><span class="k">Facebook ID</span><span class="v">${escapeHtml(lead.facebookId||'—')}</span></div>
-      <div class="profile-row"><span class="k">Preferred Unit</span><span class="v">${escapeHtml(lead.preferredUnit||'—')}</span></div>
-      <div class="profile-row"><span class="k">Employment Status</span><span class="v">${escapeHtml(lead.employmentStatus||'—')}</span></div>
-      <div class="profile-row"><span class="k">Location</span><span class="v">${escapeHtml(lead.location||'—')}</span></div>
+      <div class="profile-row"><span>Name</span><span>${escapeHtml(lead.name)}</span></div>
+      <div class="profile-row"><span>Contact Number</span><span>${escapeHtml(lead.contact)}</span></div>
+      <div class="profile-row"><span>Facebook ID</span><span>${escapeHtml(lead.facebookId)}</span></div>
+      <div class="profile-row"><span>Preferred Unit</span><span>${escapeHtml(lead.preferredUnit)}</span></div>
+      <div class="profile-row"><span>Employment Status</span><span>${escapeHtml(lead.employmentStatus)}</span></div>
+      <div class="profile-row"><span>Location</span><span>${escapeHtml(lead.location)}</span></div>
     </div>
-    <div class="profile-block">
+    <div class="profile-section">
       <h4>Lead Information</h4>
-      <div class="profile-row"><span class="k">Inquiry</span><span class="v">${escapeHtml(lead.inquiry||'—')}</span></div>
-      <div class="profile-row"><span class="k">Status</span><span class="v">${escapeHtml(lead.status||'—')}</span></div>
-      <div class="profile-row"><span class="k">Source</span><span class="v">${escapeHtml(lead.source||'—')}</span></div>
-      <div class="profile-row"><span class="k">Assigned To</span><span class="v">${escapeHtml(lead.assignedTo||'Unassigned')}</span></div>
+      <div class="profile-row"><span>Inquiry</span><span>${escapeHtml(lead.inquiry)}</span></div>
+      <div class="profile-row"><span>Status</span><span>${escapeHtml(lead.status)}</span></div>
+      <div class="profile-row"><span>Source</span><span>${escapeHtml(lead.source)}</span></div>
     </div>
-    <div class="profile-block">
+    <div class="profile-section">
       <h4>AI Information</h4>
-      <div class="profile-row"><span class="k">AI Status</span><span class="v">${escapeHtml(aiActive?'Active':'Paused / Manual')}</span></div>
-      <div class="profile-row"><span class="k">Last AI Reply</span><span class="v">${escapeHtml(lead.lastAiReply||'—')}</span></div>
-      <div class="profile-row"><span class="k">Last Customer Reply</span><span class="v">${escapeHtml(lead.lastCustomerReply||'—')}</span></div>
-      <div class="profile-row"><span class="k">Conversation Count</span><span class="v">${escapeHtml(String(dsConvosForLead(lead).length))}</span></div>
-      <div class="profile-row"><span class="k">Last Activity</span><span class="v">${dsFormatRelTime(lead.lastActivity)}</span></div>
+      <div class="profile-row"><span>AI Status</span><span>${escapeHtml(lead.aiStatus)}</span></div>
+      <div class="profile-row"><span>Last AI Reply</span><span>${escapeHtml(lead.lastAiReply)}</span></div>
+      <div class="profile-row"><span>Last Customer Reply</span><span>${escapeHtml(lead.lastCustomerReply)}</span></div>
+      <div class="profile-row"><span>Conversation Count</span><span>${escapeHtml(String(lead.conversationCount))}</span></div>
+      <div class="profile-row"><span>Last Activity</span><span>${escapeHtml(lead.lastActivity)}</span></div>
     </div>
-    <div class="profile-block">
+    <div class="profile-section">
       <h4>AI Summary</h4>
-      <div class="ai-summary-card">${lead.aiSummary ? escapeHtml(lead.aiSummary).replace(/\n/g,'<br>') : '<i>Wala pang AI summary para sa customer na ito.</i>'}</div>
+      <div class="ai-summary-card">
+        <div class="row"><span>Summary</span></div>
+        <p style="margin:6px 0 0 0; font-size:12px; line-height:1.5;">${escapeHtml(lead.aiSummary || 'Wala pang AI summary.')}</p>
+      </div>
     </div>
-  `;
+    <div class="profile-section">
+      <h4>Pipeline Stage</h4>
+      <select onchange="changeLeadStage('${escapeHtml(lead.id)}', this.value)" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:5px; font-size:12px;">
+        ${PIPELINE_STAGES.map(s=>`<option value="${s}" ${s===lead.pipelineStage?'selected':''}>${s}</option>`).join('')}
+      </select>
+    </div>`;
 }
-
-function toggleHumanTakeover(){
-  if(!dsSelectedLeadId) return;
-  const lead = dsCache.leads.find(l=>l.leadId===dsSelectedLeadId);
+async function toggleHumanTakeover(leadId){
+  const lead = currentInboxLeads.find(l=>l.id===leadId);
   if(!lead) return;
   lead.humanTakeover = !lead.humanTakeover;
-  openConversation(dsSelectedLeadId);
-  dsWriteUpdate(lead.leadId, { 'Human Takeover': lead.humanTakeover ? 'TRUE' : 'FALSE', 'AI Status': lead.humanTakeover ? 'paused' : 'active' });
+  lead.assignedTo = lead.humanTakeover ? 'Agent' : 'AI';
+  lead.aiStatus = lead.humanTakeover ? 'Paused' : 'Active';
+  await DataService.setHumanTakeover(leadId, lead.facebookId, lead.humanTakeover);
+  openLeadConversation(leadId);
+}
+async function changeLeadStage(leadId, newStage){
+  const lead = currentInboxLeads.find(l=>l.id===leadId);
+  if(lead) lead.pipelineStage = newStage;
+  await DataService.updateLead(leadId, { 'Pipeline Stage': newStage });
 }
 
-// ---------------- Pipeline (Kanban) tab ----------------
-function renderPipelineTab(){
-  const board = document.getElementById('pipelineBoard');
+// ---- Sales Pipeline (Kanban) ----
+async function renderPipelineTab(){
+  const board = document.getElementById('kanbanBoard');
+  board.innerHTML = '<p style="color:#8a93a3; padding:20px;">Naglo-load...</p>';
+  const leads = await DataService.getLeads();
   board.innerHTML = PIPELINE_STAGES.map(stage=>{
-    const cards = dsCache.leads.filter(l => (l.pipelineStage||'New Lead')===stage);
-    return `<div class="pipeline-col" data-stage="${escapeHtml(stage)}" ondragover="pcDragOver(event)" ondragleave="pcDragLeave(event)" ondrop="pcDrop(event,'${escapeHtml(stage)}')">
-      <div class="pipeline-col-head"><span>${escapeHtml(stage)}</span><span class="pipeline-col-count">${cards.length}</span></div>
-      ${cards.map(l=>`
-        <div class="pipeline-card" draggable="true" data-lead-id="${escapeHtml(l.leadId)}" ondragstart="pcDragStart(event,'${escapeHtml(l.leadId)}')" onclick="switchTab('aiconvo'); setTimeout(()=>openConversation('${escapeHtml(l.leadId)}'),50);">
-          <div class="pc-name">${escapeHtml(l.customerName||'(Walang pangalan)')}</div>
-          <div class="pc-veh">${escapeHtml(l.preferredUnit||'—')}</div>
-          <div class="pc-meta"><span>${escapeHtml(l.assignedTo||'Unassigned')}</span><span>${dsFormatRelTime(l.lastActivity)}</span></div>
-        </div>`).join('')}
+    const cards = leads.filter(l=>(l.pipelineStage||'New Lead')===stage);
+    return `
+    <div class="kanban-col">
+      <div class="kanban-col-header"><span>${escapeHtml(stage)}</span><span>${cards.length}</span></div>
+      <div class="kanban-col-body" data-stage="${escapeHtml(stage)}" ondragover="event.preventDefault(); this.classList.add('drag-over');" ondragleave="this.classList.remove('drag-over');" ondrop="onKanbanDrop(event, '${escapeHtml(stage)}')">
+        ${cards.map(l=>`
+          <div class="kanban-card" draggable="true" ondragstart="event.dataTransfer.setData('text/plain','${escapeHtml(l.id)}')" onclick="switchTab('inbox'); setTimeout(()=>openLeadConversation('${escapeHtml(l.id)}'), 50);">
+            <div class="kc-name">${escapeHtml(l.name)}</div>
+            <div class="kc-veh">${escapeHtml(l.preferredUnit||'—')}</div>
+            <div class="kc-meta"><span>${l.humanTakeover?'🧑 Human':'🤖 AI'}</span><span>${escapeHtml((l.lastActivity||'').split(' ')[0]||'')}</span></div>
+          </div>`).join('')}
+      </div>
     </div>`;
   }).join('');
 }
-
-let pcDraggedLeadId = null;
-function pcDragStart(e, leadId){ pcDraggedLeadId = leadId; e.dataTransfer.effectAllowed = 'move'; }
-function pcDragOver(e){ e.preventDefault(); e.currentTarget.classList.add('drag-over'); }
-function pcDragLeave(e){ e.currentTarget.classList.remove('drag-over'); }
-function pcDrop(e, stage){
-  e.preventDefault();
-  e.currentTarget.classList.remove('drag-over');
-  if(!pcDraggedLeadId) return;
-  const lead = dsCache.leads.find(l=>l.leadId===pcDraggedLeadId);
-  if(!lead) return;
-  lead.pipelineStage = stage;
-  lead.lastActivity = new Date().toISOString();
+async function onKanbanDrop(evt, newStage){
+  evt.preventDefault();
+  evt.currentTarget.classList.remove('drag-over');
+  const leadId = evt.dataTransfer.getData('text/plain');
+  const leads = await DataService.getLeads();
+  const lead = leads.find(l=>l.id===leadId);
+  if(lead) lead.pipelineStage = newStage;
+  await DataService.updateLead(leadId, { 'Pipeline Stage': newStage });
   renderPipelineTab();
-  dsWriteUpdate(lead.leadId, { 'Pipeline Stage': stage });
-  pcDraggedLeadId = null;
 }
 
-// init
-dsLoadConfig();
-if(dsConfig.sheetId) dsRefreshAll();
-if(dsAutoRefreshTimer) clearInterval(dsAutoRefreshTimer);
-dsAutoRefreshTimer = setInterval(()=>{ if(dsConfig.sheetId || dsConfig.restUrl) dsRefreshAll(); }, 60000);
-// =====================================================================================
+// ---- Dashboard: AI Sales stats panel ----
+async function renderCrmStatsOnDashboard(){
+  const holder = document.getElementById('crmStatsPanel');
+  if(!holder) return;
+  const leads = await DataService.getLeads();
+  const total = leads.length;
+  const activeAi = leads.filter(l=>!l.humanTakeover).length;
+  const qualified = leads.filter(l=>l.pipelineStage==='Qualified').length;
+  const applications = leads.filter(l=>l.pipelineStage==='Application').length;
+  const approved = leads.filter(l=>l.pipelineStage==='Approved').length;
+  const released = leads.filter(l=>l.pipelineStage==='Released').length;
+  const stats = [
+    {label:'Total Leads', value: total}, {label:'Active AI Conversations', value: activeAi},
+    {label:'Qualified Leads', value: qualified}, {label:'Applications', value: applications},
+    {label:'Approved', value: approved}, {label:'Released', value: released}
+  ];
+  holder.innerHTML = stats.map(s=>`
+    <div class="kpi-card accent-navy">
+      <div class="kpi-label">${escapeHtml(s.label)}</div>
+      <div class="kpi-value">${s.value}</div>
+    </div>`).join('');
+}
+
+const _cameFromLoginLink = applyLoginFromHash();
+if(_cameFromLoginLink && history.replaceState){
+  // tidy the address bar, but the bookmarked/home-screen URL itself keeps the #login= part
+  history.replaceState(null, '', location.pathname + location.search);
+}
 
 loadBulletin();
 initQuoteTab();
@@ -4872,6 +4773,7 @@ initCalendar();
 loadNotepad();
 if(lsGet('cl_sidebar_hidden', false)) document.body.classList.add('sidebar-hidden');
 updateAccountUI();
+renderCrmStatsOnDashboard();
 if(isLoggedIn()){
   githubLoad(true).finally(()=>{ updateAccountUI(); switchTab('dashboard'); });
 } else {
