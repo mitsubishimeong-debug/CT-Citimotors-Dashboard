@@ -415,7 +415,7 @@
           }
         }
       },
-      "pipelineStage": "Waiting for Requirements",
+      "pipelineStage": "Waiting for Bank Approval",
       "originSource": "Manual",
       "lostReason": ""
     }
@@ -770,5 +770,5 @@
   ],
   "calendarEvents": {},
   "notepad": "",
-  "savedAt": "2026-08-12T08:48:07.154Z"
+  "savedAt": "2026-08-12T08:48:25.670Z"
 }
