@@ -107,13 +107,138 @@
   .sig-img-holder{height:42px; display:flex; align-items:center; justify-content:center;}
   .addrow-btn{background:#eee; border:1px dashed #999; padding:3px 8px; font-size:10px; cursor:pointer; margin-top:3px;}
   .del-btn{background:#a12626; color:#fff; border:none; border-radius:3px; padding:2px 7px; cursor:pointer; font-size:11px;}
-  .bulletin-wrap, .saved-wrap, .quote-wrap{max-width:1000px; margin:0 auto; background:#fff; padding:16px; border:1px solid #ccc; overflow-x:auto;}
-  .bulletin-wrap h2, .saved-wrap h2, .quote-wrap h2{margin-top:0;}
-  .bulletin-wrap table{min-width:900px;}
-  .bulletin-wrap table input{border:1px solid #ccc; padding:5px; width:100%; font-size:11.5px;}
+  .saved-wrap, .quote-wrap{max-width:1000px; margin:0 auto; background:#fff; padding:16px; border:1px solid #ccc; overflow-x:auto;}
+  .saved-wrap h2, .quote-wrap h2{margin-top:0;}
+
+  /* ---- Vehicle Bulletin V2 — single-card premium CRM pricing manager ----
+     Visual/structural only: #bulletinSummaryPanel, #bulletinFilterInput, #bulletinRows,
+     tr.bold.center header, bl-* input classes, del-btn, and every onclick handler are
+     the exact same elements the existing JS already targets — only wrapped/restyled. */
+  .bulletin-wrap{max-width:1200px; margin:0 auto;}
+  .bulletin-card{
+    background:var(--ent-card,#fff); border:1px solid var(--ent-border,#e2e5ea);
+    border-radius:var(--ent-radius,16px); box-shadow:var(--ent-shadow,0 1px 3px rgba(0,0,0,0.04));
+    padding:20px 22px 22px 22px;
+  }
+  body.dark-mode .bulletin-card{ background:var(--ent-card); border-color:var(--ent-border); }
+  .bulletin-card-top{
+    display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap;
+    gap:16px; margin-bottom:16px; padding-bottom:16px; border-bottom:1px solid var(--ent-border,#eef0f4);
+  }
+  .bulletin-card-heading h2{ margin:0 0 3px 0; font-size:15px; font-weight:800; color:var(--ent-text,#1c3350); }
+  .bulletin-card-heading p{ margin:0; font-size:11.5px; color:var(--ent-text-mut,#667); }
+  body.dark-mode .bulletin-card-heading h2{ color:var(--ent-text); }
+  body.dark-mode .bulletin-card-heading p{ color:var(--ent-text-mut); }
+
+  /* Compact inline stat strip — same #bulletinSummaryPanel the JS writes 4 .kpi-card divs into,
+     just laid out as small pills instead of the big dashboard-style grid. ID beats .kpi-grid's
+     class rule so no !important needed. */
+  #bulletinSummaryPanel{ display:flex; flex-wrap:wrap; gap:10px; margin:0; max-width:none; }
+  #bulletinSummaryPanel .kpi-card{
+    min-height:0; padding:8px 13px; border-radius:10px; box-shadow:none;
+    background:var(--ent-bg,#f8fafc); border:1px solid var(--ent-border,#e2e5ea);
+    display:flex; align-items:center; gap:8px;
+  }
+  #bulletinSummaryPanel .kpi-card:hover{ transform:none; box-shadow:none; }
+  #bulletinSummaryPanel .kpi-icon{ width:26px; height:26px; border-radius:8px; font-size:12px; }
+  #bulletinSummaryPanel .kpi-icon svg{ width:13px; height:13px; }
+  #bulletinSummaryPanel .kpi-label{ font-size:8.5px; }
+  #bulletinSummaryPanel .kpi-value{ font-size:13.5px !important; margin-top:1px; }
+
+  .bulletin-toolbar{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:6px; }
+  .bulletin-toolbar .page-search-input{ flex:1; min-width:200px; margin-bottom:0; }
+  .bulletin-toolbar .bulletin-save-btn{ flex-shrink:0; padding:10px 18px !important; font-size:12.5px !important; }
+  .bulletin-sync-note{ font-size:10.5px; color:var(--ent-text-mut,#8a93a3); margin:0 0 14px 2px; }
+  body.dark-mode .bulletin-sync-note{ color:var(--ent-text-mut); }
+
+  .bulletin-table-scroll{ overflow-x:auto; border-radius:12px; border:1px solid var(--ent-border,#e2e5ea); }
+  .bulletin-table-scroll table{ min-width:920px; width:100%; }
+
+  /* Dark navy table header (matches the sidebar navy, not a plain gray strip) */
+  .bulletin-table-scroll table tr.bold.center td{
+    background:linear-gradient(135deg,var(--sidebar-bg,#152238) 0%, var(--sidebar-bg2,#1c3350) 100%);
+    color:rgba(255,255,255,0.92); font-size:10px; text-transform:uppercase; letter-spacing:0.06em;
+    font-weight:800; padding:12px; border-bottom:none;
+  }
+
+  .bulletin-table-scroll table td{ border:none; border-bottom:1px solid var(--ent-border,#eef0f4); padding:10px 12px; vertical-align:middle; }
+  .bulletin-table-scroll table tbody#bulletinRows tr:last-child td{ border-bottom:none; }
+  .bulletin-table-scroll table tbody#bulletinRows tr:nth-child(even) td{ background:rgba(37,99,235,0.02); }
+  body.dark-mode .bulletin-table-scroll table tbody#bulletinRows tr:nth-child(even) td{ background:rgba(255,255,255,0.02); }
+  .bulletin-table-scroll table tbody#bulletinRows tr:hover td{ background:rgba(37,99,235,0.05); }
+  body.dark-mode .bulletin-table-scroll table tbody#bulletinRows tr:hover td{ background:rgba(59,130,246,0.09); }
+
+  .bulletin-table-scroll table input{
+    border:1px solid var(--ent-border,#d7dbe2); padding:7px 9px; width:100%; font-size:12px;
+    border-radius:7px; background:#fff; font-family:inherit; color:var(--ent-text,#0F172A);
+    transition:border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .bulletin-table-scroll table input:focus{ outline:none; border-color:var(--ent-secondary,#2563EB); box-shadow:0 0 0 3px rgba(37,99,235,0.12); }
+  body.dark-mode .bulletin-table-scroll table input{ background:var(--ent-panel,#1b2534); border-color:var(--ent-border,#2c3a52); color:var(--ent-text,#e6ebf3); }
+
+  /* Vehicle name = strongest info in the row: reads like bold label text, still a real input */
+  .bulletin-table-scroll table input.bl-unit{
+    font-weight:800; font-size:12.5px; border-color:transparent; background:transparent; padding:8px 8px;
+  }
+  .bulletin-table-scroll table input.bl-unit:hover{ background:var(--ent-bg,#f8fafc); }
+  .bulletin-table-scroll table input.bl-unit:focus{ background:#fff; border-color:var(--ent-secondary,#2563EB); }
+  body.dark-mode .bulletin-table-scroll table input.bl-unit:hover{ background:rgba(255,255,255,0.04); }
+  body.dark-mode .bulletin-table-scroll table input.bl-unit:focus{ background:var(--ent-panel,#1b2534); }
+
+  /* Numeric cash-figure columns: right-aligned, tabular figures */
+  .bulletin-table-scroll table input.bl-srp, .bulletin-table-scroll table input.bl-discount,
+  .bulletin-table-scroll table input.bl-c20, .bulletin-table-scroll table input.bl-c25, .bulletin-table-scroll table input.bl-c30{
+    text-align:right; font-variant-numeric:tabular-nums; font-weight:700; color:var(--ent-primary,#0F172A);
+  }
+  body.dark-mode .bulletin-table-scroll table input.bl-srp, body.dark-mode .bulletin-table-scroll table input.bl-discount,
+  body.dark-mode .bulletin-table-scroll table input.bl-c20, body.dark-mode .bulletin-table-scroll table input.bl-c25, body.dark-mode .bulletin-table-scroll table input.bl-c30{ color:var(--ent-text,#e6ebf3); }
+
+  /* Promo as a premium green offer badge, still fully editable */
+  .bulletin-table-scroll table input.bl-promo{
+    background:rgba(16,185,129,0.10); border-color:rgba(16,185,129,0.35);
+    border-radius:20px; text-align:center; font-weight:700; font-size:11px; color:#0d7d5c;
+  }
+  .bulletin-table-scroll table input.bl-promo:focus{ background:#fff; color:#111; text-align:left; border-radius:7px; }
+  body.dark-mode .bulletin-table-scroll table input.bl-promo{ background:rgba(16,185,129,0.14); border-color:rgba(16,185,129,0.35); color:#5fd6a8; }
+  body.dark-mode .bulletin-table-scroll table input.bl-promo:focus{ background:var(--ent-panel,#1b2534); color:var(--ent-text,#e6ebf3); }
+
+  /* Actions column: compact danger icon-button */
+  .bulletin-table-scroll td.bulletin-actions-cell{ text-align:center; }
+  .bulletin-table-scroll .del-btn{
+    width:30px; height:30px; padding:0; border-radius:9px; font-size:13px;
+    display:inline-flex; align-items:center; justify-content:center;
+    background:rgba(239,68,68,0.10); color:#a12626; border:1px solid rgba(239,68,68,0.25);
+  }
+  .bulletin-table-scroll .del-btn:hover{ background:#a12626; color:#fff; }
+
+  .bulletin-footer-actions{ display:flex; gap:8px; flex-wrap:wrap; margin-top:14px; }
+  .bulletin-footer-actions .addrow-btn{
+    background:#fff !important; border:1px solid var(--ent-border,#d7dbe2) !important; color:var(--ent-text,#333) !important;
+  }
+  body.dark-mode .bulletin-footer-actions .addrow-btn{
+    background:var(--ent-panel,#1b2534) !important; border-color:var(--ent-border,#2c3a52) !important; color:var(--ent-text,#e6ebf3) !important;
+  }
   .saved-item{display:flex; justify-content:space-between; align-items:center; border:1px solid #ddd; border-radius:5px; padding:10px 12px; margin-bottom:8px;}
   .saved-item .meta{font-size:11px; color:#666;}
   .saved-item button{margin-left:6px; padding:6px 10px; border:none; border-radius:4px; cursor:pointer; font-size:12px;}
+  .page-search-input{width:100%; box-sizing:border-box; padding:10px 12px; margin-bottom:14px; border:1px solid #d7dbe2; border-radius:8px; font-size:12.5px; background:#fff;}
+  .page-search-input:focus{outline:none; border-color:var(--ent-secondary,#2563EB); box-shadow:0 0 0 3px rgba(37,99,235,0.12);}
+  .saved-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(270px,1fr)); gap:14px;}
+  .saved-card{background:var(--ent-card,#fff); border:1px solid var(--ent-border,#e2e5ea); border-radius:var(--ent-radius-sm,10px); box-shadow:var(--ent-shadow,0 1px 3px rgba(0,0,0,0.04)); padding:14px; display:flex; flex-direction:column; gap:8px; transition:box-shadow 0.15s, transform 0.15s;}
+  .saved-card:hover{box-shadow:var(--ent-shadow-hover,0 6px 16px rgba(15,23,42,0.08)); transform:translateY(-1px);}
+  .saved-card-top{display:flex; justify-content:space-between; align-items:flex-start; gap:8px;}
+  .saved-card-namewrap{display:flex; align-items:center; gap:9px; min-width:0;}
+  .saved-card-avatar{width:32px; height:32px; border-radius:9px; background:rgba(37,99,235,0.1); color:var(--ent-secondary,#2563EB); font-weight:800; font-size:13px; display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+  .saved-card-name{font-size:13.5px; font-weight:700; color:var(--ent-text,#1c3350); min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .saved-card-vehicle{font-size:12px; color:#667; margin-top:-2px; margin-left:41px;}
+  .saved-card-meta{display:flex; justify-content:space-between; font-size:11px; color:#8a93a3;}
+  .saved-card-lost{font-size:11px; color:#a12626; background:rgba(239,68,68,0.08); padding:5px 8px; border-radius:5px;}
+  .saved-card-stage{width:100%; padding:7px 8px; border:1px solid #d7dbe2; border-radius:6px; font-size:11.5px; cursor:pointer; background:#fff;}
+  .saved-card-actions{display:flex; gap:6px;}
+  .saved-card-actions button{flex:1; padding:7px 10px; border:none; border-radius:6px; cursor:pointer; font-size:12px;}
+  body.dark-mode .saved-card{background:var(--ent-panel,#1b2534); border-color:var(--ent-border,#2c3a52);}
+  body.dark-mode .saved-card-name{color:var(--ent-text,#e6ebf3);}
+  body.dark-mode .page-search-input{background:var(--ent-panel,#1b2534); border-color:var(--ent-border,#2c3a52); color:var(--ent-text,#e6ebf3);}
   .load-btn{background:var(--orange); color:#fff;}
   .del-btn2{background:#a12626; color:#fff;}
   .monitoring-wrap{max-width:1100px; margin:0 auto; background:#fff; padding:16px; border:1px solid #ccc; overflow-x:auto;}
@@ -121,21 +246,52 @@
   .monitoring-wrap table{min-width:1400px;}
   .monitoring-wrap table input, .monitoring-wrap table select, .monitoring-wrap table textarea{border:1px solid #ccc; padding:5px; width:100%; font-size:11px; font-family:inherit;}
   .monitoring-wrap textarea{resize:vertical; min-height:34px;}
-  .status-ONGOING{background:#fff3cd;}
-  .status-DECLINED{background:#f8d7da;}
-  .status-APPROVED{background:#d4edda;}
+  .status-ONGOING{background:rgba(245,158,11,0.10);}
+  .status-DECLINED{background:rgba(239,68,68,0.08);}
+  .status-APPROVED{background:rgba(16,185,129,0.10);}
+  .mon-status{border-radius:20px !important; font-weight:800; font-size:10px !important; text-transform:uppercase; letter-spacing:0.03em; text-align:center; padding:5px 6px !important; border:none !important; cursor:pointer;}
+  tr.status-ONGOING .mon-status{background:rgba(245,158,11,0.16); color:#92600a;}
+  tr.status-DECLINED .mon-status{background:rgba(239,68,68,0.14); color:#a12626;}
+  tr.status-APPROVED .mon-status{background:rgba(16,185,129,0.16); color:#0d7d5c;}
 
   .messages-wrap, .sync-wrap{max-width:1000px; margin:0 auto; background:#fff; padding:16px; border:1px solid #ccc;}
   .messages-wrap h2, .sync-wrap h2{margin-top:0;}
   .alert-box{background:#fff3cd; border:1px solid #e0c46c; border-radius:6px; padding:10px 12px; margin-bottom:8px; font-size:12.5px;}
   .alert-box.holiday{background:#d6e9ff; border-color:#8fb8e8;}
-  .template-card{border:1px solid #ddd; border-radius:6px; padding:12px; margin-bottom:12px;}
-  .template-card h4{margin:0 0 8px 0; font-size:13px; color:var(--orange);}
-  .template-card textarea{width:100%; min-height:80px; font-family:inherit; font-size:12.5px; padding:8px; border:1px solid #ccc; border-radius:4px;}
-  .template-card .copy-btn{margin-top:6px; background:var(--orange); color:#fff; border:none; padding:8px 14px; border-radius:4px; cursor:pointer; font-size:12px;}
-  .client-picker{width:100%; padding:8px; margin-bottom:12px; border:1px solid #ccc; border-radius:4px; font-size:13px;}
+  .template-card{border:1px solid #e2e5ea; border-radius:var(--ent-radius-sm,10px); padding:14px; margin-bottom:12px; background:var(--ent-card,#fff); box-shadow:var(--ent-shadow,0 1px 3px rgba(0,0,0,0.04)); transition:transform 0.15s ease, box-shadow 0.15s ease;}
+  .template-card:hover{ transform:translateY(-2px); box-shadow:var(--ent-shadow-hover,0 6px 18px rgba(0,0,0,0.08)); }
+  .template-card h4{margin:0; font-size:13px; color:var(--ent-text,#1c3350);}
+  .template-card .tpl-icon{ width:34px; height:34px; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0; background:rgba(37,99,235,0.1); color:var(--ent-secondary,#2563EB); }
+  .template-card .tpl-icon.tpl-approved{ background:rgba(16,185,129,0.14); color:var(--ent-success,#10B981); }
+  .template-card .tpl-icon.tpl-declined{ background:rgba(239,68,68,0.14); color:var(--ent-danger,#EF4444); }
+  .template-card .tpl-icon.tpl-birthday{ background:rgba(245,158,11,0.16); color:var(--ent-warning,#F59E0B); }
+  .template-card .tpl-head-text{ min-width:0; flex:1; }
+  .template-card .tpl-desc{ font-size:10.5px; color:var(--ent-text-mut,#8a93a3); margin:2px 0 0 0; }
+  .template-card .tpl-card-head{display:flex; align-items:flex-start; justify-content:space-between; gap:8px; margin-bottom:10px;}
+  .template-card .tpl-lang-tag{font-size:9.5px; font-weight:800; text-transform:uppercase; letter-spacing:0.04em; color:#8a93a3; background:rgba(100,116,139,0.12); padding:2px 8px; border-radius:20px; white-space:nowrap; flex-shrink:0;}
+  .template-card textarea{width:100%; min-height:80px; font-family:inherit; font-size:12.5px; padding:8px; border:1px solid #ccc; border-radius:6px;}
+  .template-card .copy-btn{margin-top:8px; background:var(--ent-secondary,#2563EB); color:#fff; border:none; padding:8px 14px; border-radius:7px; cursor:pointer; font-size:12px; display:inline-flex; align-items:center; gap:5px; font-weight:600;}
+  .template-card .copy-btn:hover{ background:var(--ent-accent,#3B82F6); }
+  .templates-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:14px; max-width:1200px; margin:0 auto; }
+  .client-picker{width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; font-size:13px;}
+  .msg-controls-row{display:flex; gap:16px; flex-wrap:wrap; align-items:flex-end; margin:14px 0 18px; }
+  .msg-controls-row > div:first-child{flex:1; min-width:220px;}
+  .lang-select-field{display:flex; flex-direction:column; gap:4px;}
+  .lang-select-field label{font-size:10px; text-transform:uppercase; letter-spacing:0.06em; font-weight:800; color:var(--ent-text-mut,#8a93a3);}
+  .lang-select-field select{padding:8px 30px 8px 12px; border:1px solid var(--ent-border,#d7dbe2); border-radius:7px; font-size:12.5px; font-weight:600; color:var(--ent-text,#1c3350); background:#fff; cursor:pointer; min-width:150px;}
+  .lang-select-field select:focus{outline:none; border-color:var(--ent-secondary,#2563EB); box-shadow:0 0 0 3px rgba(37,99,235,0.12);}
+  body.dark-mode .lang-select-field select{background:var(--ent-panel,#1b2534); border-color:var(--ent-border,#2c3a52); color:var(--ent-text,#e6ebf3);}
   .sync-box{background:var(--navy); color:#fff; padding:16px; border-radius:8px; margin-bottom:14px;}
   .sync-box button{background:var(--orange); color:#fff; border:none; padding:10px 16px; border-radius:5px; cursor:pointer; font-size:13px; margin-right:8px; margin-top:8px;}
+  .sync-status-card{background:#fff; border:1px solid #e2e5ea; border-radius:10px; padding:16px; margin-bottom:16px;}
+  .sync-stat-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(190px,1fr)); gap:14px;}
+  .sync-stat-label{font-size:10.5px; text-transform:uppercase; letter-spacing:0.05em; color:#8a93a3; margin-bottom:4px; font-weight:700;}
+  .sync-stat-value{font-size:13px; font-weight:600; color:var(--ent-text,#1c3350); display:flex; align-items:center; gap:6px;}
+  .status-dot{display:inline-block; width:8px; height:8px; border-radius:50%; flex-shrink:0;}
+  .status-dot.dot-live{background:#10b981; box-shadow:0 0 0 3px rgba(16,185,129,0.18);}
+  .status-dot.dot-local{background:#94a3b8; box-shadow:0 0 0 3px rgba(148,163,184,0.18);}
+  body.dark-mode .sync-status-card{background:var(--ent-panel,#1b2534); border-color:var(--ent-border,#2c3a52);}
+  body.dark-mode .sync-stat-value{color:var(--ent-text,#e6ebf3);}
   #qrDisplay{background:#fff; padding:14px; border-radius:8px; text-align:center; margin-top:10px;}
   #qrDisplay img, #qrDisplay canvas{margin:0 auto;}
   #qrScanVideo{width:100%; max-width:360px; border-radius:8px; display:block; margin:10px auto;}
@@ -164,8 +320,10 @@
   .inbox-shell{display:grid; grid-template-columns:320px 1fr; gap:14px; max-width:1300px; margin:0 auto; align-items:start;}
   @media (max-width:900px){ .inbox-shell{grid-template-columns:1fr;} }
   .inbox-list{background:#fff; border:1px solid #e2e5ea; border-radius:10px; max-height:78vh; overflow-y:auto;}
-  .inbox-search{padding:10px; border-bottom:1px solid #eee; position:sticky; top:0; background:#fff; z-index:2;}
+  .inbox-search{padding:10px 10px 0 10px; border-bottom:none; position:sticky; top:0; background:#fff; z-index:2;}
   .inbox-search input{width:100%; padding:8px 10px; border:1px solid #ccc; border-radius:6px; font-size:12.5px;}
+  .inbox-filter-row{display:flex; gap:8px; padding:8px 10px 10px 10px; border-bottom:1px solid #eee; position:sticky; top:38px; background:#fff; z-index:2;}
+  .inbox-filter-row select{flex:1; padding:6px 8px; border:1px solid #ccc; border-radius:6px; font-size:11.5px; background:#fff; min-width:0;}
   .inbox-item{display:flex; gap:10px; padding:12px; border-bottom:1px solid #f0f1f3; cursor:pointer; align-items:flex-start;}
   .inbox-item:hover{background:#f7f8fa;}
   .inbox-item.active{background:#fdf3e4; border-left:3px solid var(--orange);}
@@ -322,6 +480,184 @@
   }
   @media print{ .topnav{ display:none !important; } }
 
+  /* ================= PART 1 REDESIGN: premium dashboard polish (additive only) ================= */
+
+  /* Sidebar section grouping labels */
+  .sidebar-nav-label{ font-size:9.5px; font-weight:800; letter-spacing:0.09em; text-transform:uppercase; color:#5c6b85; padding:14px 12px 5px 12px; }
+  .sidebar-nav-label:first-child{ padding-top:2px; }
+
+  /* Status-specific KPI accents for the Sales Pipeline Overview */
+  .kpi-card.accent-slate{ border-left:4px solid #64748B; }
+  .kpi-card.accent-slate .kpi-icon{ background:rgba(100,116,139,0.14); }
+  .kpi-card.accent-blue{ border-left:4px solid var(--ent-secondary,#2563EB); }
+  .kpi-card.accent-blue .kpi-icon{ background:rgba(37,99,235,0.12); }
+  .kpi-card.accent-amber{ border-left:4px solid var(--ent-warning,#F59E0B); }
+  .kpi-card.accent-amber .kpi-icon{ background:rgba(245,158,11,0.14); }
+  .kpi-card.accent-teal{ border-left:4px solid #0d9488; }
+  .kpi-card.accent-teal .kpi-icon{ background:rgba(13,148,136,0.14); }
+  .kpi-card{ min-height:78px; }
+  .kpi-card .kpi-icon{ font-size:16px; }
+
+  /* Dashboard panel header row (icon-title + optional action buttons) */
+  .dash-panel-head{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px; flex-wrap:wrap; }
+  .dash-panel-head h3{ margin:0; display:flex; align-items:center; gap:8px; }
+  .dash-panel-head .dph-actions{ display:flex; gap:8px; }
+
+  /* Quick action buttons — icon-circle premium treatment */
+  .quick-action-btn{ padding:18px 16px; gap:10px; transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease; }
+  .quick-action-btn:hover{ transform:translateY(-2px); box-shadow:var(--ent-shadow-hover,0 6px 18px rgba(0,0,0,0.08)); }
+  .quick-action-btn .qa-icon{ width:40px; height:40px; border-radius:12px; background:rgba(37,99,235,0.1); display:flex; align-items:center; justify-content:center; font-size:18px; }
+  body.dark-mode .quick-action-btn .qa-icon{ background:rgba(59,130,246,0.16); }
+
+  /* Section eyebrow used on the Sales Pipeline Overview / Source Breakdown headers */
+  .dash-section-label{ font-size:10.5px; color:var(--ent-text-mut,#8a93a3); text-transform:uppercase; letter-spacing:0.06em; font-weight:800; margin:18px 0 8px 0; display:flex; align-items:center; gap:6px; }
+
+  /* Professional empty states (Reminders / Recent Activity / Status Breakdown) */
+  .dash-empty{ display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:26px 10px; color:var(--ent-text-mut,#8a93a3); }
+  .dash-empty .de-icon{ font-size:22px; margin-bottom:6px; opacity:0.6; }
+  .dash-empty .de-text{ font-size:12px; }
+
+  /* Recent Activity row polish */
+  .activity-row{ display:flex; align-items:center; gap:10px; padding:9px 4px; border-radius:8px; transition:background 0.15s ease; }
+  .activity-row:hover{ background:var(--ent-bg,#f7f8fa); }
+  .activity-row .a-avatar{ width:30px; height:30px; border-radius:9px; background:linear-gradient(135deg,var(--ent-secondary,#2563EB),var(--ent-accent,#3B82F6)); color:#fff; font-weight:800; font-size:11px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .activity-row .a-body{ min-width:0; flex:1; }
+  .activity-row .a-name{ display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+  /* Alert / reminder rows on the dashboard */
+  .alert-box{ border-radius:9px; }
+
+  /* Portfolio / system credit — subtle, non-intrusive */
+  .dash-credit-footer{ max-width:1200px; margin:6px auto 0 auto; text-align:center; padding:10px 0 2px 0; font-size:10px; color:var(--ent-text-mut,#a3abb8); letter-spacing:0.02em; }
+  .dash-credit-footer b{ color:#8a93a3; font-weight:700; }
+  body.dark-mode .dash-credit-footer{ color:#5c6b85; }
+
+  @media (max-width:700px){
+    .kpi-grid{ grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; }
+    .quick-actions{ gap:8px; }
+  }
+
+  /* ================= PART 2 — EXECUTIVE ANALYTICS ADD-ONS ================= */
+
+  /* KPI trend line (vs previous period) — only rendered when real historical data exists */
+  .kpi-trend{ font-size:10.5px; font-weight:700; margin-top:3px; display:flex; align-items:center; gap:3px; }
+  .kpi-trend.up{ color:var(--ent-success,#10B981); }
+  .kpi-trend.down{ color:var(--ent-danger,#EF4444); }
+  .kpi-trend.flat{ color:var(--ent-text-mut,#8a93a3); }
+
+  /* Pipeline Conversion funnel */
+  .funnel-wrap{ display:flex; flex-direction:column; gap:8px; max-width:1200px; margin:0 auto; }
+  .funnel-row{ display:grid; grid-template-columns:150px 1fr 46px; align-items:center; gap:10px; }
+  .funnel-row .fr-label{ font-size:11.5px; font-weight:700; color:var(--ent-text,#1c3350); display:flex; align-items:center; gap:6px; }
+  .funnel-row .fr-track{ background:var(--ent-bg,#F1F5F9); border-radius:8px; height:22px; overflow:hidden; position:relative; }
+  .funnel-row .fr-fill{ height:100%; border-radius:8px; transition:width 0.4s ease; min-width:2px; }
+  .funnel-row .fr-count{ font-size:12px; font-weight:800; color:var(--ent-text,#1c3350); text-align:right; }
+  body.dark-mode .funnel-row .fr-track{ background:rgba(255,255,255,0.06); }
+  .funnel-arrow{ text-align:center; font-size:11px; color:var(--ent-text-mut,#94a3b8); margin:-2px 0; }
+  .funnel-lost-card{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:6px; padding:10px 14px; border-radius:10px; background:rgba(239,68,68,0.07); border:1px solid rgba(239,68,68,0.18); }
+  .funnel-lost-card .fl-label{ font-size:11.5px; font-weight:700; color:var(--ent-danger,#EF4444); }
+  .funnel-lost-card .fl-count{ font-size:15px; font-weight:800; color:var(--ent-danger,#EF4444); }
+
+  /* Source Performance comparison */
+  .source-perf{ display:flex; flex-direction:column; gap:12px; max-width:1200px; margin:0 auto; }
+  .sp-row .sp-head{ display:flex; justify-content:space-between; align-items:baseline; font-size:12px; margin-bottom:5px; }
+  .sp-row .sp-name{ font-weight:800; color:var(--ent-text,#1c3350); display:flex; align-items:center; gap:6px; }
+  .sp-row .sp-stat{ font-size:11px; color:var(--ent-text-mut,#8a93a3); }
+  .sp-row .sp-track{ background:var(--ent-bg,#F1F5F9); border-radius:8px; height:14px; overflow:hidden; }
+  .sp-row .sp-fill{ height:100%; border-radius:8px; transition:width 0.4s ease; min-width:2px; }
+  body.dark-mode .sp-row .sp-track{ background:rgba(255,255,255,0.06); }
+
+  /* Compact Quick Actions grid (6 modules) */
+  .qa-grid{ max-width:1200px; margin:0 auto 18px auto; display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:10px; }
+  .qa-grid .quick-action-btn{ padding:14px 10px; min-width:0; }
+  .qa-grid .qa-icon{ width:34px; height:34px; font-size:15px; }
+
+  /* Status Breakdown time filter */
+  .time-filter-bar{ display:flex; gap:6px; flex-wrap:wrap; }
+  .time-filter-btn{ font-size:10.5px; font-weight:700; padding:5px 11px; border-radius:20px; border:1px solid var(--ent-border,#e2e5ea); background:transparent; color:var(--ent-text-mut,#64748B); cursor:pointer; transition:all 0.15s ease; }
+  .time-filter-btn:hover{ border-color:var(--ent-secondary,#2563EB); color:var(--ent-secondary,#2563EB); }
+  .time-filter-btn.active{ background:var(--ent-secondary,#2563EB); border-color:var(--ent-secondary,#2563EB); color:#fff; }
+
+  /* Reminders — priority-tagged rows for faster scanning */
+  .reminder-row{ display:flex; align-items:flex-start; gap:10px; border-radius:9px; padding:10px 12px; margin-bottom:8px; cursor:pointer; }
+  .reminder-row:last-child{ margin-bottom:0; }
+  .reminder-row .rr-tag{ flex-shrink:0; font-size:9px; font-weight:800; text-transform:uppercase; letter-spacing:0.03em; padding:3px 8px; border-radius:20px; white-space:nowrap; }
+  .reminder-row .rr-text{ font-size:12px; line-height:1.4; }
+
+  @media (max-width:700px){
+    .funnel-row{ grid-template-columns:110px 1fr 36px; gap:6px; }
+  }
+
+  /* ================= PART 1.5 — GLOBAL CRM DESIGN SYSTEM ================= */
+
+  /* ---- Unified page header (breadcrumb lives in the persistent topnav already) ---- */
+  .page-header{ max-width:1200px; margin:0 auto 18px auto; display:flex; align-items:flex-end; justify-content:space-between; gap:14px; flex-wrap:wrap; }
+  .page-header .ph-title h1{ font-size:20px; margin:0 0 4px 0; color:var(--ent-text,#1c3350); }
+  .page-header .ph-title p{ font-size:12px; color:var(--ent-text-mut,#667); margin:0; max-width:56ch; }
+  .page-header .ph-actions{ display:flex; gap:8px; flex-wrap:wrap; }
+  body.dark-mode .page-header .ph-title h1{ color:var(--ent-text); }
+  body.dark-mode .page-header .ph-title p{ color:var(--ent-text-mut); }
+  @media (max-width:700px){ .page-header{ flex-direction:column; align-items:flex-start; } }
+  .form-section-nav{ max-width:1000px; margin:0 auto 10px auto; display:flex; gap:6px; flex-wrap:wrap; position:sticky; top:0; z-index:5; background:var(--ent-bg,#f4f6f9); padding:6px 0; }
+  .form-section-nav button{ background:#fff; border:1px solid #d7dbe2; color:#445; padding:7px 12px; border-radius:20px; font-size:11.5px; font-weight:600; cursor:pointer; transition:background 0.15s, color 0.15s, border-color 0.15s; }
+  .form-section-nav button:hover{ background:var(--navy,#1c3350); color:#fff; border-color:var(--navy,#1c3350); }
+  body.dark-mode .form-section-nav button{ background:var(--ent-panel,#1b2534); border-color:var(--ent-border,#2c3a52); color:var(--ent-text,#e6ebf3); }
+
+  /* ---- Unified button system (cascades onto existing button classes — no HTML rewrite needed) ---- */
+  .toolbar button, .addrow-btn, .cal-add-form button, .bcd-btn{
+    border-radius:9px !important; font-weight:700 !important; letter-spacing:0.01em;
+    transition: transform 0.1s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+    box-shadow:0 1px 2px rgba(15,23,42,0.06);
+  }
+  .toolbar button:hover, .addrow-btn:hover{ transform:translateY(-1px); box-shadow:0 4px 10px rgba(15,23,42,0.12); opacity:0.96; }
+  .toolbar button:active, .addrow-btn:active{ transform:translateY(0); }
+  .btn-primary, .toolbar button:not(.secondary):not(.navy){ background:var(--ent-secondary,#2563EB) !important; color:#fff !important; border:none !important; }
+  .btn-danger{ background:var(--ent-danger,#EF4444) !important; color:#fff !important; border:none !important; }
+  .btn-success{ background:var(--ent-success,#10B981) !important; color:#fff !important; border:none !important; }
+  .btn-ghost{ background:transparent !important; border:1px solid var(--ent-border,#e2e5ea) !important; color:var(--ent-text,#333) !important; }
+
+  /* ---- Unified status badge system ---- */
+  .status-badge{ display:inline-flex; align-items:center; gap:5px; font-size:10px; font-weight:800; letter-spacing:0.03em; text-transform:uppercase; padding:4px 10px; border-radius:20px; white-space:nowrap; }
+  .status-badge.st-lead{ background:rgba(100,116,139,0.14); color:#475569; }
+  .status-badge.st-qualified, .status-badge.st-application{ background:rgba(37,99,235,0.12); color:#1d4ed8; }
+  .status-badge.st-waiting{ background:rgba(245,158,11,0.16); color:#92600a; }
+  .status-badge.st-approved{ background:rgba(16,185,129,0.16); color:#0d7d5c; }
+  .status-badge.st-released{ background:rgba(13,148,136,0.16); color:#0a6b62; }
+  .status-badge.st-lost, .status-badge.st-declined{ background:rgba(239,68,68,0.14); color:#a12626; }
+  .status-badge.st-ongoing{ background:rgba(195,162,107,0.22); color:#8a5a1c; }
+  /* Re-skin existing ad-hoc chips/badges to the same language without touching their HTML */
+  .stage-chip, .chip{ border-radius:20px !important; font-weight:800 !important; }
+  .kanban-card .kc-manual-badge{ border-radius:20px; }
+
+  /* ---- Unified card language for existing "-wrap" containers (Bulletin, Saved, Monitoring, Messages, Sync) ---- */
+  .bulletin-wrap, .saved-wrap, .monitoring-wrap, .messages-wrap, .sync-wrap, .quote-wrap{ max-width:1200px; margin:0 auto; }
+  .bulletin-wrap > table, .monitoring-wrap > table{ background:var(--ent-card,#fff); border-radius:var(--ent-radius-sm,10px); overflow:hidden; box-shadow:var(--ent-shadow,0 1px 3px rgba(0,0,0,0.04)); border:1px solid var(--ent-border,#e2e5ea); }
+  body.dark-mode .bulletin-wrap > table, body.dark-mode .monitoring-wrap > table{ background:var(--ent-card); border-color:var(--ent-border); color:var(--ent-text); }
+
+  /* ---- Unified table system ---- */
+  table{ border-collapse:collapse; }
+  .monitoring-wrap table tr.bold.center, .bulletin-wrap table tr.bold.center{ position:sticky; top:0; background:var(--ent-bg,#f8fafc); z-index:1; }
+  .monitoring-wrap table td, .bulletin-wrap table td{ transition:background 0.12s ease; }
+  .monitoring-wrap table tr:hover td, .bulletin-wrap table tr:hover td{ background:rgba(37,99,235,0.04); }
+  body.dark-mode .monitoring-wrap table tr:hover td, body.dark-mode .bulletin-wrap table tr:hover td{ background:rgba(59,130,246,0.08); }
+
+  /* ---- Unified modal system ---- */
+  .ds-modal-box, .gh-modal-box{ border-radius:var(--ent-radius,16px) !important; box-shadow:0 20px 50px rgba(15,23,42,0.25) !important; }
+
+  /* ---- Loading skeleton (used where a page briefly shows "Loading...") ---- */
+  .skeleton-line{ height:12px; border-radius:6px; background:linear-gradient(90deg, #eceff3 25%, #f6f7f9 37%, #eceff3 63%); background-size:400% 100%; animation:skeleton-shine 1.4s ease infinite; margin-bottom:8px; }
+  @keyframes skeleton-shine{ 0%{background-position:100% 50%;} 100%{background-position:0 50%;} }
+  body.dark-mode .skeleton-line{ background:linear-gradient(90deg, #1a2740 25%, #223050 37%, #1a2740 63%); background-size:400% 100%; }
+
+  /* ---- Section title cards used across Bulletin/Monitoring/etc. ---- */
+  .bulletin-wrap h2, .saved-wrap h2, .monitoring-wrap h2, .messages-wrap h2, .sync-wrap h2{
+    font-size:18px; color:var(--ent-text,#1c3350); margin:0 0 4px 0;
+  }
+  body.dark-mode .bulletin-wrap h2, body.dark-mode .saved-wrap h2, body.dark-mode .monitoring-wrap h2, body.dark-mode .messages-wrap h2, body.dark-mode .sync-wrap h2{ color:var(--ent-text); }
+  .bulletin-wrap .hint, .monitoring-wrap .hint, .messages-wrap .hint, .sync-wrap .hint{
+    background:var(--ent-bg,#fffbe0); border-color:var(--ent-border,#e0d38a); border-radius:9px;
+  }
+
   /* ---- GitHub Cloud Sync modal ---- */
   .gh-modal-box{max-width:440px;}
   .gh-modal-box label{font-size:11.5px; font-weight:700; color:#333; display:block; margin:10px 0 4px;}
@@ -346,18 +682,80 @@
   /* ---- Vehicle Specs modal ---- */
   .specs-modal-box{max-width:480px; max-height:80vh; overflow-y:auto;}
   .specs-modal-box h3{margin-top:0; color:var(--navy);}
-  .specs-group{margin-bottom:12px;}
-  .specs-group h4{font-size:11px; text-transform:uppercase; letter-spacing:0.06em; color:var(--orange); margin:0 0 6px 0; border-bottom:1px solid #eee; padding-bottom:3px;}
-  .specs-row{display:flex; justify-content:space-between; font-size:12px; padding:3px 0;}
-  .specs-row span:first-child{color:#666;}
-  .specs-row span:last-child{font-weight:700; text-align:right; max-width:60%;}
+
+  /* ---- Vehicle Details page: modern CRM info-module cards ---- */
+  .vdetails-wrap{max-width:1200px; margin:0 auto;}
+  /* ---- Two-column layout: left = image/name/price card, right = spec cards ---- */
+  .vdetails-main-grid{display:grid; grid-template-columns:360px 1fr; gap:16px; align-items:start; margin-bottom:14px;}
+  @media (max-width:1000px){ .vdetails-main-grid{grid-template-columns:1fr;} }
+  .vdetails-left-col{background:var(--ent-card,#fff); border:1px solid var(--ent-border,#e2e5ea); border-radius:var(--ent-radius-sm,10px); box-shadow:var(--ent-shadow,0 1px 3px rgba(0,0,0,0.04)); padding:16px; display:flex; flex-direction:column; gap:12px;}
+  .vlc-select-label{display:block; font-size:10px; text-transform:uppercase; letter-spacing:0.06em; font-weight:800; color:var(--ent-text-mut,#64748B); margin-bottom:6px;}
+  .vdetails-left-col select{width:100%; padding:9px 10px; border:1px solid var(--ent-border,#d7dbe2); border-radius:7px; font-size:12.5px; background:#fff; color:var(--ent-text,#0F172A);}
+  .vlc-name{font-size:17.5px; font-weight:800; color:var(--ent-text,#0F172A); margin:0; line-height:1.3;}
+  .vlc-price{font-size:22px; font-weight:800; color:var(--ent-secondary,#2563EB); margin:0;}
+  .vlc-price .vlc-srp-tag{font-size:10px; font-weight:700; color:var(--ent-text-mut,#94a3b8); margin-left:5px; text-transform:uppercase; letter-spacing:0.04em;}
+  body.dark-mode .vdetails-left-col{background:var(--ent-panel,#1b2534); border-color:var(--ent-border,#2c3a52);}
+  body.dark-mode .vdetails-left-col select{background:var(--ent-panel,#1b2534); border-color:var(--ent-border,#2c3a52); color:var(--ent-text,#e6ebf3);}
+  body.dark-mode .vlc-name{color:var(--ent-text,#e6ebf3);}
+  /* ---- Vehicle image card (Part 5 — image system preparation) ---- */
+  .vdetails-image-card{background:var(--ent-bg,#f1f5f9); border:1px solid var(--ent-border,#e2e5ea); border-radius:var(--ent-radius,16px); overflow:hidden; display:flex; align-items:center; justify-content:center; min-height:380px; padding:0;}
+  .vdetails-image-card .vdetails-image{display:block; width:100%; height:100%; object-fit:cover;}
+  .vdetails-image-card .vdetails-image-placeholder{display:none; flex-direction:column; align-items:center; justify-content:center; gap:10px; color:var(--ent-text-mut,#94a3b8); width:100%; height:100%; min-height:380px;}
+  .vdetails-image-card .vdetails-image-placeholder svg{width:76px; height:76px; opacity:0.4;}
+  .vdetails-image-card .vdetails-image-placeholder .vip-label{font-weight:700; font-size:14px; color:var(--ent-text,#334155);}
+  .vdetails-image-card .vdetails-image-placeholder .vip-sub{font-size:12.5px;}
+  body.dark-mode .vdetails-image-card{background:var(--ent-panel,#1b2534); border-color:var(--ent-border,#2c3a52);}
+  body.dark-mode .vdetails-image-card .vdetails-image-placeholder .vip-label{color:var(--ent-text,#e6ebf3);}
+  .specs-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px;}
+  @media (max-width:700px){ .specs-grid{grid-template-columns:1fr;} }
+  .specs-group{background:var(--ent-card,#fff); border:1px solid var(--ent-border,#e2e5ea); border-radius:var(--ent-radius-sm,10px); box-shadow:var(--ent-shadow,0 1px 3px rgba(0,0,0,0.04)); padding:14px 16px; margin:0;}
+  .specs-group.specs-full{grid-column:1 / -1;}
+  .specs-group h4{display:flex; align-items:center; gap:7px; font-size:10.5px; text-transform:uppercase; letter-spacing:0.07em; font-weight:800; color:var(--ent-text-mut,#64748B); margin:0 0 10px 0; padding-bottom:8px; border-bottom:1px solid var(--ent-border,#eef0f4);}
+  .specs-group h4 .sg-ic{width:26px; height:26px; border-radius:8px; background:rgba(37,99,235,0.1); color:var(--ent-secondary,#2563EB); display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+  .specs-group h4 .sg-ic svg{width:14px; height:14px;}
+  .specs-row{display:flex; justify-content:space-between; align-items:baseline; gap:10px; font-size:12px; padding:5px 0; border-bottom:1px dashed var(--ent-border,#eef0f4);}
+  .specs-row:last-child{border-bottom:none;}
+  .specs-row span:first-child{color:var(--ent-text-mut,#667); flex-shrink:0;}
+  .specs-row span:last-child{font-weight:700; color:var(--ent-text,#0F172A); text-align:right; max-width:60%;}
   .specs-btn{background:var(--navy); color:#fff; border:none; border-radius:4px; padding:4px 9px; font-size:10.5px; cursor:pointer;}
-  .compare-table{width:100%; border-collapse:collapse; margin-top:8px; font-size:11.5px;}
-  .compare-table th{background:var(--navy); color:#fff; padding:7px 8px; text-align:center; font-size:11px;}
-  .compare-table td{padding:6px 8px; border-bottom:1px solid #eee; text-align:center;}
-  .compare-table .cmp-label{text-align:left; font-weight:700; color:#555; background:#f7f7f8;}
-  .compare-table .cmp-better{color:#1e7a3d; font-weight:800; background:#e9f7ee;}
-  .compare-table .cmp-worse{color:#8a1f1f; font-weight:600;}
+  .specs-swatches{display:flex; flex-wrap:wrap; gap:8px; margin-top:2px;}
+  .specs-swatch{width:26px; height:26px; border-radius:50%; border:1px solid rgba(0,0,0,0.15); box-shadow:0 1px 2px rgba(0,0,0,0.12); flex-shrink:0;}
+  body.dark-mode .specs-group{background:var(--ent-panel,#1b2534); border-color:var(--ent-border,#2c3a52);}
+  body.dark-mode .specs-group h4{color:var(--ent-text-mut,#93A2B8); border-color:var(--ent-border,#2c3a52);}
+  body.dark-mode .specs-row{border-color:rgba(255,255,255,0.06);}
+  body.dark-mode .specs-row span:last-child{color:var(--ent-text,#e6ebf3);}
+
+  /* ---- Competitor comparison: premium comparison card ---- */
+  .compare-card{background:var(--ent-card,#fff); border:1px solid var(--ent-border,#e2e5ea); border-radius:var(--ent-radius-sm,10px); box-shadow:var(--ent-shadow,0 1px 3px rgba(0,0,0,0.04)); overflow:hidden; margin-top:10px;}
+  .compare-card-head{display:grid; grid-template-columns:1fr 1fr; background:linear-gradient(135deg,var(--navy,#152238) 0%,var(--sidebar-bg2,#1c3350) 100%);}
+  .compare-card-head .cch-side{padding:14px 16px; text-align:center;}
+  .compare-card-head .cch-side + .cch-side{border-left:1px solid rgba(255,255,255,0.14);}
+  .compare-card-head .cch-tag{font-size:9px; text-transform:uppercase; letter-spacing:0.08em; font-weight:800; opacity:0.75; margin-bottom:3px;}
+  .compare-card-head .cch-own .cch-tag{color:#8fd6a8;}
+  .compare-card-head .cch-rival .cch-tag{color:#c3a26b;}
+  .compare-card-head .cch-name{color:#fff; font-size:13px; font-weight:700; line-height:1.3;}
+  .compare-table{width:100%; border-collapse:collapse; font-size:11.5px;}
+  .compare-table td{padding:8px 10px; border-bottom:1px solid var(--ent-border,#eef0f4); text-align:center;}
+  .compare-table tr:last-child td{border-bottom:none;}
+  .compare-table tr:hover td{background:rgba(37,99,235,0.03);}
+  .compare-table .cmp-label{text-align:left; font-weight:700; color:var(--ent-text-mut,#667); background:var(--ent-bg,#f8fafc); font-size:10.5px; text-transform:uppercase; letter-spacing:0.03em;}
+  .compare-table .cmp-better{color:#0d7d5c; font-weight:800; background:rgba(16,185,129,0.10);}
+  .compare-table .cmp-worse{color:#a12626; font-weight:600; background:rgba(239,68,68,0.05);}
+  .compare-table .cmp-similar{color:#8a5a1c; background:rgba(245,158,11,0.08);}
+  body.dark-mode .compare-card{background:var(--ent-panel,#1b2534); border-color:var(--ent-border,#2c3a52);}
+  body.dark-mode .compare-table .cmp-label{background:rgba(255,255,255,0.03); color:var(--ent-text-mut);}
+  body.dark-mode .compare-table td{border-color:var(--ent-border,#2c3a52);}
+  .cmp-legend{display:flex; gap:14px; flex-wrap:wrap; font-size:10.5px; color:#667; margin:10px 2px 2px 2px;}
+  .cmp-legend span{display:inline-flex; align-items:center; gap:5px;}
+  .cmp-legend i{display:inline-block; width:10px; height:10px; border-radius:3px;}
+  .cmp-legend .lg-better{background:#e9f7ee; border:1px solid #1e7a3d;}
+  .cmp-legend .lg-similar{background:#fbf3e3; border:1px solid #8a5a1c;}
+  .cmp-legend .lg-worse{background:#fff; border:1px solid #8a1f1f;}
+  .rival-picker-row{display:flex; gap:12px; flex-wrap:wrap; margin-bottom:12px;}
+  .rival-picker-row .rp-field{display:flex; flex-direction:column; gap:4px;}
+  .rival-picker-row label{font-size:10px; text-transform:uppercase; letter-spacing:0.05em; font-weight:700; color:var(--ent-text-mut,#8a93a3);}
+  .rival-picker-row select{padding:8px 10px; border:1px solid var(--ent-border,#d7dbe2); border-radius:7px; font-size:12px; min-width:190px; background:#fff;}
+  body.dark-mode .rival-picker-row select{background:var(--ent-panel,#1b2534); border-color:var(--ent-border,#2c3a52); color:var(--ent-text,#e6ebf3);}
   #tab-form, #tab-bulletin, #tab-details, #tab-saved, #tab-quote, #tab-monitoring, #tab-messages, #tab-sync, #tab-inbox, #tab-pipeline{display:none;}
 
   /* bold + all-caps as the borrower/co-borrower details are typed, so the bank checker reads them fast */
@@ -479,31 +877,100 @@
   body.pdf-mode .sig-line textarea{display:none;}
   body.pdf-mode .sig-print-only{display:block !important;}
   body.pdf-mode .sig-img-holder:empty::before{display:none !important;}
+  /* ================= PART 3A — ICON SYSTEM ================= */
+  /* One consistent stroke-icon treatment (referenced via <use href="#ic-..."/>)
+     replacing emoji across the sidebar, top header, quick actions and
+     dashboard panel headers — the foundation surfaces for this pass. */
+  .nav-ic{ width:16px; height:16px; flex-shrink:0; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; vertical-align:-3px; }
+  .sidebar-nav button .nav-ic{ opacity:0.92; }
+  .sidebar-toggle .nav-ic{ stroke-width:2.1; }
+  .sidebar-footer button .nav-ic{ margin-right:2px; }
+  .qa-icon .nav-ic{ width:19px; height:19px; stroke-width:1.7; }
+  .topnav .tn-icon-btn .nav-ic{ width:16px; height:16px; }
+  .tn-search .nav-ic{ width:15px; height:15px; color:var(--ent-text-mut,#8a93a3); }
+  .dash-panel-head h3 .nav-ic{ width:15px; height:15px; stroke-width:2; color:var(--ent-secondary,#2563EB); margin-right:1px; }
+  .dph-actions button .nav-ic{ width:14px; height:14px; }
+  .toolbar button .nav-ic, .addrow-btn .nav-ic, .btn-navy .nav-ic, .btn-gold .nav-ic, .btn-orange .nav-ic, .quote-action-bar button .nav-ic{ width:14px; height:14px; margin-right:2px; }
+  .del-btn .nav-ic{ width:12px; height:12px; }
+  .ph-actions button .nav-ic{ width:14px; height:14px; margin-right:2px; }
+  .sync-box button .nav-ic{ width:14px; height:14px; margin-right:2px; }
+  .load-btn, .del-btn2{ display:inline-flex; align-items:center; gap:4px; }
 </style>
 </head>
 <body>
 
-<button class="sidebar-toggle no-print" onclick="toggleSidebar()" title="Show/Hide menu">☰</button>
+<!-- ================= ENTERPRISE ICON SYSTEM (Part 3A) =================
+     Single reusable SVG sprite: one consistent stroke-icon style used
+     across sidebar nav, top header, quick actions and dashboard panel
+     headers, replacing ad-hoc emoji in those foundation surfaces. -->
+<svg style="position:absolute; width:0; height:0; overflow:hidden;" aria-hidden="true">
+  <defs>
+    <symbol id="ic-dashboard" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1.4"/><rect x="14" y="3" width="7" height="5" rx="1.4"/><rect x="14" y="12" width="7" height="9" rx="1.4"/><rect x="3" y="16" width="7" height="5" rx="1.4"/></symbol>
+    <symbol id="ic-chat" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-4.4 7.4 8.5 8.5 0 0 1-8.9-.5L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></symbol>
+    <symbol id="ic-columns" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></symbol>
+    <symbol id="ic-filetext" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></symbol>
+    <symbol id="ic-calc" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8.01" y1="10" x2="8.01" y2="10"/><line x1="12.01" y1="10" x2="12.01" y2="10"/><line x1="16.01" y1="10" x2="16.01" y2="10"/><line x1="8.01" y1="14" x2="8.01" y2="14"/><line x1="12.01" y1="14" x2="12.01" y2="14"/><line x1="16" y1="14" x2="16" y2="18"/><line x1="8.01" y1="18" x2="8.01" y2="18"/><line x1="12.01" y1="18" x2="12.01" y2="18"/></symbol>
+    <symbol id="ic-car" viewBox="0 0 24 24"><path d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H5.24a2 2 0 0 0-1.8 1.1l-.8 1.63A6 6 0 0 0 2 12.42V16h2"/><circle cx="6.5" cy="16.5" r="2.5"/><circle cx="16.5" cy="16.5" r="2.5"/></symbol>
+    <symbol id="ic-clipboard" viewBox="0 0 24 24"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></symbol>
+    <symbol id="ic-save" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></symbol>
+    <symbol id="ic-activity" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></symbol>
+    <symbol id="ic-mail" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 6-10 7L2 6"/></symbol>
+    <symbol id="ic-qr" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><line x1="14" y1="14" x2="14" y2="17"/><line x1="14" y1="20" x2="14" y2="21"/><line x1="17" y1="14" x2="21" y2="14"/><line x1="17" y1="17" x2="19" y2="17"/><line x1="17" y1="20" x2="21" y2="20"/><line x1="21" y1="17" x2="21" y2="18"/></symbol>
+    <symbol id="ic-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></symbol>
+    <symbol id="ic-bell" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></symbol>
+    <symbol id="ic-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></symbol>
+    <symbol id="ic-login" viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></symbol>
+    <symbol id="ic-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></symbol>
+    <symbol id="ic-chevrons-left" viewBox="0 0 24 24"><polyline points="11 17 6 12 11 7"/><polyline points="18 17 13 12 18 7"/></symbol>
+    <symbol id="ic-funnel" viewBox="0 0 24 24"><path d="M22 3H2l8 9.46V19l4 2v-8.54z"/></symbol>
+    <symbol id="ic-radio" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-8.49a6 6 0 0 0 0 8.49M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></symbol>
+    <symbol id="ic-inbox" viewBox="0 0 24 24"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></symbol>
+    <symbol id="ic-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></symbol>
+    <symbol id="ic-upload" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></symbol>
+    <symbol id="ic-printer" viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></symbol>
+    <symbol id="ic-camera" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></symbol>
+    <symbol id="ic-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></symbol>
+    <symbol id="ic-refresh" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></symbol>
+    <symbol id="ic-plus" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></symbol>
+    <symbol id="ic-trash" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></symbol>
+    <symbol id="ic-eye" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="ic-wrench" viewBox="0 0 24 24"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L2 19l3 3 7.3-7.3a4 4 0 0 0 5.4-5.4l-2.5 2.5a1.5 1.5 0 0 1-2 0 1.5 1.5 0 0 1 0-2z"/></symbol>
+    <symbol id="ic-check-circle" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></symbol>
+    <symbol id="ic-x-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></symbol>
+    <symbol id="ic-gift" viewBox="0 0 24 24"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></symbol>
+  </defs>
+</svg>
+
+<button class="sidebar-toggle no-print" onclick="toggleSidebar()" title="Show/Hide menu"><svg class="nav-ic" style="width:17px;height:17px;"><use href="#ic-columns"/></svg></button>
 
 <div class="app-shell">
   <aside class="sidebar no-print" id="sidebarEl">
     <div class="sidebar-logo">
       <div class="lg1">CITIMOTORS LAS PIÑAS</div>
       <div class="lg2">Best Offer by Romeo - Meong</div>
-      <button class="sidebar-collapse-btn" onclick="toggleSidebar()" title="Hide menu">⟨⟨</button>
+      <button class="sidebar-collapse-btn" onclick="toggleSidebar()" title="Hide menu"><svg class="nav-ic" style="width:13px;height:13px;"><use href="#ic-chevrons-left"/></svg></button>
     </div>
     <nav class="sidebar-nav">
-      <button onclick="switchTab('dashboard')" id="btn-tab-dashboard">📊 Dashboard</button>
-      <button onclick="switchTab('inbox')" id="btn-tab-inbox">💬 AI Conversations</button>
-      <button onclick="switchTab('pipeline')" id="btn-tab-pipeline">📋 Pipeline</button>
-      <button onclick="switchTab('form')" id="btn-tab-form">📄 Application Form</button>
-      <button onclick="switchTab('quote')" id="btn-tab-quote">🧮 Quotation</button>
-      <button onclick="switchTab('bulletin')" id="btn-tab-bulletin">🚗 Vehicle Bulletin</button>
-      <button onclick="switchTab('details')" id="btn-tab-details">🚘 Vehicle Details</button>
-      <button onclick="switchTab('saved')" id="btn-tab-saved">💾 Saved Applications</button>
-      <button onclick="switchTab('monitoring')" id="btn-tab-monitoring">📋 Monitoring</button>
-      <button onclick="switchTab('messages')" id="btn-tab-messages">📨 Messages</button>
-      <button onclick="switchTab('sync')" id="btn-tab-sync">🔗 Sync (QR)</button>
+      <div class="sidebar-nav-label">Overview</div>
+      <button onclick="switchTab('dashboard')" id="btn-tab-dashboard"><svg class="nav-ic"><use href="#ic-dashboard"/></svg> Dashboard</button>
+      <button onclick="switchTab('inbox')" id="btn-tab-inbox"><svg class="nav-ic"><use href="#ic-chat"/></svg> AI Conversations</button>
+
+      <div class="sidebar-nav-label">Sales</div>
+      <button onclick="switchTab('pipeline')" id="btn-tab-pipeline"><svg class="nav-ic"><use href="#ic-columns"/></svg> Pipeline</button>
+      <button onclick="switchTab('form')" id="btn-tab-form"><svg class="nav-ic"><use href="#ic-filetext"/></svg> Application Form</button>
+      <button onclick="switchTab('quote')" id="btn-tab-quote"><svg class="nav-ic"><use href="#ic-calc"/></svg> Quotation</button>
+
+      <div class="sidebar-nav-label">Inventory</div>
+      <button onclick="switchTab('bulletin')" id="btn-tab-bulletin"><svg class="nav-ic"><use href="#ic-car"/></svg> Vehicle Bulletin</button>
+      <button onclick="switchTab('details')" id="btn-tab-details"><svg class="nav-ic"><use href="#ic-clipboard"/></svg> Vehicle Details</button>
+
+      <div class="sidebar-nav-label">Records</div>
+      <button onclick="switchTab('saved')" id="btn-tab-saved"><svg class="nav-ic"><use href="#ic-save"/></svg> Saved Applications</button>
+      <button onclick="switchTab('monitoring')" id="btn-tab-monitoring"><svg class="nav-ic"><use href="#ic-activity"/></svg> Monitoring</button>
+      <button onclick="switchTab('messages')" id="btn-tab-messages"><svg class="nav-ic"><use href="#ic-mail"/></svg> Messages</button>
+
+      <div class="sidebar-nav-label">Settings</div>
+      <button onclick="switchTab('sync')" id="btn-tab-sync"><svg class="nav-ic"><use href="#ic-qr"/></svg> Sync (QR)</button>
     </nav>
     <div class="sidebar-profile" id="sidebarProfile">
       <div class="avatar" id="sidebarAvatar">?</div>
@@ -513,11 +980,11 @@
       </div>
     </div>
     <div class="sidebar-footer">
-      <button onclick="openGithubModal()" id="sidebarLoginBtn">🔐 Log In / Sync</button>
-      <button onclick="openDataSourceModal()" id="sidebarDataSourceBtn" style="margin-top:6px;">🔌 Data Source (n8n/Sheets)</button>
+      <button onclick="openGithubModal()" id="sidebarLoginBtn"><svg class="nav-ic" style="width:13px;height:13px;"><use href="#ic-login"/></svg> Log In / Sync</button>
+      <button onclick="openDataSourceModal()" id="sidebarDataSourceBtn" style="margin-top:6px;"><svg class="nav-ic" style="width:13px;height:13px;"><use href="#ic-link"/></svg> Data Source (n8n/Sheets)</button>
     </div>
     <div id="syncStatusFooter" style="font-size:9.5px; color:#8fd6a8; text-align:center; padding:0 10px 8px 10px; display:none;"></div>
-    <div class="sidebar-version">CT Citimotors CRM · v2.0 Enterprise</div>
+    <div class="sidebar-version">CT Citimotors CRM · v2.0 Enterprise<br><span style="opacity:0.75;">UI &amp; System Design by NALA- Digital Marketing Services</span></div>
   </aside>
 
   <main class="main-content">
@@ -525,13 +992,13 @@
 <div class="topnav no-print" id="topNav">
   <div class="tn-breadcrumb">CRM / <b id="tnBreadcrumb">Dashboard</b></div>
   <div class="tn-search">
-    <span>🔎</span>
+    <svg class="nav-ic"><use href="#ic-search"/></svg>
     <input type="text" id="tnSearchInput" placeholder="Search client, phone, vehicle, status..." onkeydown="if(event.key==='Enter') tnGlobalSearch()">
   </div>
   <div class="tn-right">
     <div class="tn-clock"><b id="tnTime">--:--</b><br><span id="tnDate">—</span></div>
-    <button class="tn-icon-btn" id="tnNotifBtn" onclick="switchTab('messages')" title="Notifications">🔔<span class="tn-badge" id="tnNotifBadge" style="display:none;">0</span></button>
-    <button class="tn-icon-btn" onclick="toggleDarkMode()" title="Toggle dark mode" id="tnDarkBtn">🌙</button>
+    <button class="tn-icon-btn" id="tnNotifBtn" onclick="switchTab('messages')" title="Notifications"><svg class="nav-ic"><use href="#ic-bell"/></svg><span class="tn-badge" id="tnNotifBadge" style="display:none;">0</span></button>
+    <button class="tn-icon-btn" onclick="toggleDarkMode()" title="Toggle dark mode" id="tnDarkBtn"><svg class="nav-ic"><use href="#ic-moon"/></svg></button>
     <div class="tn-user">
       <div class="avatar">RM</div>
       <div>
@@ -548,36 +1015,53 @@
     <p id="dashDateLabel">—</p>
   </div>
   <div class="dash-panel" style="max-width:1200px; margin:0 auto 16px auto;">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:8px;">
-      <h3 style="margin:0;">📊 Sales Pipeline Overview</h3>
-      <div style="display:flex; gap:8px;">
-        <button class="quick-action-btn" style="min-width:auto; padding:6px 12px; flex-direction:row; gap:6px;" onclick="switchTab('inbox')">💬 Open Inbox</button>
-        <button class="quick-action-btn" style="min-width:auto; padding:6px 12px; flex-direction:row; gap:6px;" onclick="switchTab('pipeline')">📋 Open Pipeline</button>
+    <div class="dash-panel-head">
+      <h3><svg class="nav-ic"><use href="#ic-dashboard"/></svg> Sales Pipeline Overview</h3>
+      <div class="dph-actions">
+        <button class="quick-action-btn" style="min-width:auto; padding:6px 12px; flex-direction:row; gap:6px;" onclick="switchTab('inbox')"><svg class="nav-ic"><use href="#ic-chat"/></svg> Open Inbox</button>
+        <button class="quick-action-btn" style="min-width:auto; padding:6px 12px; flex-direction:row; gap:6px;" onclick="switchTab('pipeline')"><svg class="nav-ic"><use href="#ic-columns"/></svg> Open Pipeline</button>
       </div>
     </div>
     <div class="kpi-grid" id="crmStatsPanel"></div>
-    <h4 style="font-size:11px; color:#8a93a3; text-transform:uppercase; letter-spacing:0.04em; margin:16px 0 8px 0;">Source Breakdown</h4>
+    <div class="dash-section-label">Source Breakdown</div>
     <div class="kpi-grid" id="sourceBreakdownPanel"></div>
   </div>
 
-  <div class="quick-actions">
-    <button class="quick-action-btn" onclick="switchTab('quote')">🧮<span>Quotation</span></button>
-    <button class="quick-action-btn" onclick="switchTab('bulletin')">🚗<span>Vehicle Bulletin</span></button>
-    <button class="quick-action-btn" onclick="switchTab('details')">🚘<span>Vehicle Details</span></button>
+  <div class="dash-panel" style="max-width:1200px; margin:0 auto 16px auto;">
+    <div class="dash-panel-head"><h3><svg class="nav-ic"><use href="#ic-funnel"/></svg> Pipeline Conversion</h3></div>
+    <div id="pipelineConversionFunnel"></div>
   </div>
 
   <div class="dash-panel" style="max-width:1200px; margin:0 auto 16px auto;">
-    <h3>🔔 Reminders</h3>
-    <div id="dashReminders"><p style="color:#8a93a3; font-size:12px;">Wala pang reminders ngayon.</p></div>
+    <div class="dash-panel-head"><h3><svg class="nav-ic"><use href="#ic-radio"/></svg> Source Performance</h3></div>
+    <div class="source-perf" id="sourcePerformancePanel"></div>
+  </div>
+
+  <div class="qa-grid">
+    <button class="quick-action-btn" onclick="switchTab('quote')"><span class="qa-icon"><svg class="nav-ic"><use href="#ic-calc"/></svg></span><span>Quotation</span></button>
+    <button class="quick-action-btn" onclick="switchTab('bulletin')"><span class="qa-icon"><svg class="nav-ic"><use href="#ic-car"/></svg></span><span>Vehicle Bulletin</span></button>
+    <button class="quick-action-btn" onclick="switchTab('details')"><span class="qa-icon"><svg class="nav-ic"><use href="#ic-clipboard"/></svg></span><span>Vehicle Details</span></button>
+    <button class="quick-action-btn" onclick="switchTab('form')"><span class="qa-icon"><svg class="nav-ic"><use href="#ic-filetext"/></svg></span><span>Application Form</span></button>
+    <button class="quick-action-btn" onclick="switchTab('saved')"><span class="qa-icon"><svg class="nav-ic"><use href="#ic-save"/></svg></span><span>Saved Applications</span></button>
+    <button class="quick-action-btn" onclick="switchTab('monitoring')"><span class="qa-icon"><svg class="nav-ic"><use href="#ic-activity"/></svg></span><span>Monitoring</span></button>
+  </div>
+
+  <div class="dash-panel" style="max-width:1200px; margin:0 auto 16px auto;">
+    <div class="dash-panel-head"><h3><svg class="nav-ic"><use href="#ic-bell"/></svg> Reminders</h3></div>
+    <div id="dashReminders"><div class="dash-empty"><div class="de-icon">🔔</div><div class="de-text">Wala pang reminders ngayon.</div></div></div>
   </div>
   <div class="dash-grid">
-    <div class="dash-panel" style="cursor:pointer;" onclick="switchTab('monitoring')">
-      <h3>Status Breakdown</h3>
+    <div class="dash-panel">
+      <div class="dash-panel-head">
+        <h3 style="cursor:pointer;" onclick="switchTab('monitoring')">Status Breakdown</h3>
+        <div class="time-filter-bar" id="statusChartFilterBar"></div>
+      </div>
       <canvas id="statusChart"></canvas>
+      <div id="statusChartEmpty" style="display:none;"></div>
     </div>
     <div class="dash-panel">
-      <h3>Recent Activity</h3>
-      <div id="recentActivity"><p style="color:#8a93a3; font-size:12px;">Wala pang saved applications.</p></div>
+      <div class="dash-panel-head"><h3>Recent Activity</h3></div>
+      <div id="recentActivity"><div class="dash-empty"><div class="de-icon">🗂️</div><div class="de-text">Wala pang saved applications.</div></div></div>
     </div>
   </div>
 
@@ -653,12 +1137,13 @@
       <div id="idPrintStatus" style="font-size:11px; color:#667; margin-top:8px;"></div>
     </div>
   </div>
+
+  <div class="dash-credit-footer">CRM UI &amp; System Design by <b>NALA- DIGITAL MARKETING SERVICES</b></div>
 </div>
 
 <div id="tab-inbox">
-  <div class="dash-header">
-    <h1>AI Conversations</h1>
-    <p>Messenger AI replies, leads, at chat history mula sa n8n automation mo.</p>
+  <div class="page-header">
+    <div class="ph-title"><h1>AI Conversations</h1><p>Messenger AI replies, leads, at chat history mula sa n8n automation mo.</p></div>
   </div>
   <div class="inbox-shell">
     <div class="inbox-list" id="inboxList"></div>
@@ -669,21 +1154,20 @@
 </div>
 
 <div id="tab-pipeline">
-  <div class="dash-header">
-    <h1>Sales Pipeline</h1>
-    <p>I-drag ang cards papunta sa susunod na stage. Awtomatikong nase-save ang bagong stage.</p>
+  <div class="page-header">
+    <div class="ph-title"><h1>Sales Pipeline</h1><p>I-drag ang cards papunta sa susunod na stage. Awtomatikong nase-save ang bagong stage.</p></div>
   </div>
   <div id="pipelineSourceFilterBar" style="display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin:0 0 12px 0;"></div>
   <div class="kanban-board" id="kanbanBoard"></div>
 </div>
 
 <div class="toolbar no-print" id="formToolbar">
-  <button onclick="downloadPDF()">⬇️ Download PDF (1-page, colored)</button>
-  <button class="secondary" onclick="printApplication()">🖨️ Print (browser dialog)</button>
+  <button onclick="downloadPDF()"><svg class="nav-ic"><use href="#ic-download"/></svg> Download PDF (1-page, colored)</button>
+  <button class="secondary" onclick="printApplication()"><svg class="nav-ic"><use href="#ic-printer"/></svg> Print (browser dialog)</button>
   <select id="paperSize"><option value="letter">Letter</option><option value="A4">A4</option><option value="legal">Legal</option></select>
   <button class="secondary" onclick="clearAll()">New / Clear</button>
-  <button onclick="saveApplication()">💾 Save Application</button>
-  <button class="navy" onclick="toggleDesignMode()" id="designModeBtn">🎨 Design Mode</button>
+  <button onclick="saveApplication()"><svg class="nav-ic"><use href="#ic-save"/></svg> Save Application</button>
+  <button class="navy" onclick="toggleDesignMode()" id="designModeBtn"><svg class="nav-ic"><use href="#ic-settings"/></svg> Design Mode</button>
 </div>
 <div class="toolbar no-print" id="designToolbar" style="display:none; background:#2c2005; border-radius:6px; padding:8px 12px;">
   <span style="color:#ecdfc4; font-size:12px; font-weight:bold;">Design Mode:</span>
@@ -694,8 +1178,8 @@
   <span style="color:#cfc09a; font-size:11px;">Tip: i-click ang kahit anong label (hal. "Vehicle:") para palitan ang pangalan nito.</span>
 </div>
 <div class="toolbar no-print" id="formToolbar3">
-  <button class="secondary" onclick="exportBackup()">⬇️ Export Backup (.json)</button>
-  <button class="secondary" onclick="document.getElementById('importFile').click()">⬆️ Import Backup</button>
+  <button class="secondary" onclick="exportBackup()"><svg class="nav-ic"><use href="#ic-download"/></svg> Export Backup (.json)</button>
+  <button class="secondary" onclick="document.getElementById('importFile').click()"><svg class="nav-ic"><use href="#ic-upload"/></svg> Import Backup</button>
   <input type="file" id="importFile" accept="application/json" style="display:none" onchange="importBackup(event)">
 </div>
 <div class="hint no-print" id="formToolbar2">
@@ -703,6 +1187,17 @@
 </div>
 
 <div id="tab-form">
+<div class="page-header no-print" style="margin-bottom:10px;">
+  <div class="ph-title"><h1>Application Form</h1><p>Auto loan application — awtomatikong nagse-save sa browser mo; gamitin ang Export Backup para madala sa ibang device.</p></div>
+</div>
+<div class="form-section-nav no-print" id="formSectionNav">
+  <button type="button" onclick="jumpToFormSection('sec-vehicle')">🚗 Vehicle / Loan</button>
+  <button type="button" onclick="jumpToFormSection('sec-customer')">🧑 Customer Info</button>
+  <button type="button" onclick="jumpToFormSection('sec-selfemployed')">💼 Self-Employed</button>
+  <button type="button" onclick="jumpToFormSection('sec-prevwork')">🕘 Previous Work</button>
+  <button type="button" onclick="jumpToFormSection('sec-bank')">🏦 Bank / Credit</button>
+  <button type="button" onclick="jumpToFormSection('sec-signatures')">✍️ Signatures</button>
+</div>
 <div class="sheet" id="sheet">
 
   <div class="app-header">
@@ -722,7 +1217,7 @@
     </div>
   </div>
 
-  <div class="section-title">VEHICLE / LOAN INFORMATION</div>
+  <div class="section-title" id="sec-vehicle">VEHICLE / LOAN INFORMATION</div>
   <table>
     <tr>
       <td style="width:25%;">
@@ -750,7 +1245,7 @@
 
   <table>
     <tr>
-      <td style="width:50%;"><span class="label">Last Name/ First Name / Middle Name:</span><textarea class="addr-field" id="b_name" rows="1" oninput="autoGrow(this)"></textarea></td>
+      <td style="width:50%;"><span class="label" id="sec-customer">Last Name/ First Name / Middle Name:</span><textarea class="addr-field" id="b_name" rows="1" oninput="autoGrow(this)"></textarea></td>
       <td style="width:50%;"><span class="label">Last Name/ First Name / Middle Name (Co-Borrower):</span><textarea class="addr-field" id="c_name" rows="1" oninput="autoGrow(this)"></textarea></td>
     </tr>
     <tr>
@@ -939,7 +1434,7 @@
     </tr>
   </table>
 
-  <div class="section-title">ADDITIONAL INFORMATION FOR SELF-EMPLOYED</div>
+  <div class="section-title" id="sec-selfemployed">ADDITIONAL INFORMATION FOR SELF-EMPLOYED</div>
   <table>
     <tr>
       <td style="width:25%;"><span class="label">Major Contact:</span><textarea class="addr-field" id="majorContact" rows="1" oninput="autoGrow(this)"></textarea></td>
@@ -949,7 +1444,7 @@
     </tr>
   </table>
 
-  <div class="section-title">ADDITIONAL INFORMATION FOR PREVIOUS WORK</div>
+  <div class="section-title" id="sec-prevwork">ADDITIONAL INFORMATION FOR PREVIOUS WORK</div>
   <table>
     <tr>
       <td style="width:25%;"><span class="label">Company Name:</span><textarea class="addr-field normal-case" id="prevCompanyName" rows="1" oninput="autoGrow(this)"></textarea></td>
@@ -961,7 +1456,7 @@
 
   <table>
     <tr>
-      <td colspan="3" class="section-title">BANK ACCOUNTS</td>
+      <td colspan="3" class="section-title" id="sec-bank">BANK ACCOUNTS</td>
       <td colspan="3" class="section-title">CREDIT CARD OWNED</td>
     </tr>
     <tr class="bold center">
@@ -993,7 +1488,7 @@
   </table>
 
   <table>
-    <tr class="sig-row">
+    <tr class="sig-row" id="sec-signatures">
       <td style="width:34%;">
         <div class="sig-line">
           <div class="sig-line-inner">
@@ -1038,6 +1533,9 @@
 
 <div id="tab-quote">
   <div class="quote-wrap">
+    <div class="page-header">
+      <div class="ph-title"><h1>Quotation</h1><p>Pumili ng unit sa kasalukuyang bulletin at bumuo ng instant na presyo/quotation.</p></div>
+    </div>
     <div class="quote-select-box">
       <label>Select Vehicle from Current Bulletin</label>
       <select id="bulletinPicker"><option value="">— Choose a unit —</option></select>
@@ -1078,18 +1576,18 @@
           <div><label>Security Bank</label><input type="number" step="0.0001" id="rateSecurity"></div>
         </div>
         <div style="margin-top:14px;">
-          <button class="btn-navy" onclick="saveAgentSettings()">💾 Save Settings</button>
-          <button class="btn-orange" style="margin-left:8px;" onclick="resetAgentSettings()">↺ Reset to Default</button>
+          <button class="btn-navy" onclick="saveAgentSettings()"><svg class="nav-ic"><use href="#ic-save"/></svg> Save Settings</button>
+          <button class="btn-orange" style="margin-left:8px;" onclick="resetAgentSettings()"><svg class="nav-ic"><use href="#ic-refresh"/></svg> Reset to Default</button>
           <span id="agentSettingsSaved" style="display:none; color:#3a7a54; font-size:12px; margin-left:10px; font-weight:600;">✓ Saved</span>
         </div>
       </div>
     </div>
 
     <div class="quote-action-bar" id="quoteActionBar">
-      <button class="btn-navy" onclick="downloadQuotePDF()">⬇️ Download PDF</button>
-      <button class="btn-gold" onclick="downloadQuoteImage()">📷 Download Image</button>
+      <button class="btn-navy" onclick="downloadQuotePDF()"><svg class="nav-ic"><use href="#ic-download"/></svg> Download PDF</button>
+      <button class="btn-gold" onclick="downloadQuoteImage()"><svg class="nav-ic"><use href="#ic-camera"/></svg> Download Image</button>
       <button class="btn-orange" onclick="applyQuoteToForm()">Use in Application Form →</button>
-      <button class="btn-navy" onclick="openVehicleDetailsForQuote()">🔧 View Full Specs</button>
+      <button class="btn-navy" onclick="openVehicleDetailsForQuote()"><svg class="nav-ic"><use href="#ic-wrench"/></svg> View Full Specs</button>
     </div>
 
     <div class="quote-sheet" id="quoteSheet">
@@ -1196,38 +1694,62 @@
 
 <div id="tab-bulletin">
   <div class="bulletin-wrap">
-    <h2>Bulletin Data — Edit Here</h2>
-    <p class="hint" style="max-width:none;">Edits sync automatically to the vehicle dropdown and quotation sheet once you click "Save Table".</p>
-    <table>
-      <tr class="bold center">
-        <td style="width:18%;">UNIT</td><td style="width:9%;">SRP</td><td style="width:9%;">DISCOUNT</td>
-        <td style="width:10%;">CASH OUT @20%</td><td style="width:10%;">CASH OUT @25%</td><td style="width:10%;">CASH OUT @30%</td>
-        <td style="width:22%;">PROMO</td><td style="width:5%;"></td>
-      </tr>
-      <tbody id="bulletinRows"></tbody>
-    </table>
-    <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
-      <button class="addrow-btn" style="padding:8px 14px; font-size:12px; background:var(--orange); color:#fff; border:none;" onclick="saveBulletinTable()">💾 Save Table</button>
-      <button class="addrow-btn" style="padding:8px 14px; font-size:12px;" onclick="addBulletinRow()">+ Add New Unit</button>
-      <button class="addrow-btn" style="padding:8px 14px; font-size:12px;" onclick="resetBulletin()">Reset to Default Bulletin</button>
+    <div class="page-header">
+      <div class="ph-title"><h1>Vehicle Bulletin</h1><p>Vehicle pricing, promotions &amp; cash-out management — awtomatikong sync sa dropdown ng Application Form at Quotation.</p></div>
+    </div>
+
+    <div class="bulletin-card">
+      <div class="bulletin-card-top">
+        <div class="bulletin-card-heading">
+          <h2>Vehicle Pricing</h2>
+          <p>Active vehicle pricing &amp; promotional offers</p>
+        </div>
+        <div class="kpi-grid" id="bulletinSummaryPanel"></div>
+      </div>
+
+      <div class="bulletin-toolbar">
+        <input type="text" id="bulletinFilterInput" class="page-search-input" placeholder="🔍 Search vehicle..." oninput="filterBulletinRows()">
+        <button class="addrow-btn bulletin-save-btn" style="background:var(--sidebar-active,#c3a26b); color:#241a04; border:none; font-weight:800;" onclick="saveBulletinTable()"><svg class="nav-ic"><use href="#ic-save"/></svg> Save Table</button>
+      </div>
+      <p class="bulletin-sync-note">ⓘ Edits sync automatically to the vehicle dropdown and quotation sheet once you click "Save Table".</p>
+
+      <div class="bulletin-table-scroll">
+        <table>
+          <tr class="bold center">
+            <td style="width:18%;">UNIT</td><td style="width:9%;">SRP</td><td style="width:9%;">DISCOUNT</td>
+            <td style="width:10%;">CASH OUT @20%</td><td style="width:10%;">CASH OUT @25%</td><td style="width:10%;">CASH OUT @30%</td>
+            <td style="width:22%;">PROMO</td><td style="width:5%;">ACTIONS</td>
+          </tr>
+          <tbody id="bulletinRows"></tbody>
+        </table>
+      </div>
+
+      <div class="bulletin-footer-actions">
+        <button class="addrow-btn" style="padding:8px 14px; font-size:12px;" onclick="addBulletinRow()"><svg class="nav-ic"><use href="#ic-plus"/></svg> Add New Unit</button>
+        <button class="addrow-btn" style="padding:8px 14px; font-size:12px;" onclick="resetBulletin()"><svg class="nav-ic"><use href="#ic-refresh"/></svg> Reset to Default Bulletin</button>
+      </div>
     </div>
   </div>
 </div>
 
 <div id="tab-saved">
   <div class="saved-wrap">
-    <h2>Saved Applications</h2>
-    <div id="savedList"><p>Loading...</p></div>
+    <div class="page-header">
+      <div class="ph-title"><h1>Saved Applications</h1><p>Hanapin, buksan, o ipagpatuloy ang naka-save mong mga loan application.</p></div>
+    </div>
+    <input type="text" id="savedFilterInput" class="page-search-input" placeholder="🔎 Hanapin: pangalan, vehicle, stage..." oninput="refreshSavedList()">
+    <div id="savedList" class="saved-grid"><div class="dash-empty"><div class="de-icon">💾</div><div class="de-text">Loading...</div></div></div>
   </div>
 </div>
 
 <div id="tab-monitoring">
   <div class="monitoring-wrap">
-    <h2>Client Monitoring</h2>
-    <p class="hint" style="max-width:none;">Automatic na nadadagdag dito ang client kapag pinindot mo ang "💾 Save Application" sa Application Form. Pwede mo ring idagdag manually gamit ang "+ Add Client".</p>
-    <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:10px;">
-      <input type="text" id="monFilterInput" placeholder="🔎 Filter by name, contact, vehicle, status..." oninput="filterMonitoringRows()" style="flex:1; min-width:220px; padding:9px 10px; border:1px solid #ccc; border-radius:6px; font-size:12px;">
-      <button class="addrow-btn" style="padding:8px 14px; font-size:12px; background:var(--ent-secondary,#2563EB); color:#fff; border:none;" onclick="exportMonitoringCSV()">⬇️ Export CSV</button>
+    <div class="page-header">
+      <div class="ph-title"><h1>Client Monitoring</h1><p>Automatic na nadadagdag dito ang client kapag pinindot mo ang "💾 Save Application" sa Application Form. Pwede mo ring idagdag manually gamit ang "+ Add Client".</p></div>
+      <div class="ph-actions"><button class="addrow-btn" style="padding:8px 14px; font-size:12px; background:var(--ent-secondary,#2563EB); color:#fff; border:none;" onclick="exportMonitoringCSV()"><svg class="nav-ic"><use href="#ic-download"/></svg> Export CSV</button></div>
+    </div>
+    <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:14px;">
+      <input type="text" id="monFilterInput" class="page-search-input" placeholder="🔎 Filter by name, contact, vehicle, status..." oninput="filterMonitoringRows()" style="margin-bottom:0; flex:1; min-width:220px;">
     </div>
     <table>
       <tr class="bold center">
@@ -1238,41 +1760,58 @@
       <tbody id="monitoringRows"></tbody>
     </table>
     <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
-      <button class="addrow-btn" style="padding:8px 14px; font-size:12px; background:var(--orange); color:#fff; border:none;" onclick="saveMonitoringTable()">💾 Save Table</button>
-      <button class="addrow-btn" style="padding:8px 14px; font-size:12px;" onclick="addMonitoringRow()">+ Add Client</button>
+      <button class="addrow-btn" style="padding:8px 14px; font-size:12px; background:var(--orange); color:#fff; border:none;" onclick="saveMonitoringTable()"><svg class="nav-ic"><use href="#ic-save"/></svg> Save Table</button>
+      <button class="addrow-btn" style="padding:8px 14px; font-size:12px;" onclick="addMonitoringRow()"><svg class="nav-ic"><use href="#ic-plus"/></svg> Add Client</button>
     </div>
   </div>
 </div>
 
 <div id="tab-messages">
   <div class="messages-wrap">
-    <h2>Client Messages</h2>
-    <p class="hint" style="max-width:none;">Ito ay ready-made na mensahe lang na pwede mong kopyahin — ikaw pa rin ang magpapadala manually sa Messenger/SMS. Walang awtomatikong ipinapadalang text.</p>
+    <div class="page-header">
+      <div class="ph-title"><h1>Client Messages</h1><p>Ito ay ready-made na mensahe lang na pwede mong kopyahin — ikaw pa rin ang magpapadala manually sa Messenger/SMS. Walang awtomatikong ipinapadalang text.</p></div>
+    </div>
 
     <div id="alertsHolder"></div>
 
-    <label style="font-size:12px; font-weight:bold; display:block; margin:14px 0 4px;">Piliin ang client (para awtomatikong mapunan ang pangalan/detalye sa mensahe):</label>
-    <select id="msgClientPicker" class="client-picker" onchange="renderMessageTemplates()"><option value="">— Walang piliin (generic template) —</option></select>
+    <div class="msg-controls-row">
+      <div>
+        <label style="font-size:12px; font-weight:bold; display:block; margin:0 0 4px;">Piliin ang client (para awtomatikong mapunan ang pangalan/detalye sa mensahe):</label>
+        <select id="msgClientPicker" class="client-picker" onchange="renderMessageTemplates()"><option value="">— Walang piliin (generic template) —</option></select>
+      </div>
+      <div class="lang-select-field">
+        <label>Language</label>
+        <select id="msgLangSelector" onchange="setMessageLanguage(this.value)">
+          <option value="tl" selected>Tagalog</option>
+          <option value="en">English</option>
+          <option value="tg">Taglish</option>
+        </select>
+      </div>
+    </div>
 
-    <div id="templatesHolder"></div>
+    <div id="templatesHolder" class="templates-grid"></div>
   </div>
 </div>
 
 <div id="tab-sync">
   <div class="sync-wrap">
-    <h2>Sync Data Between Gadgets (QR Code, walang internet/cloud kailangan)</h2>
+    <div class="page-header">
+      <div class="ph-title"><h1>Sync (QR)</h1><p>Ilipat ang Saved Applications, Monitoring, at Vehicle Bulletin papunta sa ibang gadget — walang internet/cloud kailangan.</p></div>
+    </div>
     <p class="hint" style="max-width:none;">Gamitin ito para ilipat ang Saved Applications, Monitoring, at Vehicle Bulletin papunta sa ibang phone o laptop na may bukas ding app na ito. Ilagay lang magkatabi ang dalawang screen. <b>Note:</b> hindi kasama ang mga naka-save na signature images dito (masyadong malaki para sa QR) — export/import backup file (.json) na lang ang gamitin kung kailangan yun.</p>
+
+    <div class="sync-status-card" id="syncStatusCard"></div>
 
     <div class="sync-box">
       <b>1️⃣ SEND — ipakita ang QR sa kabilang gadget</b><br>
-      <button onclick="startSyncSend()">📤 Generate QR to Send</button>
+      <button onclick="startSyncSend()"><svg class="nav-ic"><use href="#ic-qr"/></svg> Generate QR to Send</button>
       <div id="qrDisplay" style="display:none;"></div>
       <div class="sync-progress" id="sendProgress"></div>
     </div>
 
     <div class="sync-box">
       <b>2️⃣ RECEIVE — i-scan gamit ang camera</b><br>
-      <button onclick="startSyncScan()">📷 Start Scanning</button>
+      <button onclick="startSyncScan()"><svg class="nav-ic"><use href="#ic-camera"/></svg> Start Scanning</button>
       <button onclick="stopSyncScan()" style="background:#555;">Stop</button>
       <video id="qrScanVideo" autoplay playsinline muted style="display:none;"></video>
       <canvas id="qrScanCanvas" style="display:none;"></canvas>
@@ -1388,12 +1927,23 @@
 </div>
 
 <div id="tab-details">
-  <div class="quote-wrap">
-    <div class="quote-select-box">
-      <label>Select Vehicle for Full Details</label>
-      <select id="detailsVehicleSelect" onchange="renderVehicleDetails()"><option value="">— Choose a unit —</option></select>
+  <div class="vdetails-wrap">
+    <div class="page-header">
+      <div class="ph-title"><h1>Vehicle Details</h1><p>Specs, features, pros &amp; cons, at paghahambing sa ibang brands.</p></div>
     </div>
-    <div id="detailsBody"><p class="hint" style="max-width:none;">Pumili ng vehicle sa itaas para makita ang specs, features, pros &amp; cons, at paghahambing sa ibang brands.</p></div>
+    <div class="vdetails-main-grid">
+      <div class="vdetails-left-col">
+        <div class="vlc-select-wrap">
+          <label class="vlc-select-label">Select Vehicle</label>
+          <select id="detailsVehicleSelect" onchange="renderVehicleDetails()"><option value="">— Choose a unit —</option></select>
+        </div>
+        <div id="detailsImageArea"></div>
+      </div>
+      <div class="vdetails-right-col">
+        <div id="detailsSpecsArea"><p class="hint" style="max-width:none;">Pumili ng vehicle sa kaliwa para makita ang specs, features, pros &amp; cons, at paghahambing sa ibang brands.</p></div>
+      </div>
+    </div>
+    <div id="detailsCompareArea"></div>
   </div>
 </div>
 
@@ -1442,6 +1992,10 @@ function toggleSidebar(){
   lsSet('cl_sidebar_hidden', document.body.classList.contains('sidebar-hidden'));
 }
 
+function jumpToFormSection(id){
+  const el = document.getElementById(id);
+  if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
+}
 let currentActiveTab = 'dashboard';
 function switchTab(name){
   currentActiveTab = name;
@@ -1457,6 +2011,7 @@ function switchTab(name){
   if(name==='monitoring') renderMonitoringTable();
   if(name==='quote'){ refreshBulletinPicker(); renderQuoteSheet(); }
   if(name==='details'){ refreshDetailsPicker(); }
+  if(name==='sync') renderSyncStatusCard();
   if(name==='messages') renderMessagesTab();
   if(name==='dashboard') renderDashboard();
   if(name==='inbox') renderInboxTab();
@@ -1730,23 +2285,59 @@ function renderBulletinTable(){
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td><input type="text" class="bl-unit" value="${escapeHtml(v.unit)}"></td>
-      <td><input type="text" class="bl-srp" value="${v.srp}"></td>
-      <td><input type="text" class="bl-discount" value="${v.discount||0}"></td>
-      <td><input type="text" class="bl-c20" value="${v.c20||0}"></td>
-      <td><input type="text" class="bl-c25" value="${v.c25||0}"></td>
-      <td><input type="text" class="bl-c30" value="${v.c30||0}"></td>
+      <td><input type="text" class="bl-srp" value="₱${formatNumber(v.srp)}" onblur="formatBulletinInput(this)"></td>
+      <td><input type="text" class="bl-discount" value="₱${formatNumber(v.discount||0)}" onblur="formatBulletinInput(this)"></td>
+      <td><input type="text" class="bl-c20" value="₱${formatNumber(v.c20||0)}" onblur="formatBulletinInput(this)"></td>
+      <td><input type="text" class="bl-c25" value="₱${formatNumber(v.c25||0)}" onblur="formatBulletinInput(this)"></td>
+      <td><input type="text" class="bl-c30" value="₱${formatNumber(v.c30||0)}" onblur="formatBulletinInput(this)"></td>
       <td><input type="text" class="bl-promo" value="${escapeHtml(v.promo||'')}"></td>
       <td class="center"><button class="del-btn" onclick="this.closest('tr').remove()">✕</button></td>`;
     tbody.appendChild(tr);
+  });
+  renderBulletinSummary();
+}
+// Re-format a bulletin cash-figure input to "₱12,345" on blur. parseNumber() already
+// strips the ₱ and commas back out in saveBulletinTable(), so calculations/storage are unaffected.
+function formatBulletinInput(el){
+  const raw = parseNumber(el.value);
+  el.value = isNaN(raw) ? '' : '₱' + formatNumber(raw);
+}
+// ---- Vehicle Bulletin summary KPI cards — Total Units / Active Promos / Avg Discount /
+// Last Updated, computed purely from the real `vehicles` array (no invented figures).
+// "Last Updated" reflects the last time Save Table / Reset actually persisted data.
+function renderBulletinSummary(){
+  const holder = document.getElementById('bulletinSummaryPanel');
+  if(!holder) return;
+  const total = vehicles.length;
+  const withPromo = vehicles.filter(v=> (v.promo||'').trim() !== '').length;
+  const discounts = vehicles.map(v=> Number(v.discount)||0).filter(n=> n>0);
+  const avgDiscount = discounts.length ? Math.round(discounts.reduce((a,b)=>a+b,0)/discounts.length) : 0;
+  const lastUpdatedIso = lsGet('cl_bulletin_last_updated', null);
+  let lastUpdatedLabel = '—';
+  if(lastUpdatedIso){
+    const d = new Date(lastUpdatedIso);
+    if(!isNaN(d.getTime())) lastUpdatedLabel = d.toLocaleDateString('en-PH',{month:'short',day:'numeric',year:'numeric'}) + ' ' + d.toLocaleTimeString('en-PH',{hour:'numeric',minute:'2-digit'});
+  }
+  holder.innerHTML = `
+    <div class="kpi-card accent-navy"><div class="kpi-icon"><svg class="nav-ic"><use href="#ic-car"/></svg></div><div><div class="kpi-label">Total Units</div><div class="kpi-value">${total}</div></div></div>
+    <div class="kpi-card accent-gold"><div class="kpi-icon"><svg class="nav-ic"><use href="#ic-activity"/></svg></div><div><div class="kpi-label">Active Promos</div><div class="kpi-value">${withPromo}</div></div></div>
+    <div class="kpi-card accent-blue"><div class="kpi-icon"><svg class="nav-ic"><use href="#ic-calc"/></svg></div><div><div class="kpi-label">Avg. Discount</div><div class="kpi-value" style="font-size:19px;">₱${formatNumber(avgDiscount)}</div></div></div>
+    <div class="kpi-card accent-slate"><div class="kpi-icon"><svg class="nav-ic"><use href="#ic-save"/></svg></div><div><div class="kpi-label">Last Updated</div><div class="kpi-value" style="font-size:13.5px;">${lastUpdatedLabel}</div></div></div>`;
+}
+function filterBulletinRows(){
+  const q = (document.getElementById('bulletinFilterInput').value||'').toLowerCase().trim();
+  document.querySelectorAll('#bulletinRows tr').forEach(tr=>{
+    const unitVal = tr.querySelector('.bl-unit') ? tr.querySelector('.bl-unit').value.toLowerCase() : '';
+    tr.style.display = !q || unitVal.includes(q) ? '' : 'none';
   });
 }
 function addBulletinRow(){
   const tbody = document.getElementById('bulletinRows');
   const tr = document.createElement('tr');
   tr.innerHTML = `
-    <td><input type="text" class="bl-unit"></td><td><input type="text" class="bl-srp"></td>
-    <td><input type="text" class="bl-discount"></td><td><input type="text" class="bl-c20"></td>
-    <td><input type="text" class="bl-c25"></td><td><input type="text" class="bl-c30"></td>
+    <td><input type="text" class="bl-unit"></td><td><input type="text" class="bl-srp" onblur="formatBulletinInput(this)"></td>
+    <td><input type="text" class="bl-discount" onblur="formatBulletinInput(this)"></td><td><input type="text" class="bl-c20" onblur="formatBulletinInput(this)"></td>
+    <td><input type="text" class="bl-c25" onblur="formatBulletinInput(this)"></td><td><input type="text" class="bl-c30" onblur="formatBulletinInput(this)"></td>
     <td><input type="text" class="bl-promo"></td>
     <td class="center"><button class="del-btn" onclick="this.closest('tr').remove()">✕</button></td>`;
   tbody.appendChild(tr);
@@ -1769,13 +2360,16 @@ function saveBulletinTable(){
   });
   vehicles = newVehicles;
   lsSet('cl_bulletin_vehicles', vehicles);
+  lsSet('cl_bulletin_last_updated', new Date().toISOString());
   renderVehicleDatalist();
+  renderBulletinSummary();
   alert('Vehicle bulletin saved. Dropdown at quotation sheet updated.');
 }
 function resetBulletin(){
   if(!confirm('Reset bulletin to the default list? Mawawala ang mga sarili mong dinagdag/binago.')) return;
   vehicles = DEFAULT_VEHICLES.slice();
   lsSet('cl_bulletin_vehicles', vehicles);
+  lsSet('cl_bulletin_last_updated', new Date().toISOString());
   renderVehicleDatalist();
   renderBulletinTable();
 }
@@ -2306,22 +2900,45 @@ function saveApplication(){
 function refreshSavedList(){
   const container = document.getElementById('savedList');
   const apps = lsGet('cl_applications', {});
-  const records = Object.values(apps).sort((a,b)=> new Date(b.savedAt)-new Date(a.savedAt));
-  if(records.length===0){ container.innerHTML = '<p>Wala pang saved applications sa gadget na ito.</p>'; return; }
+  let records = Object.values(apps).sort((a,b)=> new Date(b.savedAt)-new Date(a.savedAt));
+  const qEl = document.getElementById('savedFilterInput');
+  const q = qEl ? qEl.value.trim().toLowerCase() : '';
+  if(q){
+    records = records.filter(rec=>{
+      const stage = normalizeStage(rec.pipelineStage || 'Application');
+      return (rec.title||'').toLowerCase().includes(q) || stage.toLowerCase().includes(q) || (rec.originSource||'').toLowerCase().includes(q);
+    });
+  }
+  if(records.length===0){ container.innerHTML = '<div class="dash-empty"><div class="de-icon">💾</div><div class="de-text">'+(q?'Walang tugma sa search.':'Wala pang saved applications sa gadget na ito.')+'</div></div>'; return; }
   container.innerHTML = '';
   records.forEach(rec=>{
     const div = document.createElement('div');
-    div.className = 'saved-item';
+    div.className = 'saved-card';
     const stage = normalizeStage(rec.pipelineStage || 'Application');
-    const sourceBadge = (rec.originSource||'Manual')==='AI' ? '🤖 AI Sales' : '🧑‍💼 Manual Sales';
-    const lostNote = stage==='Lost' && rec.lostReason ? ` · Lost reason: ${escapeHtml(rec.lostReason)}` : '';
+    const isAI = (rec.originSource||'Manual')==='AI';
+    const sourceBadge = isAI ? '🤖 AI Sales' : '🧑‍💼 Manual Sales';
+    const lostNote = stage==='Lost' && rec.lostReason ? `<div class="saved-card-lost">Lost reason: ${escapeHtml(rec.lostReason)}</div>` : '';
+    const [name, vehicle] = rec.title.split(' — ');
+    const initial = (name||rec.title||'?').trim().charAt(0).toUpperCase();
     div.innerHTML = `
-      <div><div><b>${escapeHtml(rec.title)}</b></div><div class="meta">Saved: ${new Date(rec.savedAt).toLocaleString()} · Stage: ${escapeHtml(stage)} · ${sourceBadge}${lostNote}</div></div>
-      <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
-        <select class="load-btn" style="cursor:pointer;" title="Manual Conversion — move to another pipeline stage" onchange="handleSavedAppStageChange('${rec.id}', this.value)">
-          ${PIPELINE_STAGES.map(s=>`<option value="${s}" ${s===stage?'selected':''}>${escapeHtml(s)}</option>`).join('')}
-        </select>
-        <button class="load-btn" onclick="loadApplication('${rec.id}')">Load</button><button class="del-btn2" onclick="deleteApplication('${rec.id}')">Delete</button>
+      <div class="saved-card-top">
+        <div class="saved-card-namewrap">
+          <div class="saved-card-avatar">${escapeHtml(initial)}</div>
+          <div class="saved-card-name" title="${escapeHtml(name||rec.title)}">${escapeHtml(name||rec.title)}</div>
+        </div>
+        <span class="status-badge ${stageBadgeClass(stage)}">${escapeHtml(stage)}</span>
+      </div>
+      <div class="saved-card-vehicle">${escapeHtml(vehicle||'—')}</div>
+      <div class="saved-card-meta">
+        <span>Saved ${new Date(rec.savedAt).toLocaleDateString()}</span>
+        <span>${sourceBadge}</span>
+      </div>
+      ${lostNote}
+      <select class="saved-card-stage" title="Manual Conversion — move to another pipeline stage" onchange="handleSavedAppStageChange('${rec.id}', this.value)">
+        ${PIPELINE_STAGES.map(s=>`<option value="${s}" ${s===stage?'selected':''}>${escapeHtml(s)}</option>`).join('')}
+      </select>
+      <div class="saved-card-actions">
+        <button class="load-btn" onclick="loadApplication('${rec.id}')"><svg class="nav-ic" style="width:12px;height:12px;"><use href="#ic-filetext"/></svg> Load</button><button class="del-btn2" onclick="deleteApplication('${rec.id}')"><svg class="nav-ic" style="width:12px;height:12px;"><use href="#ic-trash"/></svg> Delete</button>
       </div>`;
     container.appendChild(div);
   });
@@ -2928,46 +3545,96 @@ function renderMessagesTab(){
 }
 
 function fillTemplate(tpl, r){
+  const isEn = msgTemplateLang==='en';
   return tpl
-    .replace(/\{NAME\}/g, (r && r.name) ? r.name : '[PANGALAN NG CLIENT]')
-    .replace(/\{VEHICLE\}/g, (r && r.vehicle) ? r.vehicle : '[MODEL NG SASAKYAN]')
+    .replace(/\{NAME\}/g, (r && r.name) ? r.name : (isEn ? '[CLIENT NAME]' : '[PANGALAN NG CLIENT]'))
+    .replace(/\{VEHICLE\}/g, (r && r.vehicle) ? r.vehicle : (isEn ? '[VEHICLE MODEL]' : '[MODEL NG SASAKYAN]'))
     .replace(/\{PLATE\}/g, (r && r.plateNumber) ? r.plateNumber : '[PLATE NUMBER]')
     .replace(/\{DEALER\}/g, 'CT Citimotors Las Piñas')
     .replace(/\{AGENT\}/g, 'Romeo Cuyacot');
 }
+// Taglish falls back to the same not-yet-filled-in bracket text as Tagalog (its
+// placeholders read fine in a Taglish sentence too), so it reuses fillTemplate as-is —
+// only the template body text itself (t.tg below) differs from t.tl/t.en.
 
+// Each template now carries both language versions. {NAME}/{VEHICLE}/{PLATE}/{DEALER}/{AGENT}
+// placeholders work identically in both languages — only fillTemplate's fallback text differs.
 const MESSAGE_TEMPLATES = [
-  { title: '✅ Approved', body:
-`Magandang balita po {NAME}! Na-approve na po ang inyong loan application para sa {VEHICLE}. Kokontakin namin kayo para sa susunod na steps at signing ng documents. Maraming salamat po sa tiwala! — {AGENT}, {DEALER}` },
-  { title: '❌ Declined', body:
-`Magandang araw po {NAME}. Sa kasamaang palad, hindi po na-approve ang inyong loan application para sa {VEHICLE} sa ngayon. Kung gusto niyo pong pag-usapan ang ibang options (ibang bank, mas mataas na down payment, o ibang unit), narito lang po ako para tumulong. — {AGENT}, {DEALER}` },
-  { title: '📞 General Follow-up', body:
-`Magandang araw po {NAME}! Ito po si {AGENT} ng {DEALER}. Sumusundan ko lang po ang status ng inyong application/unit para sa {VEHICLE}. May tanong po ba kayo o kailangan ng tulong? — {AGENT}` },
-  { title: '3-Day Follow-up (After Release)', body:
-`Magandang araw po {NAME}! Ito po si {AGENT} ng {DEALER}. Kamusta na po ang experience niyo sa inyong bagong {VEHICLE}? Kung may tanong o concern po kayo, huwag mag-atubiling mag-message lang po. Salamat sa tiwala! 🚗✨` },
-  { title: '📄 ORCR / Plate Number Update', body:
-`Magandang araw po {NAME}! Update lang po sa ORCR at plate number ng inyong {VEHICLE} ({PLATE}). Sasabihan po namin kayo kapag ready na para i-release o i-pick up. Salamat po sa paghihintay! — {AGENT}, {DEALER}` },
-  { title: 'Birthday Greeting', body:
-`Maligayang Kaarawan po, {NAME}! 🎉 Nawa'y puno ng biyaya at kasiyahan ang taong ito para sa inyo. Salamat sa patuloy na tiwala sa {DEALER}. — {AGENT}` },
-  { title: 'Philippine Holiday Greeting', body:
-`Maligayang bakasyon po, {NAME}! Nawa'y makapiling niyo ang inyong mga mahal sa buhay sa araw na ito. Ingat po palagi. — {AGENT}, {DEALER}` },
-  { title: 'Weather Advisory (manual — check current weather/PAGASA first)', body:
-`Magandang araw po {NAME}. Paalala lang po na mag-ingat sa biyahe dahil sa kasalukuyang panahon. Siguraduhing maayos ang wipers, gulong, at ilaw ng inyong {VEHICLE}. Ingat po palagi! — {AGENT}, {DEALER}` },
-  { title: 'Application Status Update', body:
-`Magandang araw po {NAME}! Update lang po sa inyong loan application para sa {VEHICLE} — [ILAGAY ANG STATUS DITO]. Sasabihan namin kayo kapag may bagong update. Salamat po! — {AGENT}, {DEALER}` }
+  { title: '✅ Approved', category:'Approved', tl:
+`Magandang balita po {NAME}! Na-approve na po ang inyong loan application para sa {VEHICLE}. Kokontakin namin kayo para sa susunod na steps at signing ng documents. Maraming salamat po sa tiwala! — {AGENT}, {DEALER}`, en:
+`Great news, {NAME}! Your loan application for the {VEHICLE} has been approved. We'll contact you shortly for the next steps and document signing. Thank you for trusting us! — {AGENT}, {DEALER}`, tg:
+`Hi {NAME}! Good news — approved na po ang loan application niyo for the {VEHICLE}. We'll contact you shortly para sa next steps at document signing. Thank you sa trust niyo! — {AGENT}, {DEALER}` },
+  { title: '❌ Declined', category:'Declined', tl:
+`Magandang araw po {NAME}. Sa kasamaang palad, hindi po na-approve ang inyong loan application para sa {VEHICLE} sa ngayon. Kung gusto niyo pong pag-usapan ang ibang options (ibang bank, mas mataas na down payment, o ibang unit), narito lang po ako para tumulong. — {AGENT}, {DEALER}`, en:
+`Good day, {NAME}. Unfortunately, your loan application for the {VEHICLE} was not approved at this time. If you'd like to explore other options (a different bank, a higher down payment, or another unit), I'm here to help. — {AGENT}, {DEALER}`, tg:
+`Hi {NAME}, good day po. Unfortunately, hindi po na-approve ang loan application niyo for the {VEHICLE} sa ngayon. Kung gusto niyo pong i-explore ang ibang options (different bank, higher down payment, or ibang unit), here to help lang po ako. — {AGENT}, {DEALER}` },
+  { title: '📞 General Follow-up', category:'General Follow-up', tl:
+`Magandang araw po {NAME}! Ito po si {AGENT} ng {DEALER}. Sumusundan ko lang po ang status ng inyong application/unit para sa {VEHICLE}. May tanong po ba kayo o kailangan ng tulong? — {AGENT}`, en:
+`Good day, {NAME}! This is {AGENT} from {DEALER}. Just following up on the status of your application/unit for the {VEHICLE}. Do you have any questions or need any help? — {AGENT}`, tg:
+`Hi {NAME}! This is {AGENT} from {DEALER}. Just following up po sa status ng application/unit niyo for the {VEHICLE}. May tanong po ba kayo or need help with anything? — {AGENT}` },
+  { title: '3-Day Follow-up (After Release)', category:'3-Day Follow-up', tl:
+`Magandang araw po {NAME}! Ito po si {AGENT} ng {DEALER}. Kamusta na po ang experience niyo sa inyong bagong {VEHICLE}? Kung may tanong o concern po kayo, huwag mag-atubiling mag-message lang po. Salamat sa tiwala! 🚗✨`, en:
+`Good day, {NAME}! This is {AGENT} from {DEALER}. How has your experience been with your new {VEHICLE} so far? If you have any questions or concerns, please don't hesitate to message us. Thank you for your trust! 🚗✨`, tg:
+`Hi {NAME}! This is {AGENT} from {DEALER}. Kamusta na po ang experience niyo with your new {VEHICLE}? Kung may questions or concerns kayo, feel free lang po mag-message. Thank you for trusting us! 🚗✨` },
+  { title: '📄 ORCR / Plate Number Update', category:'ORCR / Plate Number Update', tl:
+`Magandang araw po {NAME}! Update lang po sa ORCR at plate number ng inyong {VEHICLE} ({PLATE}). Sasabihan po namin kayo kapag ready na para i-release o i-pick up. Salamat po sa paghihintay! — {AGENT}, {DEALER}`, en:
+`Good day, {NAME}! Just an update on the ORCR and plate number for your {VEHICLE} ({PLATE}). We'll let you know once it's ready for release or pick-up. Thank you for your patience! — {AGENT}, {DEALER}`, tg:
+`Hi {NAME}! Quick update po sa ORCR and plate number ng {VEHICLE} niyo ({PLATE}). We'll let you know po once ready na for release or pick-up. Thank you for your patience! — {AGENT}, {DEALER}` },
+  { title: 'Birthday Greeting', category:'Birthday Greeting', tl:
+`Maligayang Kaarawan po, {NAME}! 🎉 Nawa'y puno ng biyaya at kasiyahan ang taong ito para sa inyo. Salamat sa patuloy na tiwala sa {DEALER}. — {AGENT}`, en:
+`Happy Birthday, {NAME}! 🎉 Wishing you a year full of blessings and joy. Thank you for your continued trust in {DEALER}. — {AGENT}`, tg:
+`Happy Birthday, {NAME}! 🎉 Wishing you po a year full of blessings and joy. Thank you sa patuloy na tiwala sa {DEALER}. — {AGENT}` },
+  { title: 'Philippine Holiday Greeting', category:'General Follow-up', tl:
+`Maligayang bakasyon po, {NAME}! Nawa'y makapiling niyo ang inyong mga mahal sa buhay sa araw na ito. Ingat po palagi. — {AGENT}, {DEALER}`, en:
+`Happy holidays, {NAME}! We hope you get to spend this day with your loved ones. Take care always. — {AGENT}, {DEALER}`, tg:
+`Happy holidays, {NAME}! Sana ma-enjoy niyo po this day kasama ang mga mahal niyo sa buhay. Take care always po. — {AGENT}, {DEALER}` },
+  { title: 'Weather Advisory (manual — check current weather/PAGASA first)', category:'General Follow-up', tl:
+`Magandang araw po {NAME}. Paalala lang po na mag-ingat sa biyahe dahil sa kasalukuyang panahon. Siguraduhing maayos ang wipers, gulong, at ilaw ng inyong {VEHICLE}. Ingat po palagi! — {AGENT}, {DEALER}`, en:
+`Good day, {NAME}. Just a reminder to drive safely given the current weather. Please make sure your {VEHICLE}'s wipers, tires, and lights are in good condition. Stay safe! — {AGENT}, {DEALER}`, tg:
+`Hi {NAME}, good day po. Just a reminder na mag-ingat po sa biyahe dahil sa current weather. Please check po na okay ang wipers, tires, at lights ng {VEHICLE} niyo. Stay safe po! — {AGENT}, {DEALER}` },
+  { title: 'Application Status Update', category:'General Follow-up', tl:
+`Magandang araw po {NAME}! Update lang po sa inyong loan application para sa {VEHICLE} — [ILAGAY ANG STATUS DITO]. Sasabihan namin kayo kapag may bagong update. Salamat po! — {AGENT}, {DEALER}`, en:
+`Good day, {NAME}! An update on your loan application for the {VEHICLE} — [INSERT STATUS HERE]. We'll let you know as soon as there's a new update. Thank you! — {AGENT}, {DEALER}`, tg:
+`Hi {NAME}! Quick update po sa loan application niyo for the {VEHICLE} — [ILAGAY ANG STATUS DITO]. We'll let you know po as soon as may bagong update. Thank you! — {AGENT}, {DEALER}` }
 ];
 
+let msgTemplateLang = 'tl';
+
+function setMessageLanguage(lang){
+  msgTemplateLang = lang;
+  const sel = document.getElementById('msgLangSelector');
+  if(sel) sel.value = lang;
+  renderMessageTemplates();
+}
+
+// Presentation-only lookup — maps each template's existing `category` to an icon +
+// short caption for the card header. Does not alter template titles/content/data.
+const TPL_CATEGORY_META = {
+  'Approved': { icon:'ic-check-circle', cls:'tpl-approved', desc:'Notify a client their loan application was approved.' },
+  'Declined': { icon:'ic-x-circle', cls:'tpl-declined', desc:'Let a client know their application was not approved.' },
+  'General Follow-up': { icon:'ic-mail', cls:'', desc:'Check in on an application, unit, or general inquiry.' },
+  '3-Day Follow-up': { icon:'ic-bell', cls:'', desc:'Follow up with a client a few days after release.' },
+  'ORCR / Plate Number Update': { icon:'ic-filetext', cls:'', desc:'Update a client on their ORCR / plate number status.' },
+  'Birthday Greeting': { icon:'ic-gift', cls:'tpl-birthday', desc:'Send a birthday greeting to a client.' }
+};
 function renderMessageTemplates(){
   const picker = document.getElementById('msgClientPicker');
   const list = getMonitoring();
   const r = picker.value!=='' ? list[parseInt(picker.value,10)] : null;
   const holder = document.getElementById('templatesHolder');
-  holder.innerHTML = MESSAGE_TEMPLATES.map((t, i)=>`
+  holder.innerHTML = MESSAGE_TEMPLATES.map((t, i)=>{
+    const meta = TPL_CATEGORY_META[t.category] || { icon:'ic-mail', cls:'', desc:'Ready-made message template.' };
+    return `
     <div class="template-card">
-      <h4>${escapeHtml(t.title)}</h4>
-      <textarea id="tplText${i}">${escapeHtml(fillTemplate(t.body, r))}</textarea>
-      <button class="copy-btn" onclick="copyTemplate(${i})">📋 Copy Message</button>
-    </div>`).join('');
+      <div class="tpl-card-head">
+        <div class="tpl-icon ${meta.cls}"><svg class="nav-ic" style="width:17px;height:17px;"><use href="#${meta.icon}"/></svg></div>
+        <div class="tpl-head-text"><h4>${escapeHtml(t.title)}</h4><p class="tpl-desc">${escapeHtml(meta.desc)}</p></div>
+        <span class="tpl-lang-tag">${({en:'English', tg:'Taglish'})[msgTemplateLang] || 'Tagalog'}</span>
+      </div>
+      <textarea id="tplText${i}">${escapeHtml(fillTemplate(t[msgTemplateLang], r))}</textarea>
+      <button class="copy-btn" onclick="copyTemplate(${i})"><svg class="nav-ic" style="width:13px;height:13px;"><use href="#ic-filetext"/></svg> Copy Message</button>
+    </div>`;
+  }).join('');
 }
 
 function copyTemplate(i){
@@ -2992,6 +3659,38 @@ let syncExpectedTotal = null;
 let syncSessionId = null;
 let syncSendTimer = null;
 
+function renderSyncStatusCard(){
+  const card = document.getElementById('syncStatusCard');
+  if(!card) return;
+  const cfg = getDsConfig();
+  const sourceLabels = {mock:'Demo Data (Mock)', appsscript:'Google Apps Script', rest:'Custom REST API'};
+  const sourceLabel = sourceLabels[cfg.type] || cfg.type || 'Demo Data (Mock)';
+  const isLive = cfg.type==='appsscript' || cfg.type==='rest';
+  const lastSync = lsGet('cl_last_sync', null);
+  const lastSyncLabel = lastSync ? new Date(lastSync).toLocaleString() : 'Never';
+  const appsCount = Object.keys(lsGet('cl_applications', {})).length;
+  const monCount = lsGet('cl_monitoring', []).length;
+  const vehCount = lsGet('cl_bulletin_vehicles', vehicles).length;
+  card.innerHTML = `
+    <div class="sync-stat-grid">
+      <div class="sync-stat">
+        <div class="sync-stat-label">Connection Status</div>
+        <div class="sync-stat-value"><span class="status-dot ${isLive?'dot-live':'dot-local'}"></span>${isLive?'Connected (live source)':'Local / Offline (this device)'}</div>
+      </div>
+      <div class="sync-stat">
+        <div class="sync-stat-label">Data Source</div>
+        <div class="sync-stat-value">${escapeHtml(sourceLabel)}</div>
+      </div>
+      <div class="sync-stat">
+        <div class="sync-stat-label">Last QR Sync (this device)</div>
+        <div class="sync-stat-value">${escapeHtml(lastSyncLabel)}</div>
+      </div>
+      <div class="sync-stat">
+        <div class="sync-stat-label">On This Device</div>
+        <div class="sync-stat-value">${appsCount} applications · ${monCount} monitoring · ${vehCount} vehicles</div>
+      </div>
+    </div>`;
+}
 function startSyncSend(){
   const backup = {
     applications: lsGet('cl_applications', {}),
@@ -3118,6 +3817,8 @@ function finishSyncScan(fullB64){
     renderMonitoringTable();
     renderDashboard();
     document.getElementById('scanProgress').textContent = '✅ Na-sync na ang data!';
+    lsSet('cl_last_sync', new Date().toISOString());
+    if(document.getElementById('syncStatusCard')) renderSyncStatusCard();
     alert('Tagumpay ang pag-sync! Tingnan ang Saved Applications / Monitoring tabs.');
   }catch(e){
     document.getElementById('scanProgress').textContent = 'Error sa pag-decode ng data: ' + (e.message||String(e));
@@ -3134,64 +3835,131 @@ function stopSyncScan(){
 
 // ---------------- Dashboard ----------------
 let statusChartInstance = null;
+let currentStatusChartFilter = 'all'; // 'today' | 'week' | 'month' | 'all'
 
 function renderDashboard(){
   document.getElementById('dashDateLabel').textContent = new Date().toLocaleDateString('en-PH', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
 
-  const monitoring = getMonitoring();
   const apps = lsGet('cl_applications', {});
   const appsList = Object.values(apps);
-
-  const ongoing = monitoring.filter(r=>r.status==='ONGOING').length;
-  const approved = monitoring.filter(r=>r.status==='APPROVED').length;
-  const declined = monitoring.filter(r=>r.status==='DECLINED').length;
 
   // The old Total Clients/Ongoing/Approved/Declined/Saved Applications cards were
   // redundant with the Monitoring table and the Pipeline board — replaced by the
   // single unified "Sales Pipeline Overview" widget instead (see
   // renderPipelineOverviewOnDashboard()). AI/Manual are shown as a source breakdown,
-  // never as separate pipelines.
-  renderPipelineOverviewOnDashboard();
+  // never as separate pipelines. That call also feeds _lastDashboardLeads used by the
+  // Status Breakdown chart below.
+  renderPipelineOverviewOnDashboard().then(()=> renderStatusBreakdownChart());
   tnUpdateNotifBadge();
   renderBankCreditDirectory();
-  // Reminders (same alert logic used in the Messages tab: holidays, 3-day follow-up, birthdays)
+  // Reminders (same alert logic used in the Messages tab: holidays, 3-day follow-up,
+  // birthdays) — logic unchanged, only the row markup is upgraded for easier scanning.
   const alerts = computeTodaysAlerts();
   const remindersHolder = document.getElementById('dashReminders');
   if(alerts.length===0){
-    remindersHolder.innerHTML = '<p style="color:#8a93a3; font-size:12px;">Wala pang reminders ngayon (walang holiday, 3-day follow-up, o birthday na tumutugma sa mga naka-save na client).</p>';
+    remindersHolder.innerHTML = '<div class="dash-empty"><div class="de-icon">🔔</div><div class="de-text">Wala pang reminders ngayon (walang holiday, 3-day follow-up, o birthday na tumutugma sa mga naka-save na client).</div></div>';
   } else {
-    remindersHolder.innerHTML = alerts.map(a=>`<div class="alert-box ${a.type==='holiday'?'holiday':''}" style="cursor:pointer;" onclick="switchTab('messages')">${escapeHtml(a.text)}</div>`).join('');
-  }
-
-  // status chart
-  const ctx = document.getElementById('statusChart');
-  if(statusChartInstance) statusChartInstance.destroy();
-  if(window.Chart){
-    statusChartInstance = new Chart(ctx, {
-      type:'doughnut',
-      data:{
-        labels:['Ongoing','Approved','Declined'],
-        datasets:[{ data:[ongoing, approved, declined], backgroundColor:['#c3a26b','#3a7a54','#a12626'] }]
-      },
-      options:{
-        responsive:true,
-        plugins:{ legend:{ position:'bottom' } },
-        onClick: () => switchTab('monitoring')
-      }
-    });
+    const TAG_STYLE = {
+      holiday:{ label:'Holiday', bg:'rgba(37,99,235,0.12)', fg:'#1d4ed8' },
+      followup:{ label:'Follow-up', bg:'rgba(245,158,11,0.16)', fg:'#92600a' },
+      birthday:{ label:'Birthday', bg:'rgba(236,72,153,0.14)', fg:'#be185d' }
+    };
+    remindersHolder.innerHTML = alerts.map(a=>{
+      const t = TAG_STYLE[a.type] || {label:'Reminder', bg:'rgba(100,116,139,0.14)', fg:'#475569'};
+      return `<div class="reminder-row" style="background:${t.bg}22;" onclick="switchTab('messages')">
+        <span class="rr-tag" style="background:${t.bg}; color:${t.fg};">${t.label}</span>
+        <span class="rr-text">${escapeHtml(a.text)}</span>
+      </div>`;
+    }).join('');
   }
 
   // recent activity (last 6 saved applications) — click to open that application
   const recent = appsList.sort((a,b)=> new Date(b.savedAt)-new Date(a.savedAt)).slice(0,6);
   const recentHolder = document.getElementById('recentActivity');
   if(recent.length===0){
-    recentHolder.innerHTML = '<p style="color:#8a93a3; font-size:12px;">Wala pang saved applications.</p>';
+    recentHolder.innerHTML = '<div class="dash-empty"><div class="de-icon">🗂️</div><div class="de-text">No recent activity</div></div>';
   } else {
-    recentHolder.innerHTML = recent.map(r=>`
+    recentHolder.innerHTML = recent.map(r=>{
+      const stage = normalizeStage(r.pipelineStage || 'Application');
+      return `
       <div class="activity-row" style="cursor:pointer;" onclick="loadApplication('${r.id}')">
-        <span class="a-name">${escapeHtml(r.title)}</span>
-        <span class="a-meta">${new Date(r.savedAt).toLocaleDateString('en-PH')}</span>
-      </div>`).join('');
+        <div class="a-avatar">${escapeHtml((r.title||'?').trim().charAt(0).toUpperCase())}</div>
+        <div class="a-body">
+          <span class="a-name">${escapeHtml(r.title)}</span>
+          <span class="a-meta">${new Date(r.savedAt).toLocaleDateString('en-PH')}</span>
+        </div>
+        <span class="status-badge ${stageBadgeClass(stage)}">${escapeHtml(stage)}</span>
+      </div>`;
+    }).join('');
+  }
+}
+
+// ---- Status Breakdown: polished analytics chart driven by the real unified pipeline
+// records (_lastDashboardLeads), with a Today / This Week / This Month / All Time filter.
+function setStatusChartFilter(filter){
+  currentStatusChartFilter = filter;
+  renderStatusBreakdownChart();
+}
+function recordDateForFilter(l){
+  const raw = l.date || l.lastActivity || '';
+  if(!raw) return null;
+  const d = new Date(String(raw).split('T')[0].split(' ')[0]);
+  return isNaN(d.getTime()) ? null : d;
+}
+function renderStatusBreakdownChart(){
+  const filterBar = document.getElementById('statusChartFilterBar');
+  const filters = [ ['today','Today'], ['week','This Week'], ['month','This Month'], ['all','All Time'] ];
+  if(filterBar){
+    filterBar.innerHTML = filters.map(([val,label])=>
+      `<button class="time-filter-btn ${currentStatusChartFilter===val?'active':''}" onclick="setStatusChartFilter('${val}')">${label}</button>`
+    ).join('');
+  }
+  const now = new Date();
+  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const startOfWeek = new Date(startOfToday); startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+  const leads = (_lastDashboardLeads||[]).filter(l=>{
+    if(currentStatusChartFilter==='all') return true;
+    const d = recordDateForFilter(l);
+    if(!d) return false; // records without a usable date only ever show under "All Time"
+    if(currentStatusChartFilter==='today') return d >= startOfToday;
+    if(currentStatusChartFilter==='week') return d >= startOfWeek;
+    if(currentStatusChartFilter==='month') return d >= startOfMonth;
+    return true;
+  });
+
+  const canvas = document.getElementById('statusChart');
+  const emptyHolder = document.getElementById('statusChartEmpty');
+  if(statusChartInstance){ statusChartInstance.destroy(); statusChartInstance = null; }
+
+  if(leads.length===0){
+    canvas.style.display = 'none';
+    if(emptyHolder){
+      emptyHolder.style.display = 'block';
+      emptyHolder.innerHTML = '<div class="dash-empty"><div class="de-icon">📊</div><div class="de-text">No data for this period yet</div></div>';
+    }
+    return;
+  }
+  canvas.style.display = 'block';
+  if(emptyHolder) emptyHolder.style.display = 'none';
+
+  const counts = {};
+  PIPELINE_STAGES.forEach(s=> counts[s] = leads.filter(l=>normalizeStage(l.pipelineStage||'Lead')===s).length);
+  const activeStages = PIPELINE_STAGES.filter(s=>counts[s]>0);
+  if(window.Chart){
+    statusChartInstance = new Chart(canvas, {
+      type:'doughnut',
+      data:{
+        labels: activeStages,
+        datasets:[{ data: activeStages.map(s=>counts[s]), backgroundColor: activeStages.map(s=>STAGE_COLOR[s]||'#64748B') }]
+      },
+      options:{
+        responsive:true,
+        plugins:{ legend:{ position:'bottom', labels:{ boxWidth:10, font:{size:10.5} } } },
+        onClick: () => switchTab('monitoring')
+      }
+    });
   }
 }
 
@@ -4393,6 +5161,74 @@ function computeOwnVehicle(modelKey, unitName, srp){
   return { name: modelLabel + ' ' + trim.label, specs: specs, tier: trim.tier || 'top', trans: trim.trans || 'AT', trimLabel: trim.label };
 }
 
+// ---------------- Vehicle Image System (Part 5 — preparation only, no photos added) ----------------
+// Images are read from assets/vehicles/ in this same GitHub repo. Nothing is downloaded,
+// hosted externally, or stored in localStorage/application records — these are static files.
+//
+// Automatic mapping: the image filename is derived from the vehicle's unit name, e.g.
+//   "2026 XPANDER GLS"              -> assets/vehicles/xpander-gls.jpg
+//   "2026 MIRAGE G4 GLX CVT"        -> assets/vehicles/mirage-g4-glx-cvt.jpg
+//   "2026 XPANDER CROSS MONOTONE AT"-> assets/vehicles/xpander-cross-monotone-at.jpg
+// This works automatically for every vehicle already in DEFAULT_VEHICLES, and for any
+// vehicle added later — no need to edit this mapping when a new unit is added, as long as
+// its photo filename follows the same pattern (year dropped, lowercase, spaces -> dashes).
+function slugifyVehicleUnit(unit){
+  return String(unit)
+    .replace(/^\d{4}\s+/, '')        // drop leading model year
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')     // spaces/punctuation -> dash
+    .replace(/^-+|-+$/g, '');        // trim leading/trailing dashes
+}
+
+// Manual overrides — only needed if a specific vehicle's photo filename can't follow the
+// automatic pattern above. Empty by default; add entries like:
+//   "2026 XPANDER GLS": "assets/vehicles/xpander-gls-special.jpg"
+const VEHICLE_IMAGE_OVERRIDES = {};
+
+const VEHICLE_IMAGE_EXTS = ['jpg','jpeg','png','webp'];
+function getVehicleImageCandidates(unit){
+  if(VEHICLE_IMAGE_OVERRIDES[unit]) return [VEHICLE_IMAGE_OVERRIDES[unit]];
+  const slug = slugifyVehicleUnit(unit);
+  return VEHICLE_IMAGE_EXTS.map(ext=>`assets/vehicles/${slug}.${ext}`);
+}
+
+// Called by the <img>'s onerror. Tries the next candidate extension; if none load,
+// hides the <img> and reveals the neutral placeholder (never a broken-image icon).
+function vehicleImageFallback(img){
+  const remaining = (img.getAttribute('data-fallbacks')||'').split('|').filter(Boolean);
+  if(remaining.length){
+    img.setAttribute('data-fallbacks', remaining.slice(1).join('|'));
+    img.src = remaining[0];
+  } else {
+    img.style.display = 'none';
+    const ph = img.nextElementSibling;
+    if(ph) ph.style.display = 'flex';
+  }
+}
+
+function vehicleImageCardHtml(unit){
+  const candidates = getVehicleImageCandidates(unit);
+  const first = candidates[0];
+  const rest = candidates.slice(1).join('|');
+  return `<div class="vdetails-image-card">
+      <img src="${escapeHtml(first)}" alt="${escapeHtml(unit)}" class="vdetails-image"
+           data-fallbacks="${escapeHtml(rest)}" onerror="vehicleImageFallback(this)" />
+      <div class="vdetails-image-placeholder">
+        <svg class="nav-ic"><use href="#ic-car"/></svg>
+        <span class="vip-label">Vehicle Image</span>
+        <small class="vip-sub">Image not available</small>
+      </div>
+    </div>`;
+}
+
+// Left-column card content: image, then vehicle name and SRP underneath (matches the
+// reference layout — image/name/price stacked in the left sidebar card).
+function vehicleLeftColHtml(v, unit){
+  return vehicleImageCardHtml(unit) +
+    `<div class="vlc-name">${escapeHtml(unit)}</div>` +
+    `<div class="vlc-price">₱${formatNumber(v.srp)}<span class="vlc-srp-tag">SRP</span></div>`;
+}
+
 // ---------------- Vehicle Details tab ----------------
 function refreshDetailsPicker(){
   const sel = document.getElementById('detailsVehicleSelect');
@@ -4409,9 +5245,13 @@ function refreshDetailsPicker(){
 
 function renderVehicleDetails(){
   const sel = document.getElementById('detailsVehicleSelect');
-  const body = document.getElementById('detailsBody');
+  const imgArea = document.getElementById('detailsImageArea');
+  const specsArea = document.getElementById('detailsSpecsArea');
+  const compareArea = document.getElementById('detailsCompareArea');
   if(sel.value===''){
-    body.innerHTML = '<p class="hint" style="max-width:none;">Pumili ng vehicle sa itaas para makita ang specs, features, pros &amp; cons, at paghahambing sa ibang brands.</p>';
+    imgArea.innerHTML = '';
+    specsArea.innerHTML = '<p class="hint" style="max-width:none;">Pumili ng vehicle sa kaliwa para makita ang specs, features, pros &amp; cons, at paghahambing sa ibang brands.</p>';
+    compareArea.innerHTML = '';
     currentOwnVehicle = null;
     currentDetailsRivals = [];
     return;
@@ -4419,49 +5259,102 @@ function renderVehicleDetails(){
   const v = vehicles[parseInt(sel.value,10)];
   const modelKey = getModelKeyForUnit(v.unit);
   const specs = modelKey ? SPECS_DB[modelKey] : null;
+  imgArea.innerHTML = vehicleLeftColHtml(v, v.unit);
   if(!specs){
-    body.innerHTML = `<p class="hint" style="max-width:none;">Wala pang naka-file na detalyadong specs para sa <b>${escapeHtml(v.unit)}</b>. Pwede itong idagdag sa SPECS_DB sa code (Mirage/Xpander/Xforce/Destinator/Triton/Montero/L300 lang ang naka-cover ngayon).</p>`;
+    specsArea.innerHTML = `<p class="hint" style="max-width:none;">Wala pang naka-file na detalyadong specs para sa <b>${escapeHtml(v.unit)}</b>. Pwede itong idagdag sa SPECS_DB sa code (Mirage/Xpander/Xforce/Destinator/Triton/Montero/L300 lang ang naka-cover ngayon).</p>`;
+    compareArea.innerHTML = '';
     currentOwnVehicle = null;
     currentDetailsRivals = [];
     return;
   }
   currentOwnVehicle = computeOwnVehicle(modelKey, v.unit, v.srp);
-  let html = `<h2 style="margin-top:0;">${escapeHtml(v.unit)}</h2>`;
-  html += Object.keys(specs.groups).map(groupName=>{
+
+  // Presentation-only lookup — maps each spec group's existing name to an icon for the
+  // card header. Does not alter the underlying group names/keys/values in SPECS_DB.
+  const GROUP_ICON = {
+    'Engine & Transmission': 'ic-wrench', 'Dimensions': 'ic-columns',
+    'Suspension & Brakes': 'ic-settings', 'Colors (PH Market)': 'ic-camera'
+  };
+  const groupIconFor = (name)=> GROUP_ICON[name] || (name.toLowerCase().includes('color') ? 'ic-camera' : 'ic-activity');
+  const isColorGroup = (name)=> name.toLowerCase().includes('color');
+  const COLOR_SWATCH_MAP = { red:'#b5312c', silver:'#c7ccd1', white:'#f4f5f7', gray:'#8a919c', grey:'#8a919c', black:'#1c1f24', blue:'#2a5ca8', titanium:'#8a919c', bronze:'#8a6a3f', beige:'#d8cdb8', maroon:'#5f242a', gold:'#c3a26b', green:'#3a7a54', orange:'#c0521a', yellow:'#e0c34a', brown:'#5a4632' };
+  const swatchColorFor = (label)=>{
+    const l = label.toLowerCase();
+    for(const k in COLOR_SWATCH_MAP){ if(l.includes(k)) return COLOR_SWATCH_MAP[k]; }
+    return '#c7ccd1';
+  };
+
+  let html = `<div class="specs-grid">`;
+  // Build each group + Key Features as separate card entries first, so we can detect
+  // when the final card would be left alone in the last row (odd total count) and make
+  // it full-width instead — this is what caused the big empty gap next to "Key Features"
+  // on vehicles that have a Dimensions card (Mirage doesn't, which is why only Mirage
+  // looked fine before).
+  const cardEntries = [];
+  Object.keys(specs.groups).forEach(groupName=>{
     const rows = specs.groups[groupName];
-    return `<div class="specs-group"><h4>${escapeHtml(groupName)}</h4>` +
+    const ic = groupIconFor(groupName);
+    if(isColorGroup(groupName)){
+      const colorText = Object.values(rows)[0] || '';
+      const colorNames = colorText.split(',').map(s=>s.trim()).filter(Boolean);
+      const swatches = colorNames.map(name=>`<div class="specs-swatch" title="${escapeHtml(name)}" style="background:${swatchColorFor(name)};"></div>`).join('');
+      cardEntries.push(`<div class="specs-group"><h4><span class="sg-ic"><svg class="nav-ic"><use href="#${ic}"/></svg></span>${escapeHtml(groupName)}</h4>` +
+        `<div class="specs-swatches">${swatches}</div>` +
+        `<div class="specs-row" style="margin-top:8px;"><span></span><span style="font-weight:500; text-align:left; max-width:100%;">${escapeHtml(colorText)}</span></div>` +
+        `</div>`);
+      return;
+    }
+    cardEntries.push(`<div class="specs-group"><h4><span class="sg-ic"><svg class="nav-ic"><use href="#${ic}"/></svg></span>${escapeHtml(groupName)}</h4>` +
       Object.keys(rows).map(k=>`<div class="specs-row"><span>${escapeHtml(k)}</span><span>${escapeHtml(rows[k])}</span></div>`).join('') +
-      `</div>`;
-  }).join('');
+      `</div>`);
+  });
   if(specs.features){
-    html += `<div class="specs-group"><h4>Key Features</h4><ul style="margin:0; padding-left:18px; font-size:12px;">` +
-      specs.features.map(f=>`<li>${escapeHtml(f)}</li>`).join('') + `</ul></div>`;
+    cardEntries.push(`<div class="specs-group"><h4><span class="sg-ic"><svg class="nav-ic"><use href="#ic-check-circle"/></svg></span>Key Features</h4><ul style="margin:0; padding-left:18px; font-size:12px; line-height:1.7;">` +
+      specs.features.map(f=>`<li>${escapeHtml(f)}</li>`).join('') + `</ul></div>`);
   }
+  // Odd count -> the last card would be alone in the final row with empty space beside
+  // it. Make it span both columns instead, so it fills the row with no gap. When that
+  // card is Key Features, also lay its list out in 2 columns so the bullets use the
+  // extra width instead of leaving it blank.
+  if(cardEntries.length % 2 === 1 && cardEntries.length > 0){
+    const lastIdx = cardEntries.length - 1;
+    cardEntries[lastIdx] = cardEntries[lastIdx].replace('class="specs-group"', 'class="specs-group specs-full"');
+    if(specs.features){
+      cardEntries[lastIdx] = cardEntries[lastIdx].replace(
+        '<ul style="margin:0; padding-left:18px; font-size:12px; line-height:1.7;">',
+        '<ul style="margin:0; padding-left:18px; font-size:12px; line-height:1.7; columns:2; column-gap:24px;">'
+      );
+    }
+  }
+  html += cardEntries.join('');
   if(specs.pros || specs.cons){
-    html += `<div class="specs-group"><h4>Pros &amp; Cons</h4><div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">`;
-    html += `<div><b style="color:#3a7a54; font-size:11.5px;">✓ PROS</b><ul style="margin:6px 0 0 0; padding-left:16px; font-size:12px;">` + (specs.pros||[]).map(p=>`<li>${escapeHtml(p)}</li>`).join('') + `</ul></div>`;
-    html += `<div><b style="color:#a12626; font-size:11.5px;">✕ CONS</b><ul style="margin:6px 0 0 0; padding-left:16px; font-size:12px;">` + (specs.cons||[]).map(c=>`<li>${escapeHtml(c)}</li>`).join('') + `</ul></div>`;
+    html += `<div class="specs-group specs-full"><h4><span class="sg-ic"><svg class="nav-ic"><use href="#ic-clipboard"/></svg></span>Pros &amp; Cons</h4><div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">`;
+    html += `<div><b style="color:#3a7a54; font-size:11.5px;">✓ PROS</b><ul style="margin:6px 0 0 0; padding-left:16px; font-size:12px; line-height:1.7;">` + (specs.pros||[]).map(p=>`<li>${escapeHtml(p)}</li>`).join('') + `</ul></div>`;
+    html += `<div><b style="color:#a12626; font-size:11.5px;">✕ CONS</b><ul style="margin:6px 0 0 0; padding-left:16px; font-size:12px; line-height:1.7;">` + (specs.cons||[]).map(c=>`<li>${escapeHtml(c)}</li>`).join('') + `</ul></div>`;
     html += `</div></div>`;
   }
+  html += `</div>`; // close .specs-grid
+  specsArea.innerHTML = html;
+
   const rivalList = specs.rivals || [];
   currentDetailsRivals = rivalList;
-  html += `<div class="specs-group" id="compareGroupWrap">`;
-  html += `<h4>Mitsubishi vs Other Brands</h4>`;
-  html += `<div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:8px;">`;
-  html += `<div><label style="font-size:11px; color:#666; display:block; margin-bottom:4px;">Brand</label>`;
-  html += `<select id="rivalBrandFilter" onchange="onRivalBrandChange()" style="padding:6px; border:1px solid #ccc; border-radius:4px; font-size:12px;">`;
-  html += `<option value="">— Select Brand —</option>`;
-  html += BRAND_LIST.map(b=>`<option value="${escapeHtml(b)}">${escapeHtml(b)}</option>`).join('');
-  html += `</select></div>`;
-  html += `<div><label style="font-size:11px; color:#666; display:block; margin-bottom:4px;">Model</label>`;
-  html += `<select id="rivalBrandSelect" onchange="renderComparisonTable()" style="padding:6px; border:1px solid #ccc; border-radius:4px; font-size:12px; min-width:200px;"><option value="">— Pumili muna ng Brand —</option></select></div>`;
-  html += `</div>`;
-  html += `<div id="compareTableHolder"></div>`;
+  let cHtml = `<div class="specs-group specs-full" id="compareGroupWrap" style="margin-top:0;">`;
+  cHtml += `<h4><span class="sg-ic"><svg class="nav-ic"><use href="#ic-car"/></svg></span>Mitsubishi vs Other Brands</h4>`;
+  cHtml += `<div class="rival-picker-row">`;
+  cHtml += `<div class="rp-field"><label>Brand</label>`;
+  cHtml += `<select id="rivalBrandFilter" onchange="onRivalBrandChange()">`;
+  cHtml += `<option value="">— Select Brand —</option>`;
+  cHtml += BRAND_LIST.map(b=>`<option value="${escapeHtml(b)}">${escapeHtml(b)}</option>`).join('');
+  cHtml += `</select></div>`;
+  cHtml += `<div class="rp-field"><label>Model</label>`;
+  cHtml += `<select id="rivalBrandSelect" onchange="renderComparisonTable()"><option value="">— Pumili muna ng Brand —</option></select></div>`;
+  cHtml += `</div>`;
+  cHtml += `<div id="compareTableHolder"></div>`;
   if(specs.comparison){
-    html += `<p style="font-size:12px; line-height:1.6; margin:10px 0 0 0;">${escapeHtml(specs.comparison)}</p>`;
+    cHtml += `<p style="font-size:12px; line-height:1.6; margin:10px 0 0 0; color:var(--ent-text-mut,#556);">${escapeHtml(specs.comparison)}</p>`;
   }
-  html += `</div>`;
-  body.innerHTML = html;
+  cHtml += `</div>`;
+  compareArea.innerHTML = cHtml;
   // auto-select the first available brand so a comparison shows immediately
   if(rivalList.length){
     document.getElementById('rivalBrandFilter').value = rivalList[0].brand;
@@ -4515,22 +5408,36 @@ function renderComparisonTable(){
   } else if(matched && matched.singleSpec){
     noteHtml = `<p style="font-size:11px; color:#a17a1f; margin:0 0 6px 0;">⚠ Iisang variant pa lang ang naka-verify na data para sa ${escapeHtml(r.brand)} ${escapeHtml(r.name)} (hindi pa naka-tier-split by base/mid/top). Ang specs sa ibaba ay yung naka-file na variant lang, hindi pa awtomatikong tumutugma sa napiling trim ng Mitsubishi.</p>`;
   }
-  let html = noteHtml + `<table class="compare-table"><tr><th></th><th>${escapeHtml(ownName)}</th><th>${escapeHtml(rivalName)}</th></tr>`;
+  let html = noteHtml + `<div class="compare-card">`;
+  html += `<div class="compare-card-head">`;
+  html += `<div class="cch-side cch-own"><div class="cch-tag">Mitsubishi</div><div class="cch-name">${escapeHtml(ownName)}</div></div>`;
+  html += `<div class="cch-side cch-rival"><div class="cch-tag">${escapeHtml(r.brand||'Competitor')}</div><div class="cch-name">${escapeHtml(rivalName)}</div></div>`;
+  html += `</div>`;
+  html += `<table class="compare-table">`;
   rows.forEach(label=>{
     const ownVal = ownSpecs[label] || '—';
     const rivalVal = rivalSpecs[label] || '—';
     const ownNum = extractNumber(ownVal);
     const rivalNum = extractNumber(rivalVal);
     let ownCls = '', rivalCls = '';
-    if(ownNum!==null && rivalNum!==null && ownNum!==rivalNum){
-      const lowerIsBetter = (label==='Price');
-      const ownWins = lowerIsBetter ? ownNum < rivalNum : ownNum > rivalNum;
-      ownCls = ownWins ? 'cmp-better' : 'cmp-worse';
-      rivalCls = ownWins ? 'cmp-worse' : 'cmp-better';
+    if(ownNum!==null && rivalNum!==null){
+      // Within ~5% of each other counts as effectively the same spec — flagged as
+      // "Similar" instead of a misleading hard win/loss on numbers this close.
+      const largerAbs = Math.max(Math.abs(ownNum), Math.abs(rivalNum), 1e-9);
+      const pctDiff = Math.abs(ownNum - rivalNum) / largerAbs;
+      if(ownNum===rivalNum || pctDiff < 0.05){
+        ownCls = 'cmp-similar'; rivalCls = 'cmp-similar';
+      } else {
+        const lowerIsBetter = (label==='Price');
+        const ownWins = lowerIsBetter ? ownNum < rivalNum : ownNum > rivalNum;
+        ownCls = ownWins ? 'cmp-better' : 'cmp-worse';
+        rivalCls = ownWins ? 'cmp-worse' : 'cmp-better';
+      }
     }
     html += `<tr><td class="cmp-label">${escapeHtml(label)}</td><td class="${ownCls}">${escapeHtml(ownVal)}</td><td class="${rivalCls}">${escapeHtml(rivalVal)}</td></tr>`;
   });
-  html += `</table>`;
+  html += `</table></div>`;
+  html += `<div class="cmp-legend"><span><i class="lg-better"></i>Mitsubishi advantage</span><span><i class="lg-similar"></i>Similar (within ~5%)</span><span><i class="lg-worse"></i>Lower</span></div>`;
   holder.innerHTML = html;
 }
 
@@ -4894,6 +5801,13 @@ function setDsConfig(cfg){ lsSet(DS_CONFIG_KEY, cfg); }
 // origin) moves through these same stages, with "Lost" as a terminal outcome (with a
 // Lost Reason) rather than "Declined" being a stage of its own.
 const PIPELINE_STAGES = ['Lead','Qualified','Application','Waiting for Requirements','Waiting for Bank Approval','Approved','Released','Lost'];
+// Shared color mapping so every place that shows a pipeline stage (Dashboard KPIs,
+// Pipeline kanban columns, badges) uses the exact same professional color language.
+const STAGE_COLOR = {
+  'Lead':'#64748B','Qualified':'#2563EB','Application':'#2563EB',
+  'Waiting for Requirements':'#F59E0B','Waiting for Bank Approval':'#F59E0B',
+  'Approved':'#10B981','Released':'#0d9488','Lost':'#EF4444'
+};
 // Reasons a record can land in the "Lost" stage — captured via the Lost Reason modal
 // whenever a card (AI or Manual) is moved/converted to Lost. "Bank Declined" lives here
 // as a reason, not as its own pipeline status.
@@ -4906,6 +5820,18 @@ function normalizeStage(stage){
   if(PIPELINE_STAGES.includes(stage)) return stage;
   if(STAGE_ALIASES[stage]) return STAGE_ALIASES[stage];
   return 'Lead';
+}
+// Maps a unified pipeline stage onto the shared .status-badge.st-* CSS classes.
+function stageBadgeClass(stage){
+  const s = normalizeStage(stage);
+  if(s==='Lead') return 'st-lead';
+  if(s==='Qualified') return 'st-qualified';
+  if(s==='Application') return 'st-application';
+  if(s==='Waiting for Requirements' || s==='Waiting for Bank Approval') return 'st-waiting';
+  if(s==='Approved') return 'st-approved';
+  if(s==='Released') return 'st-released';
+  if(s==='Lost') return 'st-lost';
+  return 'st-lead';
 }
 
 // No demo/testing records — when the Data Source is not yet connected (or a fetch fails),
@@ -5076,6 +6002,8 @@ function stopAutoRefresh(){
 // ---- AI Conversations inbox ----
 let currentInboxLeads = [];
 let currentOpenLeadId = null;
+let inboxTypeFilter = '';
+let inboxStageFilter = '';
 
 async function renderInboxTab(){
   const listEl = document.getElementById('inboxList');
@@ -5098,7 +6026,19 @@ async function refreshInboxSilently(){
 }
 function renderInboxList(leads){
   const listEl = document.getElementById('inboxList');
-  let html = `<div class="inbox-search"><input type="text" id="inboxSearchInput" placeholder="Hanapin: pangalan, contact, FB ID, vehicle..." oninput="filterInboxList(this.value)"></div>`;
+  const searchVal = document.getElementById('inboxSearchInput') ? document.getElementById('inboxSearchInput').value : '';
+  let html = `<div class="inbox-search"><input type="text" id="inboxSearchInput" placeholder="Hanapin: pangalan, contact, FB ID, vehicle..." value="${escapeHtml(searchVal)}" oninput="applyInboxFilters()"></div>`;
+  html += `<div class="inbox-filter-row">
+    <select id="inboxTypeFilter" onchange="applyInboxFilters()">
+      <option value="">All types</option>
+      <option value="ai" ${inboxTypeFilter==='ai'?'selected':''}>🤖 AI</option>
+      <option value="human" ${inboxTypeFilter==='human'?'selected':''}>🧑‍💼 Human</option>
+    </select>
+    <select id="inboxStageFilter" onchange="applyInboxFilters()">
+      <option value="">All statuses</option>
+      ${PIPELINE_STAGES.map(s=>`<option value="${escapeHtml(s)}" ${inboxStageFilter===s?'selected':''}>${escapeHtml(s)}</option>`).join('')}
+    </select>
+  </div>`;
   if(leads.length===0){
     html += '<div class="inbox-empty">Walang lead na makita.</div>';
   } else {
@@ -5122,14 +6062,26 @@ function renderInboxList(leads){
   listEl.innerHTML = html;
 }
 function filterInboxList(q){
-  q = q.toLowerCase();
-  const filtered = currentInboxLeads.filter(l=>
-    (l.name||'').toLowerCase().includes(q) ||
-    (l.contact||'').toLowerCase().includes(q) ||
-    (l.facebookId||'').toLowerCase().includes(q) ||
-    (l.preferredUnit||'').toLowerCase().includes(q) ||
-    (l.pipelineStage||'').toLowerCase().includes(q)
-  );
+  applyInboxFilters(q);
+}
+function applyInboxFilters(qOverride){
+  const searchEl = document.getElementById('inboxSearchInput');
+  const typeEl = document.getElementById('inboxTypeFilter');
+  const stageEl = document.getElementById('inboxStageFilter');
+  const q = (typeof qOverride==='string' ? qOverride : (searchEl?searchEl.value:'')).toLowerCase();
+  inboxTypeFilter = typeEl ? typeEl.value : inboxTypeFilter;
+  inboxStageFilter = stageEl ? stageEl.value : inboxStageFilter;
+  const filtered = currentInboxLeads.filter(l=>{
+    const matchesText = !q ||
+      (l.name||'').toLowerCase().includes(q) ||
+      (l.contact||'').toLowerCase().includes(q) ||
+      (l.facebookId||'').toLowerCase().includes(q) ||
+      (l.preferredUnit||'').toLowerCase().includes(q) ||
+      (l.pipelineStage||'').toLowerCase().includes(q);
+    const matchesType = !inboxTypeFilter || (inboxTypeFilter==='ai' ? !l.humanTakeover : !!l.humanTakeover);
+    const matchesStage = !inboxStageFilter || normalizeStage(l.pipelineStage)===inboxStageFilter;
+    return matchesText && matchesType && matchesStage;
+  });
   renderInboxList(filtered);
 }
 async function openLeadConversation(leadId){
@@ -5363,7 +6315,7 @@ function renderKanbanBoard(leads){
     const cards = filtered.filter(l=>normalizeStage(l.pipelineStage||'Lead')===stage);
     return `
     <div class="kanban-col">
-      <div class="kanban-col-header"><span>${escapeHtml(stage)}</span><span>${cards.length}</span></div>
+      <div class="kanban-col-header" style="border-top:3px solid ${STAGE_COLOR[stage]||'#64748B'};"><span>${escapeHtml(stage)}</span><span class="status-badge" style="background:${STAGE_COLOR[stage]}22; color:${STAGE_COLOR[stage]};">${cards.length}</span></div>
       <div class="kanban-col-body" data-stage="${escapeHtml(stage)}" ondragover="event.preventDefault(); this.classList.add('drag-over');" ondragleave="this.classList.remove('drag-over');" ondrop="onKanbanDrop(event, '${escapeHtml(stage)}')">
         ${cards.map(l=>{
           const draggable = !l._fromMonitoring; // monitoring rows are edited in the Monitoring tab, not dragged here
@@ -5417,41 +6369,183 @@ async function onKanbanDrop(evt, newStage){
   renderPipelineTab();
 }
 
+// ---- Dashboard: KPI history snapshots (for real "vs previous period" comparisons) ----
+// Stores ONE snapshot per calendar day of the actual pipeline-stage counts. No numbers
+// are ever invented — a trend is only shown once a snapshot from an earlier day exists.
+const KPI_SNAPSHOT_KEY = 'cl_dashboard_kpi_snapshots';
+function todayIso(){ return new Date().toISOString().slice(0,10); }
+function recordKpiSnapshot(stageCounts){
+  const snaps = lsGet(KPI_SNAPSHOT_KEY, []);
+  const today = todayIso();
+  const idx = snaps.findIndex(s=>s.date===today);
+  if(idx>=0) snaps[idx] = {date:today, counts:stageCounts};
+  else snaps.push({date:today, counts:stageCounts});
+  // Keep a rolling 90-day history — plenty for week/month comparisons without
+  // growing localStorage unbounded.
+  snaps.sort((a,b)=> a.date<b.date?-1:1);
+  lsSet(KPI_SNAPSHOT_KEY, snaps.slice(-90));
+}
+// Finds the most recent snapshot that is at least `daysAgo` days older than today, so a
+// comparison is only ever computed against a REAL earlier recording, not a guess.
+function findComparisonSnapshot(daysAgo){
+  const snaps = lsGet(KPI_SNAPSHOT_KEY, []);
+  const cutoff = new Date(); cutoff.setDate(cutoff.getDate()-daysAgo); cutoff.setHours(0,0,0,0);
+  const eligible = snaps.filter(s=> new Date(s.date+'T00:00:00') <= cutoff);
+  if(eligible.length===0) return null;
+  return eligible[eligible.length-1];
+}
+function kpiTrendHtml(stage, currentValue){
+  const prevSnap = findComparisonSnapshot(7);
+  if(!prevSnap) return ''; // not enough real history yet — never fabricate a comparison
+  const prevValue = prevSnap.counts && typeof prevSnap.counts[stage]==='number' ? prevSnap.counts[stage] : null;
+  if(prevValue===null) return '';
+  const diff = currentValue - prevValue;
+  if(prevValue===0){
+    if(diff===0) return `<div class="kpi-trend flat">— vs ${escapeHtml(prevSnap.date)}</div>`;
+    return `<div class="kpi-trend up">▲ +${diff} vs ${escapeHtml(prevSnap.date)}</div>`;
+  }
+  const pct = Math.round((diff/prevValue)*100);
+  const dir = pct>0 ? 'up' : (pct<0 ? 'down' : 'flat');
+  const arrow = pct>0 ? '▲' : (pct<0 ? '▼' : '—');
+  const pctTxt = pct===0 ? '0%' : `${pct>0?'+':''}${pct}%`;
+  return `<div class="kpi-trend ${dir}">${arrow} ${pctTxt} vs ${escapeHtml(prevSnap.date)}</div>`;
+}
+
 // ---- Dashboard: ONE unified Sales Pipeline Overview ----
 // AI Sales and Manual Sales are only the SOURCE of a client, never separate pipelines —
 // so this combines AI leads + Monitoring + Saved Applications into a single set of
 // counts per unified PIPELINE_STAGES, plus a small source breakdown underneath.
+let _lastDashboardLeads = [];
 async function renderPipelineOverviewOnDashboard(){
   const holder = document.getElementById('crmStatsPanel');
   const sourceHolder = document.getElementById('sourceBreakdownPanel');
   if(!holder) return;
   const aiLeads = await DataService.getLeads();
   const allLeads = mergeLeadsWithMonitoring(aiLeads);
+  _lastDashboardLeads = allLeads;
+  // Presentational-only mapping (icon + accent color) per pipeline stage — does not
+  // affect stage names, counts, filters, or any underlying data.
+  const STAGE_STYLE = {
+    'Lead': {icon:'🆕', accent:'accent-slate'},
+    'Qualified': {icon:'✅', accent:'accent-blue'},
+    'Application': {icon:'📄', accent:'accent-blue'},
+    'Waiting for Requirements': {icon:'⏳', accent:'accent-amber'},
+    'Waiting for Bank Approval': {icon:'🏦', accent:'accent-amber'},
+    'Approved': {icon:'👍', accent:'accent-green'},
+    'Released': {icon:'🚗', accent:'accent-teal'},
+    'Lost': {icon:'✖️', accent:'accent-red'}
+  };
+  const stageCounts = {};
+  PIPELINE_STAGES.forEach(stage=>{ stageCounts[stage] = allLeads.filter(l=>normalizeStage(l.pipelineStage||'Lead')===stage).length; });
+  // Record today's real counts so future visits can show an honest "vs previous period".
+  recordKpiSnapshot(stageCounts);
   const stats = PIPELINE_STAGES.map(stage=>({
     label: stage,
-    value: allLeads.filter(l=>normalizeStage(l.pipelineStage||'Lead')===stage).length,
-    action: `goToPipelineStage('${stage}')`
+    value: stageCounts[stage],
+    action: `goToPipelineStage('${stage}')`,
+    style: STAGE_STYLE[stage] || {icon:'📌', accent:'accent-navy'}
   }));
   holder.innerHTML = stats.map(s=>`
-    <div class="kpi-card accent-navy" style="cursor:pointer;" onclick="${s.action}">
-      <div class="kpi-label">${escapeHtml(s.label)}</div>
-      <div class="kpi-value">${s.value}</div>
+    <div class="kpi-card ${s.style.accent}" style="cursor:pointer;" onclick="${s.action}">
+      <div class="kpi-icon">${s.style.icon}</div>
+      <div>
+        <div class="kpi-label">${escapeHtml(s.label)}</div>
+        <div class="kpi-value">${s.value}</div>
+        ${kpiTrendHtml(s.label, s.value)}
+      </div>
     </div>`).join('');
   if(sourceHolder){
     const aiCount = allLeads.filter(l=>(l.originSource||'Manual')==='AI').length;
     const manualCount = allLeads.filter(l=>(l.originSource||'Manual')==='Manual').length;
     sourceHolder.innerHTML = `
       <div class="kpi-card accent-gold" style="cursor:pointer;" onclick="switchTab('pipeline'); setTimeout(()=>setPipelineSourceFilter('AI'),150);">
-        <div class="kpi-label">🤖 AI Sales</div><div class="kpi-value">${aiCount}</div>
+        <div class="kpi-icon">🤖</div>
+        <div>
+          <div class="kpi-label">AI Sales</div><div class="kpi-value">${aiCount}</div>
+          ${kpiTrendHtml('__source_ai', aiCount)}
+        </div>
       </div>
       <div class="kpi-card accent-gold" style="cursor:pointer;" onclick="switchTab('pipeline'); setTimeout(()=>setPipelineSourceFilter('Manual'),150);">
-        <div class="kpi-label">🧑‍💼 Manual Sales</div><div class="kpi-value">${manualCount}</div>
+        <div class="kpi-icon">🧑‍💼</div>
+        <div>
+          <div class="kpi-label">Manual Sales</div><div class="kpi-value">${manualCount}</div>
+          ${kpiTrendHtml('__source_manual', manualCount)}
+        </div>
       </div>`;
   }
+  renderPipelineConversionFunnel(allLeads, stageCounts);
+  renderSourcePerformancePanel(allLeads);
 }
 // Backwards-compatible alias — kept in case anything else in the file still calls the
 // old function name on startup.
 async function renderCrmStatsOnDashboard(){ return renderPipelineOverviewOnDashboard(); }
+
+// ---- Pipeline Conversion funnel: Lead → Qualified → Application → Approved → Released,
+// with Lost shown separately as a terminal outcome. Uses ONLY real current-stage counts
+// from the unified pipeline — never a fabricated conversion percentage.
+function renderPipelineConversionFunnel(allLeads, stageCounts){
+  const holder = document.getElementById('pipelineConversionFunnel');
+  if(!holder) return;
+  const counts = stageCounts || {};
+  const funnelStages = [
+    {stage:'Lead', icon:'🆕', color:'#64748B'},
+    {stage:'Qualified', icon:'✅', color:'#2563EB'},
+    {stage:'Application', icon:'📄', color:'#2563EB'},
+    {stage:'Approved', icon:'👍', color:'#10B981'},
+    {stage:'Released', icon:'🚗', color:'#0d9488'}
+  ];
+  const total = PIPELINE_STAGES.reduce((sum,s)=> sum + (counts[s]||0), 0);
+  const lostCount = counts['Lost']||0;
+  if(total===0){
+    holder.innerHTML = '<div class="dash-empty"><div class="de-icon">🔀</div><div class="de-text">Not enough data yet</div></div>';
+    return;
+  }
+  const maxVal = Math.max(1, ...funnelStages.map(f=>counts[f.stage]||0));
+  holder.innerHTML = `
+    <div class="funnel-wrap">
+      ${funnelStages.map((f,i)=>{
+        const val = counts[f.stage]||0;
+        const widthPct = Math.max(val>0?4:1, Math.round((val/maxVal)*100));
+        return `
+        <div class="funnel-row" style="cursor:pointer;" onclick="goToPipelineStage('${f.stage}')" title="${escapeHtml(f.stage)}">
+          <div class="fr-label">${f.icon} ${escapeHtml(f.stage)}</div>
+          <div class="fr-track"><div class="fr-fill" style="width:${widthPct}%; background:${f.color};"></div></div>
+          <div class="fr-count">${val}</div>
+        </div>
+        ${i<funnelStages.length-1 ? '<div class="funnel-arrow">↓</div>' : ''}`;
+      }).join('')}
+    </div>
+    <div class="funnel-lost-card">
+      <div class="fl-label">✖️ Lost (terminal outcome, shown separately)</div>
+      <div class="fl-count">${lostCount}${total>0 ? ` <span style="font-size:10.5px; font-weight:700; opacity:0.75;">(${Math.round((lostCount/total)*100)}% of ${total})</span>` : ''}</div>
+    </div>`;
+}
+
+// ---- Source Performance: AI Sales vs Manual Sales, with real counts, % of total, and
+// a simple side-by-side visual comparison. No invented figures — purely derived counts.
+function renderSourcePerformancePanel(allLeads){
+  const holder = document.getElementById('sourcePerformancePanel');
+  if(!holder) return;
+  const total = allLeads.length;
+  if(total===0){
+    holder.innerHTML = '<div class="dash-empty"><div class="de-icon">📡</div><div class="de-text">No active leads yet</div></div>';
+    return;
+  }
+  const aiCount = allLeads.filter(l=>(l.originSource||'Manual')==='AI').length;
+  const manualCount = allLeads.filter(l=>(l.originSource||'Manual')==='Manual').length;
+  const rows = [
+    {name:'🤖 AI Sales', count:aiCount, color:'#c3a26b'},
+    {name:'🧑‍💼 Manual Sales', count:manualCount, color:'#2563EB'}
+  ];
+  holder.innerHTML = rows.map(r=>{
+    const pct = Math.round((r.count/total)*100);
+    return `
+    <div class="sp-row">
+      <div class="sp-head"><span class="sp-name">${r.name}</span><span class="sp-stat">${r.count} record${r.count===1?'':'s'} · ${pct}% of total</span></div>
+      <div class="sp-track"><div class="sp-fill" style="width:${Math.max(r.count>0?2:0,pct)}%; background:${r.color};"></div></div>
+    </div>`;
+  }).join('');
+}
 
 const _cameFromLoginLink = applyLoginFromHash();
 if(_cameFromLoginLink || (isLoggedIn() && !location.hash.startsWith('#login='))){
