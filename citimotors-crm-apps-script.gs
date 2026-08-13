@@ -4,31 +4,98 @@
  *   Deploy > New deployment > type "Web app" > Execute as "Me" > Who has access "Anyone" >
  *   Deploy, then copy the Web App URL into the CRM's Sync (QR) tab ("Write endpoint").
  *
- * Handles: updating a lead's Pipeline Stage / AI Status / Human Takeover / Assigned To
- * from the CRM (drag-and-drop pipeline, human-takeover toggle) so the Google Sheet used
- * by the n8n Messenger workflow always reflects what's shown in the CRM.
+ * If updating an EXISTING deployment (recommended, so the URL stays the same):
+ *   Deploy > Manage deployments > (pencil icon on your active deployment) >
+ *   Version: "New version" > Deploy.
  *
- * IMPORTANT: When "Human Takeover" is toggled from the CRM, this ALSO updates the
- * "Chat Control" tab's "Assigned To" column (matched by Facebook ID) — that's the
- * value the n8n workflow's "Check Assigned To" node actually reads to decide whether
- * the AI should keep auto-replying. Without this, the CRM toggle only changed a label
- * in the Leads tab and never actually paused the bot.
+ * Handles:
+ *  - READS (doGet): ?action=leads and ?action=conversations&leadId=X — these feed the
+ *    CRM's Pipeline and AI Conversations pages. Without this, the dashboard always shows
+ *    "Walang lead na makita" no matter what, because it has nothing to fetch.
+ *  - WRITES (doPost): 'updateLead' (pipeline stage changes, form saves, etc.) and
+ *    'setTakeover' (the AI/Human toggle switch in the CRM — Pipeline card AND AI Conversations
+ *    panel both call this same action).
+ *
+ * IMPORTANT: Whenever Human Takeover changes (via either 'updateLead' with a 'Human Takeover'
+ * field, or via 'setTakeover'), this ALSO updates the "Chat Control" tab's "Assigned To"
+ * column (matched by Facebook ID) — that's the value the n8n workflow's "Check Assigned To"
+ * node actually reads to decide whether the AI should keep auto-replying. Without this, the
+ * CRM toggle only changes a label in the Leads tab and never actually pauses the bot.
  */
 const LEADS_SHEET_NAME = 'Leads';
 const LEAD_ID_COLUMN = 'Lead ID';
+const CONVERSATIONS_SHEET_NAME = 'Conversations';
 const CHAT_CONTROL_SHEET_NAME = 'Chat Control';
 const CHAT_CONTROL_FB_COLUMN = 'Facebook ID';
 const CHAT_CONTROL_ASSIGNED_COLUMN = 'Assigned To';
 // Must match the value n8n's "Check Assigned To" / "Check Assigned To1" nodes compare against.
 const HUMAN_TAKEOVER_ASSIGNEE = 'Romeo';
 
+// ============================== READS (doGet) ==============================
+
+function doGet(e) {
+  const action = e.parameter.action;
+
+  if (action === 'leads') {
+    return jsonOutput(getSheetAsObjects(LEADS_SHEET_NAME));
+  }
+
+  if (action === 'conversations') {
+    const leadId = e.parameter.leadId || '';
+    const rows = getSheetAsObjects(CONVERSATIONS_SHEET_NAME);
+    const filtered = rows.filter(r =>
+      String(r['Lead ID']) === String(leadId) ||
+      String(r['Facebook ID']) === String(leadId)
+    );
+    return jsonOutput(filtered);
+  }
+
+  return jsonOutput({ ok: false, error: 'Unknown action' });
+}
+
+// Generic header-row -> array-of-objects reader. Works for any sheet as long as
+// row 1 has column headers — doesn't care about column order, so it stays correct
+// even if columns get reordered or new ones get added later.
+function getSheetAsObjects(sheetName) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName(sheetName);
+  if (!sheet) return [];
+  const data = sheet.getDataRange().getValues();
+  if (data.length < 2) return []; // header row only (or completely empty) = no data yet
+
+  const headers = data[0];
+  const rows = [];
+  for (let r = 1; r < data.length; r++) {
+    const row = data[r];
+    const isBlank = row.every(cell => cell === '' || cell === null);
+    if (isBlank) continue; // skip fully empty rows
+    const obj = {};
+    headers.forEach((h, i) => { obj[h] = row[i]; });
+    rows.push(obj);
+  }
+  return rows;
+}
+
+function jsonOutput(obj) {
+  return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
+}
+
+// ============================== WRITES (doPost) ==============================
+
 function doPost(e) {
   const payload = JSON.parse(e.postData.contents);
+
   if (payload.action === 'updateLead') {
     updateLead(payload.leadId, payload.fields);
-    return ContentService.createTextOutput(JSON.stringify({ ok: true })).setMimeType(ContentService.MimeType.JSON);
+    return jsonOutput({ ok: true });
   }
-  return ContentService.createTextOutput(JSON.stringify({ ok: false, error: 'Unknown action' })).setMimeType(ContentService.MimeType.JSON);
+
+  if (payload.action === 'setTakeover') {
+    setTakeover(payload.facebookId, payload.mode);
+    return jsonOutput({ ok: true });
+  }
+
+  return jsonOutput({ ok: false, error: 'Unknown action' });
 }
 
 function updateLead(leadId, fields) {
@@ -59,6 +126,39 @@ function updateLead(leadId, fields) {
           syncChatControlAssignedTo(ss, facebookId, isTakeover ? HUMAN_TAKEOVER_ASSIGNEE : '');
         }
       }
+      break;
+    }
+  }
+}
+
+// Handles the CRM's AI/Human toggle switch (Pipeline card AND AI Conversations panel
+// both call this same 'setTakeover' action via DataService.setHumanTakeover()).
+function setTakeover(facebookId, mode) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const isHuman = String(mode).toLowerCase() === 'human';
+
+  // This is the write that actually matters to n8n — Chat Control's "Assigned To"
+  // must read exactly "Romeo" for the bot to pause.
+  syncChatControlAssignedTo(ss, facebookId, isHuman ? HUMAN_TAKEOVER_ASSIGNEE : '');
+
+  // Also reflect the change on the Leads sheet itself, so the CRM's own lead list/kanban
+  // shows the correct AI/Human badge without needing a manual refresh of that row.
+  const sheet = ss.getSheetByName(LEADS_SHEET_NAME);
+  const data = sheet.getDataRange().getValues();
+  const headers = data[0];
+  const fbColIdx = headers.indexOf('Facebook ID');
+  if (fbColIdx === -1) return;
+
+  for (let r = 1; r < data.length; r++) {
+    if (String(data[r][fbColIdx]) === String(facebookId)) {
+      const setIfColumnExists = (col, val) => {
+        const idx = headers.indexOf(col);
+        if (idx !== -1) sheet.getRange(r + 1, idx + 1).setValue(val);
+      };
+      setIfColumnExists('Human Takeover', isHuman);
+      setIfColumnExists('Assigned To', isHuman ? 'Agent' : 'AI');
+      setIfColumnExists('AI Status', isHuman ? 'Paused' : 'Active');
+      setIfColumnExists('Last Activity', new Date().toISOString());
       break;
     }
   }
