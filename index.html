@@ -5842,7 +5842,7 @@ const MOCK_CONVERSATIONS = {};
 function normalizeLead(raw){
   const g = (a,b)=> raw[a] ?? raw[b] ?? '';
   return {
-    id: g('Lead ID','id') || g('id','Lead ID'),
+    id: String(g('Lead ID','id') || g('id','Lead ID')),
     date: g('Date','date'),
     name: g('Customer Name','name'),
     contact: g('Contact Number','contact'),
